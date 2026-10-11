@@ -697,3 +697,473 @@ a {
         scroll-behavior: auto !important;
     }
 }
+
+
+/* =========================================
+   ETHORISE V2 — PREMIUM DESIGN
+========================================= */
+
+:root {
+    --ethorise-black: #101010;
+    --ethorise-orange: #ff6b35;
+    --ethorise-cream: #faf9f6;
+}
+
+/* NAVIGATION */
+
+.header {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.navbar {
+    height: 84px;
+}
+
+.nav-links a {
+    position: relative;
+    font-weight: 500;
+    letter-spacing: -0.2px;
+}
+
+.nav-links a::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--ethorise-orange);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* HERO */
+
+.hero-v2 {
+    background: var(--ethorise-cream);
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-v2 .hero-grid {
+    min-height: 720px;
+    gap: 70px;
+}
+
+.hero-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    background: white;
+    border: 1px solid #ececec;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #555;
+}
+
+.hero-label-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ethorise-orange);
+    box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.12);
+}
+
+.hero-v2 h1 {
+    font-size: clamp(48px, 5.2vw, 80px);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -4px;
+    margin: 32px 0;
+}
+
+.hero-v2 h1 span {
+    color: var(--ethorise-orange);
+}
+
+.hero-description {
+    max-width: 500px;
+    font-size: 16px;
+    line-height: 1.9;
+    color: #666;
+}
+
+.hero-v2 .hero-buttons {
+    margin-top: 40px;
+}
+
+.hero-v2 .btn {
+    min-height: 54px;
+    padding: 16px 30px;
+    border-radius: 7px;
+}
+
+.hero-v2 .btn-primary {
+    background: var(--ethorise-black);
+    display: inline-flex;
+    gap: 25px;
+}
+
+.hero-v2 .btn-primary:hover {
+    background: var(--ethorise-orange);
+}
+
+.hero-bottom-text {
+    margin-top: 55px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #777;
+    font-size: 12px;
+}
+
+.hero-bottom-text span {
+    font-size: 22px;
+    color: var(--ethorise-orange);
+}
+
+/* PREMIUM SHOWCASE */
+
+.hero-visual-v2 {
+    position: relative;
+    min-height: 550px;
+}
+
+.hero-showcase {
+    width: 100%;
+    height: 530px;
+    background:
+        radial-gradient(
+            circle at 50% 40%,
+            #444 0%,
+            #222 35%,
+            #101010 80%
+        );
+    border-radius: 26px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 35px 80px rgba(0, 0, 0, 0.16);
+}
+
+.showcase-glow {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: rgba(255, 107, 53, 0.28);
+    filter: blur(100px);
+    border-radius: 50%;
+    top: 10%;
+    left: 25%;
+}
+
+.showcase-content {
+    position: relative;
+    height: 100%;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
+}
+
+.showcase-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #aaa;
+}
+
+.showcase-symbol {
+    font-size: clamp(120px, 15vw, 240px);
+    color: var(--ethorise-orange);
+    text-align: center;
+    line-height: 1;
+    filter: drop-shadow(0 20px 50px rgba(255, 107, 53, 0.25));
+    animation: showcaseFloat 6s ease-in-out infinite;
+}
+
+.showcase-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.showcase-bottom span {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #aaa;
+}
+
+.showcase-bottom h2 {
+    font-size: 26px;
+    margin-top: 12px;
+    letter-spacing: -1px;
+}
+
+.showcase-bottom a {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    background: white;
+    color: black;
+    border-radius: 50%;
+    font-size: 24px;
+    transition: 0.3s;
+}
+
+.showcase-bottom a:hover {
+    background: var(--ethorise-orange);
+    color: white;
+    transform: rotate(45deg);
+}
+
+/* FLOATING BADGES */
+
+.floating-badge {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    padding: 15px 20px;
+    border-radius: 14px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.12);
+    animation: badgeFloat 5s ease-in-out infinite;
+}
+
+.floating-badge > span {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background: #fff0e9;
+    color: var(--ethorise-orange);
+    border-radius: 10px;
+    font-size: 23px;
+}
+
+.floating-badge strong {
+    display: block;
+    font-size: 12px;
+}
+
+.floating-badge small {
+    display: block;
+    color: #888;
+    margin-top: 5px;
+    font-size: 10px;
+}
+
+.floating-badge-one {
+    top: 50px;
+    right: -25px;
+}
+
+.floating-badge-two {
+    bottom: 55px;
+    left: -35px;
+    animation-delay: 1.5s;
+}
+
+/* PRODUCT CARDS UPGRADE */
+
+.product-card {
+    border: 1px solid #eeeeee;
+    border-radius: 14px;
+    box-shadow: none;
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 25px 55px rgba(0,0,0,.08);
+}
+
+.product-image {
+    overflow: hidden;
+    background: #f5f5f5;
+}
+
+.product-image img {
+    transition: transform 0.6s ease;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
+}
+
+.product-info {
+    padding: 24px;
+}
+
+.product-info h3 {
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.product-price {
+    font-size: 18px;
+}
+
+.product-actions a {
+    background: var(--ethorise-black);
+    transition: background 0.3s;
+}
+
+.product-actions a:hover {
+    background: var(--ethorise-orange);
+}
+
+.wishlist-toggle {
+    box-shadow: 0 5px 15px rgba(0,0,0,.06);
+    transition: transform 0.3s;
+}
+
+.wishlist-toggle:hover {
+    transform: scale(1.12);
+}
+
+/* ANIMATIONS */
+
+@keyframes showcaseFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-18px);
+    }
+}
+
+@keyframes badgeFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* TABLET */
+
+@media (max-width: 1024px) {
+    .hero-v2 .hero-grid {
+        gap: 35px;
+    }
+
+    .hero-showcase {
+        height: 450px;
+    }
+
+    .hero-visual-v2 {
+        min-height: 470px;
+    }
+
+    .floating-badge-one {
+        right: 0;
+    }
+
+    .floating-badge-two {
+        left: 0;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+    .navbar {
+        height: 70px;
+    }
+
+    .hero-v2 .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 50px;
+        padding-top: 65px;
+        padding-bottom: 70px;
+    }
+
+    .hero-v2 h1 {
+        font-size: clamp(45px, 9vw, 65px);
+        letter-spacing: -2.5px;
+    }
+
+    .hero-visual-v2 {
+        min-height: 430px;
+    }
+
+    .hero-showcase {
+        height: 400px;
+    }
+
+    .floating-badge {
+        padding: 10px 12px;
+    }
+
+    .floating-badge strong {
+        font-size: 10px;
+    }
+
+    .floating-badge small {
+        font-size: 9px;
+    }
+
+    .showcase-symbol {
+        font-size: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-label {
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .hero-v2 h1 {
+        font-size: 43px;
+    }
+
+    .hero-showcase {
+        height: 360px;
+    }
+
+    .hero-visual-v2 {
+        min-height: 390px;
+    }
+
+    .showcase-content {
+        padding: 25px;
+    }
+
+    .showcase-bottom h2 {
+        font-size: 20px;
+    }
+
+    .floating-badge-one {
+        top: 30px;
+    }
+
+    .floating-badge-two {
+        bottom: 25px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .showcase-symbol,
+    .floating-badge {
+        animation: none;
+    }
+}
