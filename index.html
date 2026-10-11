@@ -3,134 +3,251 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="ETHORISE — Discover better. Live smarter.">
+          content="ETHORISE — Discover extraordinary products, innovative gadgets, and modern lifestyle essentials.">
 
-    <title>ETHORISE | Discover Better. Live Smarter.</title>
+    <meta name="theme-color" content="#ffffff">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>ETHORISE | Discover Extraordinary</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-          rel="stylesheet">
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
 
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- MAIN CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <!-- ANNOUNCEMENT BAR -->
+    <!-- =====================================
+         ANNOUNCEMENT BAR
+    ====================================== -->
+
     <div class="announcement">
-        Discover smarter shopping with ETHORISE ✨
+        ✦ Discover extraordinary products with ETHORISE
     </div>
 
- <!-- PREMIUM NAVIGATION -->
-<header class="header">
-    <nav class="navbar container">
 
-        <a href="index.html" class="logo">
-            ETHORISE<span>.</span>
-        </a>
+    <!-- =====================================
+         PREMIUM NAVIGATION
+    ====================================== -->
 
-        <div class="nav-links" id="navLinks">
-            <a href="#home">Home</a>
-            <a href="#shop">Shop</a>
-            <a href="#categories">Collections</a>
-            <a href="#about">Our Story</a>
-        </div>
+    <header class="header">
 
-        <div class="nav-actions">
-            <button
-                id="wishlistBtn"
-                aria-label="View wishlist"
-                title="Wishlist"
-            >
-                ♡ <span id="wishlistCount">0</span>
-            </button>
+        <nav class="navbar container">
 
-            <button
-                id="menuToggle"
-                aria-label="Toggle navigation"
-                aria-expanded="false"
-            >
-                ☰
-            </button>
-        </div>
+            <!-- BRAND -->
+            <a href="index.html" class="logo">
+                ETHORISE<span>.</span>
+            </a>
 
-    </nav>
-</header>
+            <!-- NAVIGATION LINKS -->
+            <div class="nav-links" id="navLinks">
 
-<!-- PREMIUM HERO -->
-<section class="hero hero-v2" id="home">
+                <a href="#home">Home</a>
 
-    <div class="container hero-grid">
+                <a href="#shop">Shop</a>
 
-        <div class="hero-content">
+                <a href="#categories">Collections</a>
 
-            <div class="hero-label">
-                <span class="hero-label-dot"></span>
-                THE NEXT GENERATION OF DISCOVERY
-            </div>
-
-            <h1>
-                Discover<br>
-                <span>Extraordinary.</span>
-            </h1>
-
-            <p class="hero-description">
-                Explore a curated world of innovative technology,
-                modern essentials, and products designed
-                to elevate everyday living.
-            </p>
-
-            <div class="hero-buttons">
-
-                <a href="#shop" class="btn btn-primary">
-                    Explore Collection
-                    <span>↗</span>
-                </a>
-
-                <a href="#categories" class="btn btn-outline">
-                    Discover More
-                </a>
+                <a href="#about">Our Story</a>
 
             </div>
 
-            <div class="hero-bottom-text">
-                <span>✦</span>
-                Curated for modern living.
+            <!-- NAVIGATION ACTIONS -->
+            <div class="nav-actions">
+
+                <button
+                    id="wishlistBtn"
+                    class="nav-icon-btn"
+                    aria-label="View wishlist"
+                    title="Wishlist"
+                    type="button"
+                >
+                    ♡
+                    <span id="wishlistCount">0</span>
+                </button>
+
+                <button
+                    id="compareNavBtn"
+                    class="nav-icon-btn"
+                    aria-label="Compare selected products"
+                    title="Compare Products"
+                    type="button"
+                >
+                    ⚖
+                    <span id="compareCount">0</span>
+                </button>
+
+                <button
+                    id="menuToggle"
+                    class="menu-toggle"
+                    aria-label="Toggle navigation"
+                    aria-expanded="false"
+                    aria-controls="navLinks"
+                    type="button"
+                >
+                    ☰
+                </button>
+
             </div>
 
-        </div>
+        </nav>
 
-        <div class="hero-visual hero-visual-v2">
+    </header>
 
-            <div class="hero-showcase">
 
-                <div class="showcase-glow"></div>
+    <!-- =====================================
+         PREMIUM HERO SECTION
+    ====================================== -->
 
-                <div class="showcase-content">
+    <section class="hero hero-v2" id="home">
 
-                    <span class="showcase-label">
-                        ETHORISE / COLLECTION 01
-                    </span>
+        <div class="container hero-grid">
 
-                    <div class="showcase-symbol">
-                        ✦
-                    </div>
+            <!-- HERO CONTENT -->
+            <div class="hero-content">
 
-                    <div class="showcase-bottom">
+                <div class="hero-label">
 
-                        <div>
-                            <span>DISCOVER THE DIFFERENCE</span>
-                            <h2>Designed for Better.</h2>
+                    <span class="hero-label-dot"></span>
+
+                    THE NEXT GENERATION OF DISCOVERY
+
+                </div>
+
+                <h1>
+                    Discover<br>
+                    <span>Extraordinary.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Explore a curated world of innovative
+                    technology, modern essentials, and
+                    products designed to elevate everyday living.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#shop"
+                       class="btn btn-primary">
+
+                        Explore Collection
+                        <span>↗</span>
+
+                    </a>
+
+                    <a href="#categories"
+                       class="btn btn-outline">
+
+                        Discover More
+
+                    </a>
+
+                </div>
+
+                <div class="hero-bottom-text">
+
+                    <span>✦</span>
+
+                    Curated for modern living.
+
+                </div>
+
+            </div>
+
+
+            <!-- HERO VISUAL -->
+            <div class="hero-visual hero-visual-v2">
+
+                <div class="hero-showcase">
+
+                    <div class="showcase-glow"></div>
+
+                    <div class="showcase-content">
+
+                        <span class="showcase-label">
+                            ETHORISE / COLLECTION 01
+                        </span>
+
+                        <div class="showcase-symbol">
+                            ✦
                         </div>
 
-                        <a href="#shop" aria-label="Explore products">
-                            ↗
-                        </a>
+                        <div class="showcase-bottom">
+
+                            <div>
+
+                                <span>
+                                    DISCOVER THE DIFFERENCE
+                                </span>
+
+                                <h2>
+                                    Designed for Better.
+                                </h2>
+
+                            </div>
+
+                            <a href="#shop"
+                               aria-label="Explore products">
+                                ↗
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FLOATING BADGE 1 -->
+                <div class="floating-badge floating-badge-one">
+
+                    <span>✦</span>
+
+                    <div>
+
+                        <strong>
+                            Thoughtfully Curated
+                        </strong>
+
+                        <small>
+                            Explore our selections
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- FLOATING BADGE 2 -->
+                <div class="floating-badge floating-badge-two">
+
+                    <span>↗</span>
+
+                    <div>
+
+                        <strong>
+                            Discover More
+                        </strong>
+
+                        <small>
+                            Find your next favorite
+                        </small>
 
                     </div>
 
@@ -138,117 +255,203 @@
 
             </div>
 
-            <div class="floating-badge floating-badge-one">
-                <span>✦</span>
-                <div>
-                    <strong>Thoughtfully Curated</strong>
-                    <small>Explore our selections</small>
-                </div>
-            </div>
-
-            <div class="floating-badge floating-badge-two">
-                <span>↗</span>
-                <div>
-                    <strong>Discover More</strong>
-                    <small>Find your next favorite</small>
-                </div>
-            </div>
-
         </div>
 
-    </div>
+    </section>
 
-</section>
 
-    <!-- TRUST -->
+    <!-- =====================================
+         TRUST FEATURES
+    ====================================== -->
+
     <section class="trust container">
 
         <div class="trust-item">
+
             <span>✦</span>
+
             <div>
-                <h3>Curated Products</h3>
-                <p>Thoughtfully selected ideas</p>
+
+                <h3>Curated Discovery</h3>
+
+                <p>
+                    Explore thoughtfully selected products
+                </p>
+
             </div>
+
         </div>
 
+
         <div class="trust-item">
+
             <span>⌕</span>
+
             <div>
-                <h3>Easy Discovery</h3>
-                <p>Find products faster</p>
+
+                <h3>Smart Search</h3>
+
+                <p>
+                    Find products that match your needs
+                </p>
+
             </div>
+
         </div>
 
+
         <div class="trust-item">
+
             <span>♡</span>
+
             <div>
+
                 <h3>Save Favorites</h3>
-                <p>Keep track of your picks</p>
+
+                <p>
+                    Keep track of products you love
+                </p>
+
             </div>
+
         </div>
 
     </section>
 
-    <!-- CATEGORIES -->
+
+    <!-- =====================================
+         FEATURED CATEGORIES
+    ====================================== -->
+
     <section class="section container" id="categories">
 
         <div class="section-heading">
+
             <div>
-                <span class="eyebrow">EXPLORE ETHORISE</span>
-                <h2>Shop by Category</h2>
+
+                <span class="eyebrow">
+                    EXPLORE ETHORISE
+                </span>
+
+                <h2>
+                    Shop by Category
+                </h2>
+
             </div>
 
-            <p>Find what fits your lifestyle.</p>
+            <p>
+                Discover products that fit your lifestyle.
+            </p>
+
         </div>
+
 
         <div class="category-grid">
 
-            <button class="category-card"
-                    data-category="Electronics">
+            <!-- ELECTRONICS -->
+            <button
+                class="category-card"
+                data-category="Electronics"
+                type="button"
+            >
+
                 <span>🎧</span>
+
                 <h3>Electronics</h3>
-                <p>Explore →</p>
+
+                <p>Explore Collection →</p>
+
             </button>
 
-            <button class="category-card"
-                    data-category="Office">
+
+            <!-- OFFICE -->
+            <button
+                class="category-card"
+                data-category="Office"
+                type="button"
+            >
+
                 <span>💻</span>
+
                 <h3>Home Office</h3>
-                <p>Explore →</p>
+
+                <p>Explore Collection →</p>
+
             </button>
 
-            <button class="category-card"
-                    data-category="Fitness">
+
+            <!-- FITNESS -->
+            <button
+                class="category-card"
+                data-category="Fitness"
+                type="button"
+            >
+
                 <span>⌚</span>
+
                 <h3>Fitness</h3>
-                <p>Explore →</p>
+
+                <p>Explore Collection →</p>
+
             </button>
 
-            <button class="category-card"
-                    data-category="Accessories">
+
+            <!-- ACCESSORIES -->
+            <button
+                class="category-card"
+                data-category="Accessories"
+                type="button"
+            >
+
                 <span>⚡</span>
+
                 <h3>Accessories</h3>
-                <p>Explore →</p>
+
+                <p>Explore Collection →</p>
+
             </button>
 
         </div>
 
     </section>
 
-    <!-- PRODUCTS -->
+
+    <!-- =====================================
+         PRODUCT SHOP SECTION
+    ====================================== -->
+
     <section class="section shop-section" id="shop">
 
         <div class="container">
 
             <div class="section-heading">
+
                 <div>
-                    <span class="eyebrow">DISCOVER MORE</span>
-                    <h2>Explore Products</h2>
+
+                    <span class="eyebrow">
+                        DISCOVER MORE
+                    </span>
+
+                    <h2>
+                        Explore Products
+                    </h2>
+
                 </div>
+
+                <p>
+                    Find your next favorite product.
+                </p>
+
             </div>
+
+
+            <!-- =====================================
+                 ADVANCED SHOP TOOLBAR
+            ====================================== -->
 
             <div class="shop-toolbar">
 
+                <!-- SEARCH -->
                 <input
                     type="search"
                     id="searchInput"
@@ -256,45 +459,195 @@
                     aria-label="Search products"
                 >
 
-                <select id="categoryFilter"
-                        aria-label="Filter by category">
-                    <option value="All">All Categories</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Office">Home Office</option>
-                    <option value="Fitness">Fitness</option>
-                    <option value="Accessories">Accessories</option>
+
+                <!-- CATEGORY FILTER -->
+                <select
+                    id="categoryFilter"
+                    aria-label="Filter by category"
+                >
+
+                    <option value="All">
+                        All Categories
+                    </option>
+
+                    <option value="Electronics">
+                        Electronics
+                    </option>
+
+                    <option value="Office">
+                        Home Office
+                    </option>
+
+                    <option value="Fitness">
+                        Fitness
+                    </option>
+
+                    <option value="Accessories">
+                        Accessories
+                    </option>
+
                 </select>
 
-                <select id="countryFilter"
-                        aria-label="Filter by country">
-                    <option value="All">All Countries</option>
-                    <option value="USA">USA</option>
-                    <option value="UK">UK</option>
-                    <option value="Canada">Canada</option>
+
+                <!-- COUNTRY FILTER -->
+                <select
+                    id="countryFilter"
+                    aria-label="Filter by country"
+                >
+
+                    <option value="All">
+                        All Countries
+                    </option>
+
+                    <option value="USA">
+                        USA
+                    </option>
+
+                    <option value="UK">
+                        UK
+                    </option>
+
+                    <option value="Canada">
+                        Canada
+                    </option>
+
+                </select>
+
+
+                <!-- PRODUCT SORTING -->
+                <select
+                    id="sortFilter"
+                    aria-label="Sort products"
+                >
+
+                    <option value="default">
+                        Sort: Featured
+                    </option>
+
+                    <option value="price-low">
+                        Price: Low to High
+                    </option>
+
+                    <option value="price-high">
+                        Price: High to Low
+                    </option>
+
+                    <option value="name">
+                        Name: A to Z
+                    </option>
+
                 </select>
 
             </div>
 
-            <div id="productGrid" class="product-grid">
+
+            <!-- PRODUCT RESULTS -->
+            <div class="product-results">
+
+                <p id="productCount" aria-live="polite">
+                    Loading products...
+                </p>
+
+                <button
+                    id="clearFilters"
+                    class="clear-filters"
+                    type="button"
+                >
+                    Clear Filters
+                </button>
+
+            </div>
+
+
+            <!-- PRODUCT GRID -->
+            <div
+                id="productGrid"
+                class="product-grid"
+                aria-live="polite"
+            >
+
                 Loading products...
+
             </div>
 
         </div>
 
     </section>
 
-    <!-- ABOUT -->
+
+    <!-- =====================================
+         PRODUCT COMPARISON BAR
+    ====================================== -->
+
+    <div
+        id="compareBar"
+        class="compare-bar"
+        aria-label="Product comparison"
+        hidden
+    >
+
+        <div class="container compare-bar-inner">
+
+            <div>
+
+                <strong>
+                    Compare Products
+                </strong>
+
+                <p id="compareBarCount">
+                    0 of 3 products selected
+                </p>
+
+            </div>
+
+
+            <div class="compare-bar-actions">
+
+                <button
+                    id="clearCompare"
+                    class="btn btn-outline"
+                    type="button"
+                >
+                    Clear
+                </button>
+
+                <button
+                    id="openCompare"
+                    class="btn btn-primary"
+                    type="button"
+                >
+                    Compare Now →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         ABOUT SECTION
+    ====================================== -->
+
     <section class="about-section" id="about">
 
         <div class="container about-content">
 
-            <span class="eyebrow">OUR PHILOSOPHY</span>
+            <span class="eyebrow">
+                OUR PHILOSOPHY
+            </span>
 
-            <h2>Better Choices.<br>Better Everyday.</h2>
+            <h2>
+                Better Choices.<br>
+                Better Everyday.
+            </h2>
 
             <p>
                 ETHORISE helps you discover useful products,
-                innovative gadgets, and modern lifestyle essentials.
+                innovative gadgets, and modern lifestyle
+                essentials through a simple and enjoyable
+                shopping discovery experience.
             </p>
 
             <a href="#shop" class="btn btn-primary">
@@ -305,13 +658,24 @@
 
     </section>
 
-    <!-- NEWSLETTER -->
+
+    <!-- =====================================
+         NEWSLETTER SECTION
+    ====================================== -->
+
     <section class="newsletter container">
 
-        <h2>Stay Ahead of the Trend.</h2>
+        <span class="eyebrow">
+            STAY INSPIRED
+        </span>
+
+        <h2>
+            Stay Ahead of the Trend.
+        </h2>
 
         <p>
-            Discover new products and shopping inspiration.
+            Discover new products, innovative ideas,
+            and shopping inspiration.
         </p>
 
         <p class="newsletter-note">
@@ -320,53 +684,101 @@
 
     </section>
 
-    <!-- FOOTER -->
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
     <footer class="footer">
 
         <div class="container footer-grid">
 
+            <!-- BRAND -->
             <div>
-                <h2>ETHORISE<span>.</span></h2>
+
+                <h2>
+                    ETHORISE<span>.</span>
+                </h2>
 
                 <p>
-                    Discover Better. Live Smarter.
+                    Discover Extraordinary.<br>
+                    Elevate Everyday.
                 </p>
+
             </div>
 
+
+            <!-- EXPLORE -->
             <div>
+
                 <h3>Explore</h3>
-                <a href="#shop">Products</a>
-                <a href="#categories">Categories</a>
-                <a href="#about">About</a>
+
+                <a href="#shop">
+                    Products
+                </a>
+
+                <a href="#categories">
+                    Collections
+                </a>
+
+                <a href="#about">
+                    Our Story
+                </a>
+
             </div>
 
+
+            <!-- INFORMATION -->
             <div>
+
                 <h3>Information</h3>
+
                 <p>
+                    ETHORISE is a product discovery platform.
                     Some links may earn us a commission
                     at no additional cost to you.
                 </p>
+
+                <p>
+                    Product prices and availability
+                    shown in this demo are illustrative.
+                </p>
+
             </div>
 
         </div>
 
+
         <div class="footer-bottom">
+
             © 2026 ETHORISE. All rights reserved.
+
         </div>
 
     </footer>
 
-    <!-- QUICK VIEW -->
-    <div class="modal" id="quickViewModal"
-         role="dialog"
-         aria-modal="true"
-         aria-label="Product quick view"
-         aria-hidden="true">
+
+    <!-- =====================================
+         PRODUCT QUICK VIEW MODAL
+    ====================================== -->
+
+    <div
+        class="modal"
+        id="quickViewModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Product quick view"
+        aria-hidden="true"
+    >
 
         <div class="modal-content">
 
-            <button class="modal-close" id="closeModal"
-                    aria-label="Close quick view">
+            <button
+                class="modal-close"
+                id="closeModal"
+                aria-label="Close quick view"
+                type="button"
+            >
                 ×
             </button>
 
@@ -376,7 +788,55 @@
 
     </div>
 
+
+    <!-- =====================================
+         PRODUCT COMPARISON MODAL
+    ====================================== -->
+
+    <div
+        class="modal"
+        id="compareModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Compare products"
+        aria-hidden="true"
+    >
+
+        <div class="modal-content compare-modal-content">
+
+            <button
+                class="modal-close"
+                id="closeCompareModal"
+                aria-label="Close comparison"
+                type="button"
+            >
+                ×
+            </button>
+
+            <h2>
+                Compare Products
+            </h2>
+
+            <p>
+                Compare your selected products side by side.
+            </p>
+
+            <div
+                id="compareContent"
+                class="compare-content"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
+
     <script src="js/app.js"></script>
 
 </body>
+
 </html>

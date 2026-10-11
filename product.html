@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Explore product details, features, and availability at ETHORISE.">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Product Details | ETHORISE</title>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- MAIN STYLESHEET -->
+    <link rel="stylesheet" href="css/style.css">
+
+
+    <style>
+    #productMenuToggle {
+        display: none;
+        border: none;
+        background: transparent;
+        font-size: 23px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        #productMenuToggle {
+            display: block;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+    <!-- =====================================
+         ANNOUNCEMENT BAR
+    ====================================== -->
+
+    <div class="announcement">
+
+        ✦ Discover extraordinary products with ETHORISE
+
+    </div>
+
+
+    <!-- =====================================
+         NAVIGATION
+    ====================================== -->
+
+    <header class="header">
+
+        <nav class="navbar container">
+
+            <!-- BRAND LOGO -->
+            <a href="index.html" class="logo">
+
+                ETHORISE<span>.</span>
+
+            </a>
+
+
+            <!-- NAVIGATION LINKS -->
+            <div class="nav-links" id="productNavLinks">
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#shop">
+                    Shop
+                </a>
+
+                <a href="index.html#categories">
+                    Collections
+                </a>
+
+                <a href="index.html#about">
+                    Our Story
+                </a>
+
+            </div>
+
+
+            <!-- MOBILE MENU BUTTON -->
+            <div class="nav-actions">
+
+                <button
+                    id="productMenuToggle"
+                    aria-label="Toggle navigation"
+                    aria-controls="productNavLinks"
+                    aria-expanded="false"
+                    type="button"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <!-- =====================================
+         PRODUCT DETAILS SECTION
+    ====================================== -->
+
+    <main>
+
+        <section class="product-detail-section">
+
+            <div class="container">
+
+                <!-- BACK NAVIGATION -->
+                <a
+                    href="index.html#shop"
+                    class="product-detail-back"
+                >
+
+                    ← Back to Products
+
+                </a>
+
+
+                <!-- PRODUCT CONTENT -->
+                <div id="productDetail">
+
+                    <p>
+                        Loading product details...
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             RELATED PRODUCTS
+        ====================================== -->
+
+        <section class="section shop-section">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            YOU MAY ALSO LIKE
+                        </span>
+
+                        <h2>
+                            Related Products
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="relatedProducts"
+                    class="product-grid"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
+    <footer class="footer">
+
+        <div class="container footer-grid">
+
+            <div>
+
+                <h2>
+                    ETHORISE<span>.</span>
+                </h2>
+
+                <p>
+                    Discover Extraordinary.<br>
+                    Elevate Everyday.
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>Explore</h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="index.html#shop">
+                    Products
+                </a>
+
+                <a href="index.html#categories">
+                    Collections
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>Information</h3>
+
+                <p>
+                    ETHORISE is a product discovery platform.
+                    Some links may earn us a commission
+                    at no additional cost to you.
+                </p>
+
+                <p>
+                    Product prices and availability
+                    in this demo are illustrative.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            © 2026 ETHORISE. All rights reserved.
+
+        </div>
+
+    </footer>
+
+
+    <!-- =====================================
+         PRODUCT DETAILS JAVASCRIPT
+    ====================================== -->
+
+    <script src="js/product.js"></script>
+
+</body>
+
+</html>
