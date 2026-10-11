@@ -1,0 +1,74 @@
+[
+    {
+        "id": 1,
+        "name": "Premium Wireless Headphones",
+        "category": "Electronics",
+        "price": 49.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Headphones",
+        "countries": ["USA", "UK", "Canada"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 2,
+        "name": "Adjustable Laptop Stand",
+        "category": "Office",
+        "price": 29.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Laptop+Stand",
+        "countries": ["USA", "UK", "Canada"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 3,
+        "name": "Smart Fitness Watch",
+        "category": "Fitness",
+        "price": 59.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Fitness+Watch",
+        "countries": ["USA", "Canada"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 4,
+        "name": "USB-C Multiport Hub",
+        "category": "Accessories",
+        "price": 34.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=USB-C+Hub",
+        "countries": ["USA", "UK"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 5,
+        "name": "Wireless Mechanical Keyboard",
+        "category": "Electronics",
+        "price": 79.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Keyboard",
+        "countries": ["USA", "UK", "Canada"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 6,
+        "name": "Minimalist Desk Lamp",
+        "category": "Office",
+        "price": 39.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Desk+Lamp",
+        "countries": ["USA", "UK", "Canada"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 7,
+        "name": "Resistance Band Set",
+        "category": "Fitness",
+        "price": 24.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Fitness+Bands",
+        "countries": ["USA", "UK"],
+        "affiliateLink": "#"
+    },
+    {
+        "id": 8,
+        "name": "Portable Power Bank",
+        "category": "Accessories",
+        "price": 44.99,
+        "image": "https://placehold.co/600x600/f5f5f5/111111?text=Power+Bank",
+        "countries": ["USA", "UK", "Canada"],
+        "affiliateLink": "#"
+    }
+]

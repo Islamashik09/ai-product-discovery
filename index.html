@@ -1,67 +1,331 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Product Discovery</title>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #0f172a;
-            color: white;
-            text-align: center;
-        }
+    <meta name="description"
+          content="ETHORISE — Discover better. Live smarter.">
 
-        header {
-            padding: 60px 20px;
-        }
+    <title>ETHORISE | Discover Better. Live Smarter.</title>
 
-        h1 {
-            font-size: 42px;
-            color: #38bdf8;
-        }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-        p {
-            font-size: 18px;
-            color: #cbd5e1;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
 
-        .btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 14px 30px;
-            background: #2563eb;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-        }
-
-        .btn:hover {
-            background: #1d4ed8;
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-    <header>
-        <h1>🚀 AI Product Discovery</h1>
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="announcement">
+        Discover smarter shopping with ETHORISE ✨
+    </div>
 
-        <p>
-            Discover the best tech gadgets and
-            home office accessories.
-        </p>
+    <!-- NAVIGATION -->
+    <header class="header">
 
-        <p>
-            USA 🇺🇸 | UK 🇬🇧 | Canada 🇨🇦
-        </p>
+        <nav class="navbar container">
 
-        <a href="#" class="btn">
-            Explore Products
-        </a>
+            <a href="index.html" class="logo">
+                ETHORISE<span>.</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#shop">Shop</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+            </div>
+
+            <div class="nav-actions">
+                <button id="wishlistBtn" aria-label="Wishlist">
+                    ♡ <span id="wishlistCount">0</span>
+                </button>
+
+                <button id="menuToggle" aria-label="Toggle menu"
+                        aria-expanded="false">
+                    ☰
+                </button>
+            </div>
+
+        </nav>
+
     </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+
+        <div class="container hero-grid">
+
+            <div class="hero-content">
+
+                <span class="eyebrow">
+                    THE FUTURE OF EVERYDAY ESSENTIALS
+                </span>
+
+                <h1>
+                    Discover Better.<br>
+                    <span>Live Smarter.</span>
+                </h1>
+
+                <p>
+                    Explore innovative gadgets, modern essentials,
+                    and thoughtfully curated products designed
+                    to elevate your everyday life.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="#shop" class="btn btn-primary">
+                        Explore Products →
+                    </a>
+
+                    <a href="#categories" class="btn btn-outline">
+                        Browse Categories
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="hero-visual">
+
+                <div class="hero-card">
+                    <span class="hero-tag">CURATED PICKS</span>
+
+                    <div class="hero-icon">✦</div>
+
+                    <h2>Elevate Your Everyday</h2>
+
+                    <p>Discover products worth exploring.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- TRUST -->
+    <section class="trust container">
+
+        <div class="trust-item">
+            <span>✦</span>
+            <div>
+                <h3>Curated Products</h3>
+                <p>Thoughtfully selected ideas</p>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <span>⌕</span>
+            <div>
+                <h3>Easy Discovery</h3>
+                <p>Find products faster</p>
+            </div>
+        </div>
+
+        <div class="trust-item">
+            <span>♡</span>
+            <div>
+                <h3>Save Favorites</h3>
+                <p>Keep track of your picks</p>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="section container" id="categories">
+
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">EXPLORE ETHORISE</span>
+                <h2>Shop by Category</h2>
+            </div>
+
+            <p>Find what fits your lifestyle.</p>
+        </div>
+
+        <div class="category-grid">
+
+            <button class="category-card"
+                    data-category="Electronics">
+                <span>🎧</span>
+                <h3>Electronics</h3>
+                <p>Explore →</p>
+            </button>
+
+            <button class="category-card"
+                    data-category="Office">
+                <span>💻</span>
+                <h3>Home Office</h3>
+                <p>Explore →</p>
+            </button>
+
+            <button class="category-card"
+                    data-category="Fitness">
+                <span>⌚</span>
+                <h3>Fitness</h3>
+                <p>Explore →</p>
+            </button>
+
+            <button class="category-card"
+                    data-category="Accessories">
+                <span>⚡</span>
+                <h3>Accessories</h3>
+                <p>Explore →</p>
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="section shop-section" id="shop">
+
+        <div class="container">
+
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">DISCOVER MORE</span>
+                    <h2>Explore Products</h2>
+                </div>
+            </div>
+
+            <div class="shop-toolbar">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search products..."
+                    aria-label="Search products"
+                >
+
+                <select id="categoryFilter"
+                        aria-label="Filter by category">
+                    <option value="All">All Categories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Office">Home Office</option>
+                    <option value="Fitness">Fitness</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+
+                <select id="countryFilter"
+                        aria-label="Filter by country">
+                    <option value="All">All Countries</option>
+                    <option value="USA">USA</option>
+                    <option value="UK">UK</option>
+                    <option value="Canada">Canada</option>
+                </select>
+
+            </div>
+
+            <div id="productGrid" class="product-grid">
+                Loading products...
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+
+        <div class="container about-content">
+
+            <span class="eyebrow">OUR PHILOSOPHY</span>
+
+            <h2>Better Choices.<br>Better Everyday.</h2>
+
+            <p>
+                ETHORISE helps you discover useful products,
+                innovative gadgets, and modern lifestyle essentials.
+            </p>
+
+            <a href="#shop" class="btn btn-primary">
+                Discover Products →
+            </a>
+
+        </div>
+
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter container">
+
+        <h2>Stay Ahead of the Trend.</h2>
+
+        <p>
+            Discover new products and shopping inspiration.
+        </p>
+
+        <p class="newsletter-note">
+            Newsletter subscriptions are coming soon.
+        </p>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="container footer-grid">
+
+            <div>
+                <h2>ETHORISE<span>.</span></h2>
+
+                <p>
+                    Discover Better. Live Smarter.
+                </p>
+            </div>
+
+            <div>
+                <h3>Explore</h3>
+                <a href="#shop">Products</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+            </div>
+
+            <div>
+                <h3>Information</h3>
+                <p>
+                    Some links may earn us a commission
+                    at no additional cost to you.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 ETHORISE. All rights reserved.
+        </div>
+
+    </footer>
+
+    <!-- QUICK VIEW -->
+    <div class="modal" id="quickViewModal"
+         role="dialog"
+         aria-modal="true"
+         aria-label="Product quick view"
+         aria-hidden="true">
+
+        <div class="modal-content">
+
+            <button class="modal-close" id="closeModal"
+                    aria-label="Close quick view">
+                ×
+            </button>
+
+            <div id="modalBody"></div>
+
+        </div>
+
+    </div>
+
+    <script src="js/app.js"></script>
 
 </body>
 </html>
