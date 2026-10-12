@@ -126,5 +126,25 @@
     ],
     "countries": ["USA", "UK", "Canada"],
     "affiliateLink": "#"
+  },
+  {
+    "id": 9,
+    "name": "JOIOT Adjustable Aluminum Laptop Stand",
+    "category": "Office",
+    "price": 0,
+    "currency": "USD",
+    "image": "https://placehold.co/600x600/f5f5f5/111111?text=JOIOT+Laptop+Stand",
+    "description": "Explore the JOIOT adjustable aluminum laptop stand, listed for compatible 11–16 inch laptops. Visit Amazon to verify the latest specifications, pricing, and availability.",
+    "features": [
+      "Adjustable laptop stand",
+      "Aluminum construction",
+      "Listed for 11–16 inch laptops",
+      "Check current specifications on Amazon"
+    ],
+    "countries": ["USA"],
+    "affiliateLink": "https://link.amazon/B09zPOFHf",
+    "productUrl": "https://www.amazon.com/dp/B0B3DNYG5F",
+    "affiliatePlatform": "Amazon",
+    "asin": "B0B3DNYG5F"
   }
 ]

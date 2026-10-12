@@ -4,67 +4,73 @@
 
 "use strict";
 
-/* ==========================================
-   DOM ELEMENTS
-========================================== */
-
 const productDetail =
     document.getElementById("productDetail");
 
 const relatedProducts =
     document.getElementById("relatedProducts");
 
-/* ==========================================
-   PRODUCT ID FROM URL
-========================================== */
-
 const params = new URLSearchParams(
     window.location.search
 );
 
-const productId = Number(
-    params.get("id")
-);
+const productId = Number(params.get("id"));
 
-/* ==========================================
-   HELPER FUNCTIONS
-========================================== */
+/* HELPERS */
 
 function createElement(tag, className = "", text) {
     const element = document.createElement(tag);
 
-    if (className) {
-        element.className = className;
-    }
+    if (className) element.className = className;
 
-    if (text !== undefined) {
-        element.textContent = text;
-    }
+    if (text !== undefined) element.textContent = text;
 
     return element;
 }
 
-function formatPrice(price) {
-    return `$${Number(price).toFixed(2)} USD (Demo)`;
+function formatPrice(product) {
+    if (
+        product.price === null ||
+        product.price === undefined ||
+        Number(product.price) <= 0
+    ) {
+        return product.affiliatePlatform === "Amazon"
+            ? "Check Price on Amazon"
+            : "Check Latest Price";
+    }
+
+    return `$${Number(product.price).toFixed(2)} USD (Demo)`;
 }
 
+/* AFFILIATE LINK */
+
 function createAffiliateLink(product) {
+    const isAmazon =
+        product.affiliatePlatform === "Amazon";
+
     const link = createElement(
         "a",
         "btn btn-primary",
-        "View Product ↗"
+        isAmazon
+            ? "View on Amazon ↗"
+            : "View Product ↗"
     );
 
     try {
-        if (!product.affiliateLink ||
-            product.affiliateLink === "#") {
-            throw new Error("No affiliate link");
+        if (
+            !product.affiliateLink ||
+            product.affiliateLink === "#"
+        ) {
+            throw new Error("Missing link");
         }
 
         const url = new URL(product.affiliateLink);
 
-        if (!["https:", "http:"].includes(url.protocol)) {
-            throw new Error("Unsupported link");
+        if (
+            url.protocol !== "https:" &&
+            url.protocol !== "http:"
+        ) {
+            throw new Error("Invalid URL");
         }
 
         link.href = url.href;
@@ -79,49 +85,44 @@ function createAffiliateLink(product) {
         link.addEventListener("click", event => {
             event.preventDefault();
 
-            alert(
-                "Affiliate product link is coming soon."
-            );
+            alert("Product link coming soon.");
         });
     }
 
     return link;
 }
 
-/* ==========================================
-   SAVE PRODUCT TO WISHLIST
-========================================== */
+/* WISHLIST */
 
-function addToWishlist(productId) {
-    let wishlist = [];
+function addToWishlist(id) {
+    let saved = [];
 
     try {
-        const saved = JSON.parse(
+        const data = JSON.parse(
             localStorage.getItem("ethoriseWishlist") || "[]"
         );
 
-        if (Array.isArray(saved)) {
-            wishlist = saved.filter(Number.isInteger);
+        if (Array.isArray(data)) {
+            saved = data.filter(Number.isInteger);
         }
+
     } catch {
-        wishlist = [];
+        saved = [];
     }
 
-    if (!wishlist.includes(productId)) {
-        wishlist.push(productId);
+    if (!saved.includes(id)) {
+        saved.push(id);
     }
 
     localStorage.setItem(
         "ethoriseWishlist",
-        JSON.stringify(wishlist)
+        JSON.stringify(saved)
     );
 
-    alert("Product added to your wishlist!");
+    alert("Product saved to wishlist!");
 }
 
-/* ==========================================
-   PRODUCT DETAILS RENDER
-========================================== */
+/* RENDER PRODUCT DETAILS */
 
 function renderProduct(product) {
     productDetail.replaceChildren();
@@ -131,9 +132,7 @@ function renderProduct(product) {
         "product-detail-grid"
     );
 
-    /* PRODUCT IMAGE */
-
-    const imageWrapper = createElement(
+    const imageBox = createElement(
         "div",
         "product-detail-image"
     );
@@ -143,9 +142,7 @@ function renderProduct(product) {
     image.src = product.image;
     image.alt = product.name;
 
-    imageWrapper.appendChild(image);
-
-    /* PRODUCT INFORMATION */
+    imageBox.appendChild(image);
 
     const info = createElement(
         "div",
@@ -167,17 +164,14 @@ function renderProduct(product) {
     const price = createElement(
         "p",
         "product-price",
-        formatPrice(product.price)
+        formatPrice(product)
     );
 
     const description = createElement(
         "p",
         "",
-        product.description ||
-        "Product information is not available."
+        product.description || "Description unavailable."
     );
-
-    /* FEATURES */
 
     const featuresBox = createElement(
         "div",
@@ -193,39 +187,27 @@ function renderProduct(product) {
     const featureList = createElement("ul");
 
     (product.features || []).forEach(feature => {
-        const item = createElement(
-            "li",
-            "",
-            feature
-        );
+        const item = createElement("li", "", feature);
 
         featureList.appendChild(item);
     });
 
-    featuresBox.append(
-        featuresTitle,
-        featureList
-    );
-
-    /* MARKET AVAILABILITY */
+    featuresBox.append(featuresTitle, featureList);
 
     const availability = createElement(
         "p",
         "",
-        `Listed Markets (Demo): ${product.countries.join(", ")}`
+        `Listed Markets (Demo): ${(product.countries || []).join(", ")}`
     );
 
     availability.style.marginTop = "20px";
-
-    /* ACTION BUTTONS */
 
     const actions = createElement(
         "div",
         "product-detail-actions"
     );
 
-    const affiliateLink =
-        createAffiliateLink(product);
+    const affiliateLink = createAffiliateLink(product);
 
     const wishlistButton = createElement(
         "button",
@@ -254,22 +236,14 @@ function renderProduct(product) {
         actions
     );
 
-    grid.append(
-        imageWrapper,
-        info
-    );
+    grid.append(imageBox, info);
 
     productDetail.appendChild(grid);
 
-    /* UPDATE PAGE TITLE */
-
-    document.title =
-        `${product.name} | ETHORISE`;
+    document.title = `${product.name} | ETHORISE`;
 }
 
-/* ==========================================
-   RELATED PRODUCTS
-========================================== */
+/* RELATED PRODUCTS */
 
 function renderRelatedProducts(allProducts, currentProduct) {
     relatedProducts.replaceChildren();
@@ -281,7 +255,7 @@ function renderRelatedProducts(allProducts, currentProduct) {
         )
         .slice(0, 4);
 
-    if (related.length === 0) {
+    if (!related.length) {
         relatedProducts.textContent =
             "No related products available.";
 
@@ -327,7 +301,7 @@ function renderRelatedProducts(allProducts, currentProduct) {
         const price = createElement(
             "p",
             "product-price",
-            formatPrice(product.price)
+            formatPrice(product)
         );
 
         const link = createElement(
@@ -346,18 +320,13 @@ function renderRelatedProducts(allProducts, currentProduct) {
             link
         );
 
-        card.append(
-            imageBox,
-            info
-        );
+        card.append(imageBox, info);
 
         relatedProducts.appendChild(card);
     });
 }
 
-/* ==========================================
-   LOAD PRODUCTS
-========================================== */
+/* LOAD PRODUCT */
 
 async function loadProductDetails() {
     try {
@@ -365,22 +334,16 @@ async function loadProductDetails() {
             throw new Error("Invalid product ID");
         }
 
-        const response = await fetch(
-            "data/products.json"
-        );
+        const response = await fetch("data/products.json");
 
         if (!response.ok) {
-            throw new Error(
-                "Unable to load product database."
-            );
+            throw new Error("Failed to load products.");
         }
 
         const products = await response.json();
 
         if (!Array.isArray(products)) {
-            throw new Error(
-                "Invalid product database."
-            );
+            throw new Error("Invalid product database.");
         }
 
         const product = products.find(
@@ -388,39 +351,29 @@ async function loadProductDetails() {
         );
 
         if (!product) {
-            productDetail.textContent =
-                "Product not found.";
-
+            productDetail.textContent = "Product not found.";
             return;
         }
 
         renderProduct(product);
 
-        renderRelatedProducts(
-            products,
-            product
-        );
+        renderRelatedProducts(products, product);
 
     } catch (error) {
         console.error(error);
 
         productDetail.textContent =
             "Unable to load product details.";
-
     }
 }
 
-/* ==========================================
-   MOBILE NAVIGATION
-========================================== */
+/* MOBILE NAVIGATION */
 
-const menuToggle = document.getElementById(
-    "productMenuToggle"
-);
+const menuToggle =
+    document.getElementById("productMenuToggle");
 
-const navLinks = document.getElementById(
-    "productNavLinks"
-);
+const navLinks =
+    document.getElementById("productNavLinks");
 
 menuToggle.addEventListener("click", () => {
     navLinks.classList.toggle("active");
@@ -435,15 +388,10 @@ navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
         navLinks.classList.remove("active");
 
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
+        menuToggle.setAttribute("aria-expanded", "false");
     });
 });
 
-/* ==========================================
-   INITIALIZE
-========================================== */
+/* INITIALIZE */
 
 loadProductDetails();

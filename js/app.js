@@ -1,12 +1,11 @@
 /* ==========================================
    ETHORISE — MAIN APPLICATION
+   Affiliate Commerce Platform
 ========================================== */
 
 "use strict";
 
-/* ==========================================
-   GLOBAL DATA
-========================================== */
+/* GLOBAL DATA */
 
 let products = [];
 
@@ -14,11 +13,14 @@ const MAX_COMPARE = 3;
 
 function readSavedIds(key) {
     try {
-        const data = JSON.parse(localStorage.getItem(key) || "[]");
+        const data = JSON.parse(
+            localStorage.getItem(key) || "[]"
+        );
 
         if (!Array.isArray(data)) return [];
 
         return data.filter(Number.isInteger);
+
     } catch {
         return [];
     }
@@ -34,9 +36,7 @@ const comparison = new Set(
 
 let wishlistOnly = false;
 
-/* ==========================================
-   DOM ELEMENTS
-========================================== */
+/* DOM ELEMENTS */
 
 const grid = document.getElementById("productGrid");
 
@@ -49,8 +49,6 @@ const countryFilter = document.getElementById("countryFilter");
 const sortFilter = document.getElementById("sortFilter");
 
 const productCount = document.getElementById("productCount");
-
-const clearFiltersBtn = document.getElementById("clearFilters");
 
 const wishlistCount = document.getElementById("wishlistCount");
 
@@ -68,9 +66,7 @@ const compareModal = document.getElementById("compareModal");
 
 const compareContent = document.getElementById("compareContent");
 
-/* ==========================================
-   HELPER FUNCTIONS
-========================================== */
+/* HELPER FUNCTIONS */
 
 function createElement(tag, className = "", text) {
     const element = document.createElement(tag);
@@ -86,8 +82,18 @@ function createElement(tag, className = "", text) {
     return element;
 }
 
-function formatPrice(price) {
-    return `$${Number(price).toFixed(2)} USD (Demo)`;
+function formatPrice(product) {
+    if (
+        product.price === null ||
+        product.price === undefined ||
+        Number(product.price) <= 0
+    ) {
+        return product.affiliatePlatform === "Amazon"
+            ? "Check Price on Amazon"
+            : "Check Latest Price";
+    }
+
+    return `$${Number(product.price).toFixed(2)} USD (Demo)`;
 }
 
 function saveSet(key, data) {
@@ -97,13 +103,7 @@ function saveSet(key, data) {
     );
 }
 
-function findProduct(id) {
-    return products.find(product => product.id === id);
-}
-
-/* ==========================================
-   WISHLIST SYSTEM
-========================================== */
+/* WISHLIST */
 
 function saveWishlist() {
     saveSet("ethoriseWishlist", wishlist);
@@ -111,20 +111,18 @@ function saveWishlist() {
     wishlistCount.textContent = wishlist.size;
 }
 
-function toggleWishlist(productId) {
-    if (wishlist.has(productId)) {
-        wishlist.delete(productId);
+function toggleWishlist(id) {
+    if (wishlist.has(id)) {
+        wishlist.delete(id);
     } else {
-        wishlist.add(productId);
+        wishlist.add(id);
     }
 
     saveWishlist();
     applyFilters();
 }
 
-/* ==========================================
-   COMPARISON SYSTEM
-========================================== */
+/* COMPARISON */
 
 function saveComparison() {
     saveSet("ethoriseComparison", comparison);
@@ -137,82 +135,80 @@ function saveComparison() {
     compareBar.hidden = comparison.size === 0;
 }
 
-function toggleComparison(productId) {
-    if (comparison.has(productId)) {
-        comparison.delete(productId);
+function toggleComparison(id) {
+    if (comparison.has(id)) {
+        comparison.delete(id);
+
     } else {
         if (comparison.size >= MAX_COMPARE) {
-            alert(
-                `You can compare up to ${MAX_COMPARE} products.`
-            );
+            alert("You can compare up to 3 products.");
             return;
         }
 
-        comparison.add(productId);
+        comparison.add(id);
     }
 
     saveComparison();
     applyFilters();
 }
 
-/* ==========================================
-   AFFILIATE LINKS
-========================================== */
+/* AFFILIATE LINK */
 
 function createAffiliateLink(product) {
+    const isAmazon =
+        product.affiliatePlatform === "Amazon";
+
     const link = createElement(
         "a",
         "",
-        "View Product"
+        isAmazon
+            ? "View on Amazon ↗"
+            : "View Product ↗"
     );
 
-    if (
-        product.affiliateLink &&
-        product.affiliateLink !== "#"
-    ) {
-        try {
-            const url = new URL(product.affiliateLink);
-
-            if (!["https:", "http:"].includes(url.protocol)) {
-                throw new Error("Unsupported URL protocol");
-            }
-
-            link.href = url.href;
-            link.target = "_blank";
-
-            link.rel =
-                "sponsored nofollow noopener noreferrer";
-        } catch {
-            link.href = "#";
+    try {
+        if (
+            !product.affiliateLink ||
+            product.affiliateLink === "#"
+        ) {
+            throw new Error("No affiliate link");
         }
-    } else {
-        link.href = "#";
-    }
 
-    if (link.getAttribute("href") === "#") {
+        const url = new URL(product.affiliateLink);
+
+        if (
+            url.protocol !== "https:" &&
+            url.protocol !== "http:"
+        ) {
+            throw new Error("Invalid protocol");
+        }
+
+        link.href = url.href;
+        link.target = "_blank";
+
+        link.rel =
+            "sponsored nofollow noopener noreferrer";
+
+    } catch {
+        link.href = "#";
+
         link.addEventListener("click", event => {
             event.preventDefault();
 
-            alert(
-                "Affiliate product link is coming soon."
-            );
+            alert("Product link coming soon.");
         });
     }
 
     return link;
 }
 
-/* ==========================================
-   PRODUCT CARD
-========================================== */
+/* PRODUCT CARD */
 
 function createProductCard(product) {
     const card = createElement(
         "article",
         "product-card"
     );
-
-    /* PRODUCT IMAGE */
 
     const imageBox = createElement(
         "div",
@@ -224,8 +220,6 @@ function createProductCard(product) {
     image.src = product.image;
     image.alt = product.name;
     image.loading = "lazy";
-
-    /* WISHLIST BUTTON */
 
     const wishlistButton = createElement(
         "button",
@@ -249,12 +243,7 @@ function createProductCard(product) {
         toggleWishlist(product.id);
     });
 
-    imageBox.append(
-        image,
-        wishlistButton
-    );
-
-    /* PRODUCT INFORMATION */
+    imageBox.append(image, wishlistButton);
 
     const info = createElement(
         "div",
@@ -276,10 +265,8 @@ function createProductCard(product) {
     const price = createElement(
         "p",
         "product-price",
-        formatPrice(product.price)
+        formatPrice(product)
     );
-
-    /* PRODUCT ACTIONS */
 
     const actions = createElement(
         "div",
@@ -298,15 +285,10 @@ function createProductCard(product) {
         openQuickView(product);
     });
 
-    const affiliateLink =
-        createAffiliateLink(product);
-
     actions.append(
         quickView,
-        affiliateLink
+        createAffiliateLink(product)
     );
-
-    /* COMPARE BUTTON */
 
     const compareButton = createElement(
         "button",
@@ -323,15 +305,9 @@ function createProductCard(product) {
         String(comparison.has(product.id))
     );
 
-    if (comparison.has(product.id)) {
-        compareButton.classList.add("active");
-    }
-
     compareButton.addEventListener("click", () => {
         toggleComparison(product.id);
     });
-
-    /* PRODUCT DETAILS LINK */
 
     const detailsLink = createElement(
         "a",
@@ -357,17 +333,12 @@ function createProductCard(product) {
         detailsLink
     );
 
-    card.append(
-        imageBox,
-        info
-    );
+    card.append(imageBox, info);
 
     return card;
 }
 
-/* ==========================================
-   RENDER PRODUCTS
-========================================== */
+/* RENDER PRODUCTS */
 
 function renderProducts(items) {
     grid.replaceChildren();
@@ -375,22 +346,10 @@ function renderProducts(items) {
     productCount.textContent =
         `${items.length} product${items.length === 1 ? "" : "s"} found`;
 
-    if (items.length === 0) {
-        const empty = createElement(
-            "div",
-            "empty-products"
-        );
-
-        const message = createElement(
-            "p",
-            "",
-            wishlistOnly
-                ? "No saved products match your filters."
-                : "No products found."
-        );
-
-        empty.appendChild(message);
-        grid.appendChild(empty);
+    if (!items.length) {
+        grid.textContent = wishlistOnly
+            ? "No saved products match your filters."
+            : "No products found.";
 
         return;
     }
@@ -398,21 +357,16 @@ function renderProducts(items) {
     const fragment = document.createDocumentFragment();
 
     items.forEach(product => {
-        fragment.appendChild(
-            createProductCard(product)
-        );
+        fragment.appendChild(createProductCard(product));
     });
 
     grid.appendChild(fragment);
 }
 
-/* ==========================================
-   PRODUCT SEARCH, FILTER & SORT
-========================================== */
+/* SEARCH, FILTER AND SORT */
 
 function applyFilters() {
-    const search =
-        searchInput.value.toLowerCase().trim();
+    const search = searchInput.value.toLowerCase().trim();
 
     const category = categoryFilter.value;
 
@@ -420,7 +374,7 @@ function applyFilters() {
 
     const sort = sortFilter.value;
 
-    let filtered = products.filter(product => {
+    const filtered = products.filter(product => {
         const matchesSearch =
             product.name.toLowerCase().includes(search) ||
             product.category.toLowerCase().includes(search) ||
@@ -448,18 +402,24 @@ function applyFilters() {
         );
     });
 
-    /* SORTING */
+    // Products without verified prices go last.
+    const priceValue = product =>
+        Number(product.price) > 0
+            ? Number(product.price)
+            : null;
 
-    if (sort === "price-low") {
-        filtered.sort(
-            (a, b) => a.price - b.price
-        );
-    }
+    if (sort === "price-low" || sort === "price-high") {
+        filtered.sort((a, b) => {
+            const priceA = priceValue(a);
+            const priceB = priceValue(b);
 
-    if (sort === "price-high") {
-        filtered.sort(
-            (a, b) => b.price - a.price
-        );
+            if (priceA === null) return priceB === null ? 0 : 1;
+            if (priceB === null) return -1;
+
+            return sort === "price-low"
+                ? priceA - priceB
+                : priceB - priceA;
+        });
     }
 
     if (sort === "name") {
@@ -471,32 +431,21 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-/* ==========================================
-   CLEAR FILTERS
-========================================== */
+/* CLEAR FILTERS */
 
-function clearFilters() {
-    searchInput.value = "";
+document.getElementById("clearFilters")
+    .addEventListener("click", () => {
+        searchInput.value = "";
+        categoryFilter.value = "All";
+        countryFilter.value = "All";
+        sortFilter.value = "default";
 
-    categoryFilter.value = "All";
+        wishlistOnly = false;
 
-    countryFilter.value = "All";
+        applyFilters();
+    });
 
-    sortFilter.value = "default";
-
-    wishlistOnly = false;
-
-    applyFilters();
-}
-
-clearFiltersBtn.addEventListener(
-    "click",
-    clearFilters
-);
-
-/* ==========================================
-   QUICK VIEW
-========================================== */
+/* QUICK VIEW */
 
 function openQuickView(product) {
     modalBody.replaceChildren();
@@ -505,12 +454,6 @@ function openQuickView(product) {
 
     image.src = product.image;
     image.alt = product.name;
-
-    const category = createElement(
-        "p",
-        "product-category",
-        product.category
-    );
 
     const title = createElement(
         "h2",
@@ -521,7 +464,7 @@ function openQuickView(product) {
     const price = createElement(
         "p",
         "product-price",
-        formatPrice(product.price)
+        formatPrice(product)
     );
 
     const description = createElement(
@@ -533,26 +476,22 @@ function openQuickView(product) {
     const detailsLink = createElement(
         "a",
         "btn btn-outline",
-        "Full Product Details →"
+        "Full Details →"
     );
 
     detailsLink.href =
         `product.html?id=${encodeURIComponent(product.id)}`;
 
-    detailsLink.style.marginRight = "10px";
     detailsLink.style.marginTop = "15px";
+    detailsLink.style.marginRight = "10px";
 
-    const affiliateLink =
-        createAffiliateLink(product);
+    const affiliateLink = createAffiliateLink(product);
 
-    affiliateLink.className =
-        "btn btn-primary";
-
+    affiliateLink.className = "btn btn-primary";
     affiliateLink.style.marginTop = "15px";
 
     modalBody.append(
         image,
-        category,
         title,
         price,
         description,
@@ -562,10 +501,7 @@ function openQuickView(product) {
 
     modal.classList.add("active");
 
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+    modal.setAttribute("aria-hidden", "false");
 
     document.getElementById("closeModal").focus();
 }
@@ -573,53 +509,36 @@ function openQuickView(product) {
 function closeQuickView() {
     modal.classList.remove("active");
 
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
+    modal.setAttribute("aria-hidden", "true");
 }
 
-/* ==========================================
-   COMPARISON MODAL
-========================================== */
+/* COMPARISON MODAL */
 
 function openComparison() {
     compareContent.replaceChildren();
 
-    const selectedProducts = products.filter(
-        product => comparison.has(product.id)
+    const selected = products.filter(product =>
+        comparison.has(product.id)
     );
 
-    if (selectedProducts.length === 0) {
+    if (!selected.length) {
         alert("Select products to compare.");
         return;
     }
 
-    const table = createElement(
-        "table",
-        "compare-table"
-    );
-
+    const table = createElement("table", "compare-table");
     const tbody = createElement("tbody");
-
-    /* TABLE ROW HELPER */
 
     function addRow(label, getValue) {
         const row = createElement("tr");
 
-        const heading = createElement(
-            "th",
-            "",
-            label
-        );
-
+        const heading = createElement("th", "", label);
         heading.scope = "row";
 
         row.appendChild(heading);
 
-        selectedProducts.forEach(product => {
+        selected.forEach(product => {
             const cell = createElement("td");
-
             const value = getValue(product);
 
             if (value instanceof Node) {
@@ -634,13 +553,10 @@ function openComparison() {
         tbody.appendChild(row);
     }
 
-    /* PRODUCT IMAGE ROW */
-
     addRow("Product", product => {
         const wrapper = createElement("div");
 
         const image = createElement("img");
-
         image.src = product.image;
         image.alt = product.name;
 
@@ -655,18 +571,12 @@ function openComparison() {
         return wrapper;
     });
 
-    addRow(
-        "Price",
-        product => formatPrice(product.price)
-    );
+    addRow("Price", product => formatPrice(product));
+
+    addRow("Category", product => product.category);
 
     addRow(
-        "Category",
-        product => product.category
-    );
-
-    addRow(
-        "Markets (Demo)",
+        "Listed Markets (Demo)",
         product => product.countries.join(", ")
     );
 
@@ -696,33 +606,22 @@ function openComparison() {
     });
 
     table.appendChild(tbody);
-
     compareContent.appendChild(table);
 
     compareModal.classList.add("active");
 
-    compareModal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+    compareModal.setAttribute("aria-hidden", "false");
 
-    document.getElementById(
-        "closeCompareModal"
-    ).focus();
+    document.getElementById("closeCompareModal").focus();
 }
 
 function closeComparison() {
     compareModal.classList.remove("active");
 
-    compareModal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
+    compareModal.setAttribute("aria-hidden", "true");
 }
 
-/* ==========================================
-   MODAL EVENTS
-========================================== */
+/* MODAL EVENTS */
 
 document.getElementById("closeModal")
     .addEventListener("click", closeQuickView);
@@ -731,15 +630,11 @@ document.getElementById("closeCompareModal")
     .addEventListener("click", closeComparison);
 
 modal.addEventListener("click", event => {
-    if (event.target === modal) {
-        closeQuickView();
-    }
+    if (event.target === modal) closeQuickView();
 });
 
 compareModal.addEventListener("click", event => {
-    if (event.target === compareModal) {
-        closeComparison();
-    }
+    if (event.target === compareModal) closeComparison();
 });
 
 document.addEventListener("keydown", event => {
@@ -749,9 +644,7 @@ document.addEventListener("keydown", event => {
     }
 });
 
-/* ==========================================
-   COMPARISON BUTTON EVENTS
-========================================== */
+/* COMPARISON CONTROLS */
 
 document.getElementById("openCompare")
     .addEventListener("click", openComparison);
@@ -762,14 +655,11 @@ document.getElementById("compareNavBtn")
 document.getElementById("clearCompare")
     .addEventListener("click", () => {
         comparison.clear();
-
         saveComparison();
         applyFilters();
     });
 
-/* ==========================================
-   WISHLIST NAVIGATION
-========================================== */
+/* WISHLIST NAVIGATION */
 
 document.getElementById("wishlistBtn")
     .addEventListener("click", () => {
@@ -783,14 +673,10 @@ document.getElementById("wishlistBtn")
         applyFilters();
 
         document.getElementById("shop")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+            .scrollIntoView({ behavior: "smooth" });
     });
 
-/* ==========================================
-   CATEGORY NAVIGATION
-========================================== */
+/* CATEGORY BUTTONS */
 
 document.querySelectorAll(".category-card")
     .forEach(button => {
@@ -798,30 +684,20 @@ document.querySelectorAll(".category-card")
             wishlistOnly = false;
 
             searchInput.value = "";
-
-            categoryFilter.value =
-                button.dataset.category;
-
+            categoryFilter.value = button.dataset.category;
             countryFilter.value = "All";
 
             applyFilters();
 
             document.getElementById("shop")
-                .scrollIntoView({
-                    behavior: "smooth"
-                });
+                .scrollIntoView({ behavior: "smooth" });
         });
     });
 
-/* ==========================================
-   MOBILE NAVIGATION
-========================================== */
+/* MOBILE MENU */
 
-const menuToggle =
-    document.getElementById("menuToggle");
-
-const navLinks =
-    document.getElementById("navLinks");
+const menuToggle = document.getElementById("menuToggle");
+const navLinks = document.getElementById("navLinks");
 
 menuToggle.addEventListener("click", () => {
     navLinks.classList.toggle("active");
@@ -836,78 +712,45 @@ navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
         navLinks.classList.remove("active");
 
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
+        menuToggle.setAttribute("aria-expanded", "false");
     });
 });
 
-/* ==========================================
-   SEARCH & FILTER EVENTS
-========================================== */
+/* FILTER EVENTS */
 
-searchInput.addEventListener(
-    "input",
-    applyFilters
-);
+searchInput.addEventListener("input", applyFilters);
+categoryFilter.addEventListener("change", applyFilters);
+countryFilter.addEventListener("change", applyFilters);
+sortFilter.addEventListener("change", applyFilters);
 
-categoryFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-countryFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-sortFilter.addEventListener(
-    "change",
-    applyFilters
-);
-
-/* ==========================================
-   LOAD PRODUCT DATABASE
-========================================== */
+/* LOAD PRODUCTS */
 
 async function loadProducts() {
     try {
-        const response = await fetch(
-            "data/products.json"
-        );
+        const response = await fetch("data/products.json");
 
         if (!response.ok) {
-            throw new Error(
-                "Failed to load products."
-            );
+            throw new Error("Unable to load products.");
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            throw new Error(
-                "Invalid product database format."
-            );
+            throw new Error("Invalid product database.");
         }
 
         products = data;
 
-        // Remove saved IDs that no longer exist.
         const validIds = new Set(
             products.map(product => product.id)
         );
 
         for (const id of wishlist) {
-            if (!validIds.has(id)) {
-                wishlist.delete(id);
-            }
+            if (!validIds.has(id)) wishlist.delete(id);
         }
 
         for (const id of comparison) {
-            if (!validIds.has(id)) {
-                comparison.delete(id);
-            }
+            if (!validIds.has(id)) comparison.delete(id);
         }
 
         saveWishlist();
@@ -918,19 +761,14 @@ async function loadProducts() {
     } catch (error) {
         console.error(error);
 
-        grid.textContent =
-            "Unable to load products. Please try again.";
+        grid.textContent = "Unable to load products.";
 
-        productCount.textContent =
-            "Products unavailable";
+        productCount.textContent = "Products unavailable";
     }
 }
 
-/* ==========================================
-   INITIALIZE APPLICATION
-========================================== */
+/* INITIALIZE */
 
 saveWishlist();
 saveComparison();
-
 loadProducts();
