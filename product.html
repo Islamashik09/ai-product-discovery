@@ -8,13 +8,12 @@
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Explore product details, features, and availability at ETHORISE.">
+          content="Explore product information, features and shopping options at ETHORISE.">
 
     <meta name="theme-color" content="#ffffff">
 
     <title>Product Details | ETHORISE</title>
 
-    <!-- GOOGLE FONTS -->
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -27,80 +26,84 @@
         rel="stylesheet"
     >
 
-    <!-- MAIN STYLESHEET -->
     <link rel="stylesheet" href="css/style.css">
 
-
     <style>
-    #productMenuToggle {
-        display: none;
-        border: none;
-        background: transparent;
-        font-size: 23px;
-        cursor: pointer;
-    }
-
-    @media (max-width: 768px) {
         #productMenuToggle {
-            display: block;
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 23px;
+            cursor: pointer;
         }
-    }
-</style>
+
+        .product-affiliate-notice {
+            background: #fff7f2;
+            border: 1px solid #ffe1d2;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .product-affiliate-notice p {
+            font-size: 13px;
+            color: #555;
+            line-height: 1.8;
+        }
+
+        .product-affiliate-notice a {
+            color: #d94f1c;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
+        .product-footer-email {
+            color: #ff8b61 !important;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 768px) {
+            #productMenuToggle {
+                display: block;
+            }
+        }
+    </style>
 
 </head>
 
 <body>
 
-    <!-- =====================================
-         ANNOUNCEMENT BAR
-    ====================================== -->
+    <!-- ANNOUNCEMENT -->
 
     <div class="announcement">
-
         ✦ Discover extraordinary products with ETHORISE
-
     </div>
 
 
-    <!-- =====================================
-         NAVIGATION
-    ====================================== -->
+    <!-- NAVIGATION -->
 
     <header class="header">
 
         <nav class="navbar container">
 
-            <!-- BRAND LOGO -->
             <a href="index.html" class="logo">
-
                 ETHORISE<span>.</span>
-
             </a>
 
-
-            <!-- NAVIGATION LINKS -->
             <div class="nav-links" id="productNavLinks">
 
-                <a href="index.html">
-                    Home
-                </a>
+                <a href="index.html">Home</a>
 
-                <a href="index.html#shop">
-                    Shop
-                </a>
+                <a href="index.html#shop">Shop</a>
 
-                <a href="index.html#categories">
-                    Collections
-                </a>
+                <a href="index.html#categories">Collections</a>
 
-                <a href="index.html#about">
-                    Our Story
-                </a>
+                <a href="about.html">About</a>
+
+                <a href="contact.html">Contact</a>
 
             </div>
 
-
-            <!-- MOBILE MENU BUTTON -->
             <div class="nav-actions">
 
                 <button
@@ -120,9 +123,7 @@
     </header>
 
 
-    <!-- =====================================
-         PRODUCT DETAILS SECTION
-    ====================================== -->
+    <!-- PRODUCT DETAILS -->
 
     <main>
 
@@ -130,22 +131,46 @@
 
             <div class="container">
 
-                <!-- BACK NAVIGATION -->
                 <a
                     href="index.html#shop"
                     class="product-detail-back"
                 >
-
                     ← Back to Products
-
                 </a>
 
 
-                <!-- PRODUCT CONTENT -->
+                <!-- PRODUCT INFORMATION -->
+
                 <div id="productDetail">
 
                     <p>
                         Loading product details...
+                    </p>
+
+                </div>
+
+
+                <!-- AFFILIATE DISCLOSURE -->
+
+                <div class="product-affiliate-notice">
+
+                    <p>
+                        <strong>Affiliate Disclosure:</strong>
+
+                        As an Amazon Associate I earn
+                        from qualifying purchases.
+
+                        Some product links may earn
+                        ETHORISE a commission.
+
+                        Product prices, shipping,
+                        availability and specifications
+                        should be verified on the
+                        retailer's website.
+
+                        <a href="affiliate-disclosure.html">
+                            Read Full Disclosure →
+                        </a>
                     </p>
 
                 </div>
@@ -155,9 +180,7 @@
         </section>
 
 
-        <!-- =====================================
-             RELATED PRODUCTS
-        ====================================== -->
+        <!-- RELATED PRODUCTS -->
 
         <section class="section shop-section">
 
@@ -179,7 +202,6 @@
 
                 </div>
 
-
                 <div
                     id="relatedProducts"
                     class="product-grid"
@@ -192,9 +214,7 @@
     </main>
 
 
-    <!-- =====================================
-         FOOTER
-    ====================================== -->
+    <!-- FOOTER -->
 
     <footer class="footer">
 
@@ -211,6 +231,13 @@
                     Elevate Everyday.
                 </p>
 
+                <a
+                    href="mailto:ethorise.contact@gmail.com"
+                    class="product-footer-email"
+                >
+                    ethorise.contact@gmail.com
+                </a>
+
             </div>
 
 
@@ -218,17 +245,13 @@
 
                 <h3>Explore</h3>
 
-                <a href="index.html">
-                    Home
-                </a>
+                <a href="index.html">Home</a>
 
-                <a href="index.html#shop">
-                    Products
-                </a>
+                <a href="index.html#shop">Products</a>
 
-                <a href="index.html#categories">
-                    Collections
-                </a>
+                <a href="about.html">About Us</a>
+
+                <a href="contact.html">Contact</a>
 
             </div>
 
@@ -237,21 +260,22 @@
 
                 <h3>Information</h3>
 
-                <p>
-                    ETHORISE is a product discovery platform.
-                    Some links may earn us a commission
-                    at no additional cost to you.
-                </p>
+                <a href="affiliate-disclosure.html">
+                    Affiliate Disclosure
+                </a>
+
+                <a href="privacy.html">
+                    Privacy Policy
+                </a>
 
                 <p>
-                    Product prices and availability
-                    in this demo are illustrative.
+                    As an Amazon Associate I earn
+                    from qualifying purchases.
                 </p>
 
             </div>
 
         </div>
-
 
         <div class="footer-bottom">
 
@@ -262,9 +286,7 @@
     </footer>
 
 
-    <!-- =====================================
-         PRODUCT DETAILS JAVASCRIPT
-    ====================================== -->
+    <!-- JAVASCRIPT -->
 
     <script src="js/product.js"></script>
 

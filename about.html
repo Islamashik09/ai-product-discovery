@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Discover ETHORISE — a modern product discovery platform helping shoppers explore technology, accessories, and everyday essentials.">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <title>About Us | ETHORISE</title>
+
+    <!-- GOOGLE FONTS -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ABOUT HERO */
+
+        .about-hero {
+            padding: 110px 20px 130px;
+            text-align: center;
+            background:
+                radial-gradient(
+                    circle at 50% 20%,
+                    #ffe7dc,
+                    transparent 40%
+                ),
+                #faf9f6;
+        }
+
+        .about-hero h1 {
+            font-size: clamp(45px, 6vw, 78px);
+            line-height: 1.1;
+            letter-spacing: -3px;
+            margin: 25px auto;
+            max-width: 900px;
+        }
+
+        .about-hero h1 span {
+            color: #ff6b35;
+        }
+
+        .about-hero p {
+            color: #6b7280;
+            font-size: 17px;
+            line-height: 1.9;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        /* STORY */
+
+        .story-section {
+            padding: 110px 0;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .story-visual {
+            min-height: 440px;
+            border-radius: 26px;
+            background:
+                radial-gradient(
+                    circle at center,
+                    #444,
+                    #111 75%
+                );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 35px 70px rgba(0,0,0,.12);
+        }
+
+        .story-visual span {
+            font-size: 180px;
+            color: #ff6b35;
+            animation: aboutFloat 6s ease-in-out infinite;
+        }
+
+        .story-content h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            letter-spacing: -2px;
+            line-height: 1.2;
+            margin: 20px 0;
+        }
+
+        .story-content p {
+            color: #6b7280;
+            line-height: 1.9;
+            margin-bottom: 20px;
+        }
+
+        /* VALUES */
+
+        .values-section {
+            background: #f8f9fa;
+            padding: 110px 0;
+        }
+
+        .values-heading {
+            text-align: center;
+            margin-bottom: 55px;
+        }
+
+        .values-heading h2 {
+            font-size: clamp(32px, 4vw, 46px);
+            letter-spacing: -2px;
+            margin-top: 15px;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .value-card {
+            background: white;
+            padding: 45px 35px;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            transition: .3s;
+        }
+
+        .value-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 55px rgba(0,0,0,.08);
+        }
+
+        .value-icon {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            background: #fff0e9;
+            display: grid;
+            place-items: center;
+            font-size: 30px;
+            margin-bottom: 30px;
+        }
+
+        .value-card h3 {
+            font-size: 21px;
+            margin-bottom: 15px;
+        }
+
+        .value-card p {
+            color: #6b7280;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        /* HOW IT WORKS */
+
+        .how-section {
+            padding: 110px 0;
+        }
+
+        .how-heading {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .how-heading h2 {
+            font-size: clamp(32px, 4vw, 46px);
+            letter-spacing: -2px;
+            margin-top: 15px;
+        }
+
+        .how-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 35px;
+        }
+
+        .how-step {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 25px;
+            border-radius: 50%;
+            background: #111;
+            color: white;
+            display: grid;
+            place-items: center;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .how-step h3 {
+            margin-bottom: 15px;
+        }
+
+        .how-step p {
+            color: #6b7280;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        /* CTA */
+
+        .about-cta {
+            background: #111;
+            color: white;
+            padding: 110px 20px;
+            text-align: center;
+        }
+
+        .about-cta h2 {
+            font-size: clamp(35px, 5vw, 55px);
+            letter-spacing: -2px;
+            margin-bottom: 25px;
+        }
+
+        .about-cta p {
+            color: #aaa;
+            max-width: 550px;
+            margin: 0 auto 35px;
+            line-height: 1.8;
+        }
+
+        .about-cta .btn {
+            background: #ff6b35;
+            color: white;
+        }
+
+        /* NAVIGATION */
+
+        #aboutMenuToggle {
+            display: none;
+            border: none;
+            background: transparent;
+            font-size: 23px;
+        }
+
+        /* ANIMATION */
+
+        @keyframes aboutFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .story-grid {
+                gap: 40px;
+            }
+
+            .values-grid,
+            .how-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            #aboutMenuToggle {
+                display: block;
+            }
+
+            .about-hero {
+                padding: 80px 20px;
+            }
+
+            .about-hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .story-visual {
+                min-height: 330px;
+            }
+
+            .story-visual span {
+                font-size: 130px;
+            }
+
+            .story-section,
+            .values-section,
+            .how-section {
+                padding: 75px 0;
+            }
+
+            .values-grid,
+            .how-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .story-visual span {
+                animation: none;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ANNOUNCEMENT -->
+    <div class="announcement">
+        ✦ Discover extraordinary products with ETHORISE
+    </div>
+
+    <!-- NAVIGATION -->
+    <header class="header">
+
+        <nav class="navbar container">
+
+            <a href="index.html" class="logo">
+                ETHORISE<span>.</span>
+            </a>
+
+            <div class="nav-links" id="aboutNavLinks">
+
+                <a href="index.html">Home</a>
+
+                <a href="index.html#shop">Shop</a>
+
+                <a href="index.html#categories">Collections</a>
+
+                <a href="about.html">About</a>
+
+                <a href="contact.html">Contact</a>
+
+            </div>
+
+            <div class="nav-actions">
+
+                <button
+                    id="aboutMenuToggle"
+                    type="button"
+                    aria-label="Toggle navigation"
+                    aria-expanded="false"
+                    aria-controls="aboutNavLinks"
+                >
+                    ☰
+                </button>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+    <!-- HERO -->
+    <main>
+
+        <section class="about-hero">
+
+            <div class="container">
+
+                <span class="eyebrow">
+                    WELCOME TO ETHORISE
+                </span>
+
+                <h1>
+                    Discover Better.<br>
+                    <span>Live Extraordinary.</span>
+                </h1>
+
+                <p>
+                    We believe discovering useful products
+                    should be simple, inspiring, and enjoyable.
+                    ETHORISE brings together modern technology,
+                    everyday essentials, and product ideas
+                    for better living.
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- OUR STORY -->
+        <section class="story-section">
+
+            <div class="container story-grid">
+
+                <div class="story-visual">
+
+                    <span>✦</span>
+
+                </div>
+
+                <div class="story-content">
+
+                    <span class="eyebrow">
+                        OUR STORY
+                    </span>
+
+                    <h2>
+                        A Better Way to Discover Products.
+                    </h2>
+
+                    <p>
+                        ETHORISE was created with a simple goal:
+                        to make online product discovery
+                        easier and more enjoyable.
+                    </p>
+
+                    <p>
+                        With countless products available online,
+                        finding useful options can take time.
+                        Our platform helps visitors explore
+                        product information, compare features,
+                        and discover shopping opportunities.
+                    </p>
+
+                    <p>
+                        We focus on technology, home office
+                        accessories, modern gadgets,
+                        and lifestyle essentials.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- OUR VALUES -->
+        <section class="values-section">
+
+            <div class="container">
+
+                <div class="values-heading">
+
+                    <span class="eyebrow">
+                        WHAT MATTERS TO US
+                    </span>
+
+                    <h2>
+                        Our Core Values
+                    </h2>
+
+                </div>
+
+                <div class="values-grid">
+
+                    <div class="value-card">
+
+                        <div class="value-icon">
+                            ✦
+                        </div>
+
+                        <h3>
+                            Thoughtful Discovery
+                        </h3>
+
+                        <p>
+                            We aim to highlight useful
+                            products and help visitors
+                            explore options that fit
+                            their everyday needs.
+                        </p>
+
+                    </div>
+
+                    <div class="value-card">
+
+                        <div class="value-icon">
+                            ♡
+                        </div>
+
+                        <h3>
+                            Transparency
+                        </h3>
+
+                        <p>
+                            We believe shoppers should
+                            understand how affiliate
+                            links work and where
+                            purchases take place.
+                        </p>
+
+                    </div>
+
+                    <div class="value-card">
+
+                        <div class="value-icon">
+                            ⚡
+                        </div>
+
+                        <h3>
+                            Simplicity
+                        </h3>
+
+                        <p>
+                            We design our platform
+                            to make browsing,
+                            searching, and comparing
+                            products straightforward.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- HOW ETHORISE WORKS -->
+        <section class="how-section">
+
+            <div class="container">
+
+                <div class="how-heading">
+
+                    <span class="eyebrow">
+                        SHOPPING MADE SIMPLE
+                    </span>
+
+                    <h2>
+                        How ETHORISE Works
+                    </h2>
+
+                </div>
+
+                <div class="how-grid">
+
+                    <div class="how-step">
+
+                        <div class="step-number">
+                            01
+                        </div>
+
+                        <h3>
+                            Discover Products
+                        </h3>
+
+                        <p>
+                            Browse product categories
+                            and explore modern gadgets,
+                            accessories, and essentials.
+                        </p>
+
+                    </div>
+
+                    <div class="how-step">
+
+                        <div class="step-number">
+                            02
+                        </div>
+
+                        <h3>
+                            Compare Your Options
+                        </h3>
+
+                        <p>
+                            Review available product
+                            information and compare
+                            features before deciding.
+                        </p>
+
+                    </div>
+
+                    <div class="how-step">
+
+                        <div class="step-number">
+                            03
+                        </div>
+
+                        <h3>
+                            Visit the Retailer
+                        </h3>
+
+                        <p>
+                            Follow a product link
+                            to the retailer's website
+                            to check current prices,
+                            availability, and purchase options.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="about-cta">
+
+            <div class="container">
+
+                <h2>
+                    Discover What's Next.
+                </h2>
+
+                <p>
+                    Explore useful products,
+                    innovative gadgets,
+                    and modern everyday essentials.
+                </p>
+
+                <a href="index.html#shop"
+                   class="btn btn-primary">
+
+                    Explore Products →
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="container footer-grid">
+
+            <div>
+
+                <h2>
+                    ETHORISE<span>.</span>
+                </h2>
+
+                <p>
+                    Discover Extraordinary.<br>
+                    Elevate Everyday.
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3>Explore</h3>
+
+                <a href="index.html">Home</a>
+
+                <a href="index.html#shop">Products</a>
+
+                <a href="about.html">About Us</a>
+
+                <a href="contact.html">Contact</a>
+
+            </div>
+
+            <div>
+
+                <h3>Information</h3>
+
+                <a href="affiliate-disclosure.html">
+                    Affiliate Disclosure
+                </a>
+
+                <a href="privacy.html">
+                    Privacy Policy
+                </a>
+
+                <p>
+                    As an Amazon Associate I earn
+                    from qualifying purchases.
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 ETHORISE. All rights reserved.
+        </div>
+
+    </footer>
+
+    <!-- MOBILE MENU -->
+    <script>
+        const toggle =
+            document.getElementById("aboutMenuToggle");
+
+        const menu =
+            document.getElementById("aboutNavLinks");
+
+        toggle.addEventListener("click", () => {
+            menu.classList.toggle("active");
+
+            toggle.setAttribute(
+                "aria-expanded",
+                String(menu.classList.contains("active"))
+            );
+        });
+
+        menu.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", () => {
+                menu.classList.remove("active");
+
+                toggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+            });
+        });
+    </script>
+
+</body>
+
+</html>
