@@ -2,7 +2,8 @@
 
 /* ==========================================
    ETHORISE — MAIN APPLICATION
-   Product Discovery + Shopping List
+   Premium Product Discovery
+   Wishlist + Comparison + Shopping List
 ========================================== */
 
 let products = [];
@@ -13,8 +14,6 @@ const CART_KEY = "ethoriseCart";
 const WISHLIST_KEY = "ethoriseWishlist";
 const COMPARE_KEY = "ethoriseComparison";
 
-let wishlistOnly = false;
-
 const $ = id => document.getElementById(id);
 
 /* ==========================================
@@ -23,9 +22,11 @@ const $ = id => document.getElementById(id);
 
 function readStorage(key) {
     try {
-        return JSON.parse(
+        const data = JSON.parse(
             localStorage.getItem(key) || "[]"
         );
+
+        return Array.isArray(data) ? data : [];
     } catch {
         return [];
     }
@@ -43,11 +44,7 @@ function saveStorage(key, data) {
 }
 
 function readIds(key) {
-    const data = readStorage(key);
-
-    return Array.isArray(data)
-        ? data.filter(Number.isInteger)
-        : [];
+    return readStorage(key).filter(Number.isInteger);
 }
 
 const wishlist = new Set(
@@ -100,16 +97,27 @@ function priceLabel(product) {
     return `$${price.toFixed(2)} USD`;
 }
 
+function refreshSavedCollections() {
+    wishlist.clear();
+    comparison.clear();
+
+    readIds(WISHLIST_KEY).forEach(id => {
+        wishlist.add(id);
+    });
+
+    readIds(COMPARE_KEY)
+        .slice(0, MAX_COMPARE)
+        .forEach(id => {
+            comparison.add(id);
+        });
+}
+
 /* ==========================================
    SHOPPING LIST
 ========================================== */
 
 function readCart() {
-    const data = readStorage(CART_KEY);
-
-    if (!Array.isArray(data)) return [];
-
-    return data.filter(item =>
+    return readStorage(CART_KEY).filter(item =>
         item &&
         Number.isInteger(item.id) &&
         Number.isInteger(item.quantity) &&
@@ -127,7 +135,9 @@ function cartQuantity() {
 function updateCartCount() {
     const count = $("cartCount");
 
-    if (count) count.textContent = cartQuantity();
+    if (count) {
+        count.textContent = cartQuantity();
+    }
 }
 
 function addToCart(productId) {
@@ -231,7 +241,6 @@ function createCartNavigation() {
     );
 
     link.id = "cartNavLink";
-
     link.href = "cart.html";
 
     link.setAttribute(
@@ -289,10 +298,12 @@ function toggleWishlist(id) {
         wishlist.add(id);
     }
 
-    saveStorage(WISHLIST_KEY, [...wishlist]);
+    saveStorage(
+        WISHLIST_KEY,
+        [...wishlist]
+    );
 
     updateCounters();
-
     filterProducts();
 }
 
@@ -312,10 +323,12 @@ function toggleCompare(id) {
         comparison.add(id);
     }
 
-    saveStorage(COMPARE_KEY, [...comparison]);
+    saveStorage(
+        COMPARE_KEY,
+        [...comparison]
+    );
 
     updateCounters();
-
     filterProducts();
 }
 
@@ -365,6 +378,7 @@ function productCard(product) {
     image.src = product.image;
     image.alt = product.name;
     image.loading = "lazy";
+    image.decoding = "async";
 
     const heart = el(
         "button",
@@ -396,7 +410,7 @@ function productCard(product) {
     const category = el(
         "p",
         "product-category",
-        product.category
+        product.category || ""
     );
 
     const title = el(
@@ -416,8 +430,6 @@ function productCard(product) {
         "product-actions"
     );
 
-    /* QUICK VIEW */
-
     const quick = el(
         "button",
         "",
@@ -425,9 +437,8 @@ function productCard(product) {
     );
 
     quick.type = "button";
-    quick.onclick = () => openQuickView(product);
 
-    /* DETAILS */
+    quick.onclick = () => openQuickView(product);
 
     const details = el(
         "a",
@@ -442,8 +453,6 @@ function productCard(product) {
         quick,
         details
     );
-
-    /* ADD TO CART */
 
     const addButton = el(
         "button",
@@ -466,9 +475,9 @@ function productCard(product) {
         cursor: "pointer"
     });
 
-    addButton.onclick = () => addToCart(product.id);
-
-    /* COMPARE */
+    addButton.onclick = () => {
+        addToCart(product.id);
+    };
 
     const compare = el(
         "button",
@@ -485,7 +494,9 @@ function productCard(product) {
         String(comparison.has(product.id))
     );
 
-    compare.onclick = () => toggleCompare(product.id);
+    compare.onclick = () => {
+        toggleCompare(product.id);
+    };
 
     info.append(
         category,
@@ -509,6 +520,8 @@ function productCard(product) {
 ========================================== */
 
 function renderProducts(items) {
+    if (!grid) return;
+
     grid.replaceChildren();
 
     const count = $("productCount");
@@ -546,6 +559,15 @@ function renderProducts(items) {
 ========================================== */
 
 function filterProducts() {
+    if (
+        !searchInput ||
+        !categoryFilter ||
+        !countryFilter ||
+        !sortFilter
+    ) {
+        return;
+    }
+
     const search =
         searchInput.value.trim().toLowerCase();
 
@@ -556,6 +578,7 @@ function filterProducts() {
     const filtered = products.filter(product => {
         const text = [
             product.name,
+            product.brand || "",
             product.category,
             product.description || "",
             ...(product.tags || [])
@@ -570,10 +593,6 @@ function filterProducts() {
             (
                 country === "All" ||
                 (product.countries || []).includes(country)
-            ) &&
-            (
-                !wishlistOnly ||
-                wishlist.has(product.id)
             )
         );
     });
@@ -591,7 +610,11 @@ function filterProducts() {
         const getPrice = product => {
             const price = Number(product.price);
 
-            return product.price == null || price <= 0
+            return (
+                product.price == null ||
+                !Number.isFinite(price) ||
+                price <= 0
+            )
                 ? null
                 : price;
         };
@@ -600,7 +623,10 @@ function filterProducts() {
             const pa = getPrice(a);
             const pb = getPrice(b);
 
-            if (pa === null) return pb === null ? 0 : 1;
+            if (pa === null) {
+                return pb === null ? 0 : 1;
+            }
+
             if (pb === null) return -1;
 
             return sort === "price-low"
@@ -617,19 +643,22 @@ function filterProducts() {
 ========================================== */
 
 function selectCategory(category) {
-    wishlistOnly = false;
+    if (!categoryFilter) return;
 
     searchInput.value = "";
     countryFilter.value = "All";
     sortFilter.value = "default";
-
     categoryFilter.value = category;
 
     filterProducts();
 
-    $("shop").scrollIntoView({
-        behavior: "smooth"
-    });
+    const shop = $("shop");
+
+    if (shop) {
+        shop.scrollIntoView({
+            behavior: "smooth"
+        });
+    }
 }
 
 /* ==========================================
@@ -637,7 +666,11 @@ function selectCategory(category) {
 ========================================== */
 
 function openQuickView(product) {
+    if (!quickModal) return;
+
     const body = $("modalBody");
+
+    if (!body) return;
 
     body.replaceChildren();
 
@@ -681,7 +714,9 @@ function openQuickView(product) {
 
     addButton.type = "button";
 
-    addButton.onclick = () => addToCart(product.id);
+    addButton.onclick = () => {
+        addToCart(product.id);
+    };
 
     const actions = el(
         "div",
@@ -708,7 +743,11 @@ function openQuickView(product) {
         "false"
     );
 
-    $("closeModal").focus();
+    const closeButton = $("closeModal");
+
+    if (closeButton) {
+        closeButton.focus();
+    }
 }
 
 /* ==========================================
@@ -716,6 +755,8 @@ function openQuickView(product) {
 ========================================== */
 
 function closeModal(modal) {
+    if (!modal) return;
+
     modal.classList.remove("active");
 
     modal.setAttribute(
@@ -736,6 +777,8 @@ function openComparison() {
 
     const container = $("compareContent");
 
+    if (!container || !compareModal) return;
+
     container.replaceChildren();
 
     const table = el(
@@ -750,7 +793,10 @@ function openComparison() {
         ["Price", priceLabel],
         ["Category", product => product.category],
         ["Description", product => product.description || ""],
-        ["Features", product => (product.features || []).join(", ")]
+        [
+            "Features",
+            product => (product.features || []).join(", ")
+        ]
     ];
 
     rows.forEach(([label, value]) => {
@@ -786,7 +832,11 @@ function openComparison() {
         "false"
     );
 
-    $("closeCompareModal").focus();
+    const closeButton = $("closeCompareModal");
+
+    if (closeButton) {
+        closeButton.focus();
+    }
 }
 
 /* ==========================================
@@ -794,85 +844,126 @@ function openComparison() {
 ========================================== */
 
 function setupEvents() {
-    searchInput.addEventListener(
-        "input",
-        filterProducts
-    );
+    if (searchInput) {
+        searchInput.addEventListener(
+            "input",
+            filterProducts
+        );
+    }
 
-    categoryFilter.addEventListener(
-        "change",
-        filterProducts
-    );
+    if (categoryFilter) {
+        categoryFilter.addEventListener(
+            "change",
+            filterProducts
+        );
+    }
 
-    countryFilter.addEventListener(
-        "change",
-        filterProducts
-    );
+    if (countryFilter) {
+        countryFilter.addEventListener(
+            "change",
+            filterProducts
+        );
+    }
 
-    sortFilter.addEventListener(
-        "change",
-        filterProducts
-    );
+    if (sortFilter) {
+        sortFilter.addEventListener(
+            "change",
+            filterProducts
+        );
+    }
 
-    $("clearFilters").onclick = () => {
-        wishlistOnly = false;
+    const clearFilters = $("clearFilters");
 
-        searchInput.value = "";
-        categoryFilter.value = "All";
-        countryFilter.value = "All";
-        sortFilter.value = "default";
+    if (clearFilters) {
+        clearFilters.onclick = () => {
+            searchInput.value = "";
+            categoryFilter.value = "All";
+            countryFilter.value = "All";
+            sortFilter.value = "default";
 
-        filterProducts();
-    };
+            filterProducts();
+        };
+    }
 
-    $("wishlistBtn").onclick = () => {
-        wishlistOnly = true;
+    /* DEDICATED WISHLIST PAGE */
 
-        filterProducts();
+    const wishlistButton = $("wishlistBtn");
 
-        $("shop").scrollIntoView({
-            behavior: "smooth"
-        });
-    };
+    if (wishlistButton) {
+        wishlistButton.onclick = () => {
+            window.location.href = "wishlist.html";
+        };
+    }
 
-    $("compareNavBtn").onclick =
-        openComparison;
+    /* DEDICATED COMPARE PAGE */
 
-    $("openCompare").onclick =
-        openComparison;
+    const compareButton = $("compareNavBtn");
 
-    $("clearCompare").onclick = () => {
-        comparison.clear();
+    if (compareButton) {
+        compareButton.onclick = () => {
+            window.location.href = "compare.html";
+        };
+    }
 
-        saveStorage(COMPARE_KEY, []);
+    /* KEEP EXISTING COMPARISON MODAL */
 
-        updateCounters();
+    const openCompare = $("openCompare");
 
-        filterProducts();
-    };
+    if (openCompare) {
+        openCompare.onclick = openComparison;
+    }
 
-    $("closeModal").onclick = () => {
-        closeModal(quickModal);
-    };
+    const clearCompare = $("clearCompare");
 
-    $("closeCompareModal").onclick = () => {
-        closeModal(compareModal);
-    };
+    if (clearCompare) {
+        clearCompare.onclick = () => {
+            comparison.clear();
+
+            saveStorage(COMPARE_KEY, []);
+
+            updateCounters();
+            filterProducts();
+        };
+    }
+
+    const closeQuick = $("closeModal");
+
+    if (closeQuick) {
+        closeQuick.onclick = () => {
+            closeModal(quickModal);
+        };
+    }
+
+    const closeCompare = $("closeCompareModal");
+
+    if (closeCompare) {
+        closeCompare.onclick = () => {
+            closeModal(compareModal);
+        };
+    }
 
     [quickModal, compareModal].forEach(modal => {
-        modal.addEventListener("click", event => {
-            if (event.target === modal) {
-                closeModal(modal);
+        if (!modal) return;
+
+        modal.addEventListener(
+            "click",
+            event => {
+                if (event.target === modal) {
+                    closeModal(modal);
+                }
             }
-        });
+        );
     });
 
-    document.addEventListener("keydown", event => {
-        if (event.key === "Escape") {
-            closeModal(quickModal);
-            closeModal(compareModal);
+    document.addEventListener(
+        "keydown",
+        event => {
+            if (event.key === "Escape") {
+                closeModal(quickModal);
+                closeModal(compareModal);
+            }
         }
-    });
+    );
 
     document.querySelectorAll(
         ".category-card"
@@ -899,25 +990,61 @@ function setupEvents() {
     const menu = $("navLinks");
     const toggle = $("menuToggle");
 
-    toggle.onclick = () => {
-        menu.classList.toggle("active");
-
-        toggle.setAttribute(
-            "aria-expanded",
-            String(menu.classList.contains("active"))
-        );
-    };
-
-    menu.querySelectorAll("a").forEach(link => {
-        link.onclick = () => {
-            menu.classList.remove("active");
+    if (menu && toggle) {
+        toggle.onclick = () => {
+            const active = menu.classList.toggle(
+                "active"
+            );
 
             toggle.setAttribute(
                 "aria-expanded",
-                "false"
+                String(active)
             );
         };
-    });
+
+        menu.querySelectorAll("a").forEach(link => {
+            link.onclick = () => {
+                menu.classList.remove("active");
+
+                toggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+            };
+        });
+    }
+
+    /* KEEP COUNTERS SYNCHRONIZED */
+
+    window.addEventListener(
+        "pageshow",
+        () => {
+            refreshSavedCollections();
+            updateCounters();
+
+            if (products.length) {
+                filterProducts();
+            }
+        }
+    );
+
+    window.addEventListener(
+        "storage",
+        event => {
+            if (
+                event.key === WISHLIST_KEY ||
+                event.key === COMPARE_KEY ||
+                event.key === CART_KEY
+            ) {
+                refreshSavedCollections();
+                updateCounters();
+
+                if (products.length) {
+                    filterProducts();
+                }
+            }
+        }
+    );
 }
 
 /* ==========================================
@@ -959,15 +1086,26 @@ async function init() {
         );
 
         for (const id of wishlist) {
-            if (!validIds.has(id)) wishlist.delete(id);
+            if (!validIds.has(id)) {
+                wishlist.delete(id);
+            }
         }
 
         for (const id of comparison) {
-            if (!validIds.has(id)) comparison.delete(id);
+            if (!validIds.has(id)) {
+                comparison.delete(id);
+            }
         }
 
-        saveStorage(WISHLIST_KEY, [...wishlist]);
-        saveStorage(COMPARE_KEY, [...comparison]);
+        saveStorage(
+            WISHLIST_KEY,
+            [...wishlist]
+        );
+
+        saveStorage(
+            COMPARE_KEY,
+            [...comparison]
+        );
 
         updateCounters();
 
@@ -976,8 +1114,10 @@ async function init() {
     } catch (error) {
         console.error(error);
 
-        grid.textContent =
-            "Unable to load products.";
+        if (grid) {
+            grid.textContent =
+                "Unable to load products.";
+        }
     }
 }
 

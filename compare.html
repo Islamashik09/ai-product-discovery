@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description"
+          content="Compare products side by side on ETHORISE.">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Compare Products | ETHORISE</title>
+
+    <link rel="canonical"
+          href="https://islamashik09.github.io/ethorise/compare.html">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .compare-page {
+            min-height: 65vh;
+            padding: 75px 0 110px;
+        }
+
+        .compare-page-header {
+            margin-bottom: 35px;
+        }
+
+        .compare-page-header h1 {
+            font-size: clamp(34px, 5vw, 56px);
+            letter-spacing: -2px;
+            margin: 12px 0;
+        }
+
+        .compare-page-header p {
+            color: #777;
+            line-height: 1.7;
+        }
+
+        .compare-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .compare-table-wrapper {
+            overflow-x: auto;
+            border: 1px solid #e9e9e9;
+            border-radius: 18px;
+            background: #fff;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 720px;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 22px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            width: 160px;
+            background: #fafafa;
+            font-size: 13px;
+        }
+
+        .compare-table td {
+            min-width: 220px;
+        }
+
+        .compare-table img {
+            width: 160px;
+            height: 160px;
+            object-fit: contain;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .compare-product-title {
+            font-weight: 700;
+            line-height: 1.5;
+        }
+
+        .compare-feature-list {
+            padding-left: 18px;
+            line-height: 1.8;
+        }
+
+        .compare-actions {
+            display: grid;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .compare-actions .btn {
+            text-align: center;
+        }
+
+        .compare-remove {
+            border: 0;
+            background: transparent;
+            color: #b42318;
+            cursor: pointer;
+            padding: 10px 0;
+            font-weight: 600;
+        }
+
+        .compare-empty {
+            text-align: center;
+            padding: 75px 20px;
+            border: 1px solid #e9e9e9;
+            border-radius: 20px;
+            background: #fafafa;
+        }
+
+        .compare-empty h2 {
+            margin-bottom: 15px;
+        }
+
+        .compare-empty p {
+            color: #777;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .compare-page {
+                padding: 45px 0 75px;
+            }
+        }
+    </style>
+</head>
+
+<body data-saved-page="compare">
+
+    <div class="announcement">
+        ✦ Discover Extraordinary. Elevate Everyday.
+    </div>
+
+    <header class="header">
+        <nav class="navbar container">
+
+            <a href="index.html" class="logo">
+                ETHORISE<span>.</span>
+            </a>
+
+            <div class="nav-links" id="savedNavLinks">
+                <a href="index.html">Home</a>
+                <a href="index.html#shop">Shop</a>
+                <a href="wishlist.html">Wishlist</a>
+                <a href="compare.html" aria-current="page">Compare</a>
+                <a href="cart.html">Shopping List</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
+            <div class="nav-actions">
+
+                <a href="wishlist.html"
+                   class="nav-icon-btn"
+                   aria-label="Wishlist">
+                    ♡ <span id="savedWishlistCount">0</span>
+                </a>
+
+                <a href="cart.html"
+                   class="nav-icon-btn"
+                   aria-label="Shopping list">
+                    🛒 <span id="savedCartCount">0</span>
+                </a>
+
+                <button
+                    id="savedMenuToggle"
+                    class="menu-toggle"
+                    aria-label="Toggle navigation"
+                    aria-controls="savedNavLinks"
+                    aria-expanded="false"
+                    type="button">
+                    ☰
+                </button>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="affiliate-notice">
+        <div class="container">
+            <p>
+                As an Amazon Associate I earn from qualifying purchases.
+                Some links may earn us a commission.
+                <a href="affiliate-disclosure.html">Learn More</a>
+            </p>
+        </div>
+    </div>
+
+    <main class="compare-page">
+
+        <div class="container">
+
+            <div class="compare-page-header">
+                <span class="eyebrow">SHOP SMARTER</span>
+
+                <h1>
+                    Compare Products<span style="color:#ff6b35">.</span>
+                </h1>
+
+                <p>
+                    Review your selected products side by side
+                    before adding them to your shopping list.
+                </p>
+            </div>
+
+            <div class="compare-toolbar">
+
+                <p id="savedCount">
+                    Loading comparison...
+                </p>
+
+                <button
+                    id="clearSaved"
+                    class="btn btn-outline"
+                    type="button">
+                    Clear Comparison
+                </button>
+
+            </div>
+
+            <div id="savedGrid"
+                 aria-live="polite">
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="footer">
+
+        <div class="container footer-grid">
+
+            <div>
+                <h2>ETHORISE<span>.</span></h2>
+                <p>
+                    Discover Extraordinary.<br>
+                    Elevate Everyday.
+                </p>
+                <a href="mailto:ethorise.contact@gmail.com"
+                   class="footer-business-email">
+                    ethorise.contact@gmail.com
+                </a>
+            </div>
+
+            <div>
+                <h3>Explore</h3>
+                <a href="index.html">Home</a>
+                <a href="index.html#shop">Products</a>
+                <a href="wishlist.html">Wishlist</a>
+                <a href="compare.html">Compare</a>
+                <a href="cart.html">Shopping List</a>
+            </div>
+
+            <div>
+                <h3>Information</h3>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="affiliate-disclosure.html">
+                    Affiliate Disclosure
+                </a>
+                <p>
+                    As an Amazon Associate I earn
+                    from qualifying purchases.
+                </p>
+                <p>
+                    Purchases are completed on
+                    third-party retailer websites.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 ETHORISE. All rights reserved.</p>
+
+            <div class="footer-bottom-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+                <a href="contact.html">Contact</a>
+            </div>
+        </div>
+
+    </footer>
+
+    <script src="js/saved.js"></script>
+
+</body>
+</html>
