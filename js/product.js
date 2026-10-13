@@ -2,6 +2,7 @@
 
 /* ==========================================
    ETHORISE — PRODUCT DETAILS
+   Interactive Media Gallery
    Shopping List + Smart Recommendations
 ========================================== */
 
@@ -25,9 +26,13 @@ const MAX_RECOMMENDATIONS = 4;
 function el(tag, className = "", text = null) {
     const element = document.createElement(tag);
 
-    if (className) element.className = className;
+    if (className) {
+        element.className = className;
+    }
 
-    if (text !== null) element.textContent = text;
+    if (text !== null) {
+        element.textContent = text;
+    }
 
     return element;
 }
@@ -73,6 +78,151 @@ function priceLabel(product) {
     }
 
     return `$${price.toFixed(2)} USD`;
+}
+
+/* ==========================================
+   MEDIA HELPERS
+========================================== */
+
+function getProductImages(product) {
+    const images = [];
+
+    if (
+        typeof product.image === "string" &&
+        product.image.trim()
+    ) {
+        images.push(product.image.trim());
+    }
+
+    if (Array.isArray(product.images)) {
+        product.images.forEach(image => {
+            if (
+                typeof image === "string" &&
+                image.trim()
+            ) {
+                images.push(image.trim());
+            }
+        });
+    }
+
+    return [...new Set(images)];
+}
+
+function getProductVideo(product) {
+    return typeof product.video === "string"
+        ? product.video.trim()
+        : "";
+}
+
+function isDirectVideo(url) {
+    try {
+        const pathname = new URL(
+            url,
+            window.location.href
+        ).pathname.toLowerCase();
+
+        return /\.(mp4|webm|ogg)$/.test(pathname);
+    } catch {
+        return false;
+    }
+}
+
+function isTrustedEmbed(url) {
+    try {
+        const parsed = new URL(url);
+
+        const hostname = parsed.hostname.toLowerCase();
+
+        return (
+            hostname === "www.youtube.com" ||
+            hostname === "youtube.com" ||
+            hostname === "www.youtube-nocookie.com" ||
+            hostname === "youtube-nocookie.com" ||
+            hostname === "player.vimeo.com"
+        );
+    } catch {
+        return false;
+    }
+}
+
+function getEmbedUrl(url) {
+    try {
+        const parsed = new URL(url);
+
+        const hostname = parsed.hostname.toLowerCase();
+
+        if (
+            hostname === "youtube.com" ||
+            hostname === "www.youtube.com"
+        ) {
+            const videoId = parsed.searchParams.get("v");
+
+            if (
+                videoId &&
+                /^[a-zA-Z0-9_-]{11}$/.test(videoId)
+            ) {
+                return (
+                    "https://www.youtube-nocookie.com/embed/" +
+                    videoId
+                );
+            }
+
+            const match = parsed.pathname.match(
+                /^\/(?:embed|shorts)\/([a-zA-Z0-9_-]{11})/
+            );
+
+            if (match) {
+                return (
+                    "https://www.youtube-nocookie.com/embed/" +
+                    match[1]
+                );
+            }
+        }
+
+        if (hostname === "youtu.be") {
+            const videoId = parsed.pathname
+                .split("/")
+                .filter(Boolean)[0];
+
+            if (
+                videoId &&
+                /^[a-zA-Z0-9_-]{11}$/.test(videoId)
+            ) {
+                return (
+                    "https://www.youtube-nocookie.com/embed/" +
+                    videoId
+                );
+            }
+        }
+
+        if (
+            hostname === "youtube-nocookie.com" ||
+            hostname === "www.youtube-nocookie.com" ||
+            hostname === "player.vimeo.com"
+        ) {
+            return parsed.toString();
+        }
+
+        if (
+            hostname === "vimeo.com" ||
+            hostname === "www.vimeo.com"
+        ) {
+            const videoId = parsed.pathname
+                .split("/")
+                .filter(Boolean)[0];
+
+            if (/^\d+$/.test(videoId || "")) {
+                return (
+                    "https://player.vimeo.com/video/" +
+                    videoId
+                );
+            }
+        }
+
+        return "";
+    } catch {
+        return "";
+    }
 }
 
 /* ==========================================
@@ -250,6 +400,8 @@ function addWishlist(id) {
         readIds(WISHLIST_KEY)
     );
 
+    const alreadySaved = wishlist.has(id);
+
     wishlist.add(id);
 
     saveStorage(
@@ -257,7 +409,589 @@ function addWishlist(id) {
         [...wishlist]
     );
 
-    alert("Product added to wishlist!");
+    alert(
+        alreadySaved
+            ? "Product is already in your wishlist."
+            : "Product added to wishlist!"
+    );
+}
+
+/* ==========================================
+   INTERACTIVE PRODUCT MEDIA GALLERY
+========================================== */
+
+function createProductGallery(product) {
+    const images = getProductImages(product);
+    const video = getProductVideo(product);
+
+    const mediaItems = images.map(src => ({
+        type: "image",
+        src
+    }));
+
+    if (video) {
+        mediaItems.push({
+            type: "video",
+            src: video
+        });
+    }
+
+    const gallery = el(
+        "div",
+        "ethorise-media-gallery"
+    );
+
+    const stage = el(
+        "div",
+        "ethorise-gallery-stage"
+    );
+
+    const stageContent = el(
+        "div",
+        "ethorise-gallery-content"
+    );
+
+    const thumbnails = el(
+        "div",
+        "ethorise-gallery-thumbnails"
+    );
+
+    thumbnails.setAttribute(
+        "aria-label",
+        "Product media thumbnails"
+    );
+
+    const position = el(
+        "span",
+        "ethorise-gallery-position"
+    );
+
+    const previous = el(
+        "button",
+        "ethorise-gallery-arrow ethorise-gallery-prev",
+        "‹"
+    );
+
+    const next = el(
+        "button",
+        "ethorise-gallery-arrow ethorise-gallery-next",
+        "›"
+    );
+
+    previous.type = "button";
+    next.type = "button";
+
+    previous.setAttribute(
+        "aria-label",
+        "Previous product media"
+    );
+
+    next.setAttribute(
+        "aria-label",
+        "Next product media"
+    );
+
+    let activeIndex = 0;
+
+    function showMedia(index) {
+        if (!mediaItems.length) return;
+
+        activeIndex = (
+            index + mediaItems.length
+        ) % mediaItems.length;
+
+        const item = mediaItems[activeIndex];
+
+        stageContent.replaceChildren();
+
+        if (item.type === "image") {
+            const image = el("img");
+
+            image.src = item.src;
+            image.alt = (
+                `${product.name} — Image ${activeIndex + 1}`
+            );
+
+            image.className =
+                "ethorise-gallery-main-image";
+
+            image.decoding = "async";
+
+            image.onerror = () => {
+                image.alt = "Product image unavailable";
+            };
+
+            image.title = "Click to enlarge image";
+
+            image.onclick = () => {
+                openImageViewer(item.src, product.name);
+            };
+
+            stageContent.appendChild(image);
+        } else {
+            const source = item.src;
+
+            if (isDirectVideo(source)) {
+                const player = el("video");
+
+                player.src = source;
+                player.controls = true;
+                player.preload = "metadata";
+                player.playsInline = true;
+
+                player.setAttribute(
+                    "aria-label",
+                    `${product.name} product video`
+                );
+
+                stageContent.appendChild(player);
+            } else {
+                const embedUrl = getEmbedUrl(source);
+
+                if (embedUrl && isTrustedEmbed(embedUrl)) {
+                    const iframe = el("iframe");
+
+                    iframe.src = embedUrl;
+                    iframe.title =
+                        `${product.name} product video`;
+
+                    iframe.loading = "lazy";
+
+                    iframe.allow =
+                        "accelerometer; autoplay; " +
+                        "clipboard-write; encrypted-media; " +
+                        "gyroscope; picture-in-picture";
+
+                    iframe.allowFullscreen = true;
+
+                    iframe.referrerPolicy =
+                        "strict-origin-when-cross-origin";
+
+                    stageContent.appendChild(iframe);
+                } else {
+                    const unavailable = el(
+                        "div",
+                        "ethorise-video-unavailable",
+                        "Video preview is unavailable."
+                    );
+
+                    stageContent.appendChild(unavailable);
+                }
+            }
+        }
+
+        position.textContent =
+            `${activeIndex + 1} / ${mediaItems.length}`;
+
+        [...thumbnails.children].forEach(
+            (button, buttonIndex) => {
+                const selected =
+                    buttonIndex === activeIndex;
+
+                button.classList.toggle(
+                    "active",
+                    selected
+                );
+
+                button.setAttribute(
+                    "aria-pressed",
+                    String(selected)
+                );
+            }
+        );
+
+        previous.hidden = mediaItems.length < 2;
+        next.hidden = mediaItems.length < 2;
+    }
+
+    previous.onclick = () => {
+        showMedia(activeIndex - 1);
+    };
+
+    next.onclick = () => {
+        showMedia(activeIndex + 1);
+    };
+
+    mediaItems.forEach((item, index) => {
+        const button = el(
+            "button",
+            "ethorise-gallery-thumbnail"
+        );
+
+        button.type = "button";
+
+        button.setAttribute(
+            "aria-label",
+            item.type === "video"
+                ? "View product video"
+                : `View product image ${index + 1}`
+        );
+
+        if (item.type === "image") {
+            const image = el("img");
+
+            image.src = item.src;
+            image.alt = "";
+            image.loading = "lazy";
+
+            button.appendChild(image);
+        } else {
+            const videoIcon = el(
+                "span",
+                "ethorise-video-icon",
+                "▶"
+            );
+
+            const videoLabel = el(
+                "small",
+                "",
+                "VIDEO"
+            );
+
+            button.append(
+                videoIcon,
+                videoLabel
+            );
+        }
+
+        button.onclick = () => {
+            showMedia(index);
+        };
+
+        thumbnails.appendChild(button);
+    });
+
+    stage.append(
+        stageContent,
+        previous,
+        next,
+        position
+    );
+
+    gallery.append(
+        stage,
+        thumbnails
+    );
+
+    if (mediaItems.length) {
+        showMedia(0);
+    } else {
+        stageContent.textContent =
+            "Product media unavailable.";
+
+        previous.hidden = true;
+        next.hidden = true;
+        position.hidden = true;
+    }
+
+    return gallery;
+}
+
+/* ==========================================
+   FULLSCREEN IMAGE VIEWER
+========================================== */
+
+function openImageViewer(src, name) {
+    const existing = $("ethoriseImageViewer");
+
+    if (existing) existing.remove();
+
+    const viewer = el(
+        "div",
+        "ethorise-image-viewer"
+    );
+
+    viewer.id = "ethoriseImageViewer";
+
+    viewer.setAttribute("role", "dialog");
+    viewer.setAttribute("aria-modal", "true");
+    viewer.setAttribute(
+        "aria-label",
+        "Enlarged product image"
+    );
+
+    const image = el("img");
+
+    image.src = src;
+    image.alt = name;
+
+    const close = el(
+        "button",
+        "ethorise-viewer-close",
+        "×"
+    );
+
+    close.type = "button";
+    close.setAttribute(
+        "aria-label",
+        "Close image viewer"
+    );
+
+    const previouslyFocused = document.activeElement;
+
+    function closeViewer() {
+        viewer.remove();
+
+        document.removeEventListener(
+            "keydown",
+            handleKeydown
+        );
+
+        if (
+            previouslyFocused &&
+            typeof previouslyFocused.focus === "function"
+        ) {
+            previouslyFocused.focus();
+        }
+    }
+
+    function handleKeydown(event) {
+        if (event.key === "Escape") {
+            closeViewer();
+        }
+
+        if (event.key === "Tab") {
+            event.preventDefault();
+            close.focus();
+        }
+    }
+
+    close.onclick = closeViewer;
+
+    viewer.onclick = event => {
+        if (event.target === viewer) {
+            closeViewer();
+        }
+    };
+
+    viewer.append(
+        image,
+        close
+    );
+
+    document.body.appendChild(viewer);
+
+    close.focus();
+
+    document.addEventListener(
+        "keydown",
+        handleKeydown
+    );
+}
+
+/* ==========================================
+   GALLERY STYLES
+   Injected automatically — no CSS edit needed
+========================================== */
+
+function injectGalleryStyles() {
+    if ($("ethoriseGalleryStyles")) return;
+
+    const style = el("style");
+
+    style.id = "ethoriseGalleryStyles";
+
+    style.textContent = `
+        .ethorise-media-gallery {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .ethorise-gallery-stage {
+            position: relative;
+            width: 100%;
+            min-height: 300px;
+            aspect-ratio: 1 / 1;
+            background: #f5f6f8;
+            border: 1px solid #e8e8e8;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .ethorise-gallery-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ethorise-gallery-content img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: zoom-in;
+        }
+
+        .ethorise-gallery-content video,
+        .ethorise-gallery-content iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            background: #000;
+        }
+
+        .ethorise-gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.94);
+            color: #111;
+            font-size: 30px;
+            line-height: 1;
+            cursor: pointer;
+            z-index: 2;
+            box-shadow: 0 4px 14px rgba(0,0,0,.12);
+        }
+
+        .ethorise-gallery-arrow:hover {
+            background: #ff6b35;
+            color: #fff;
+        }
+
+        .ethorise-gallery-arrow[hidden] {
+            display: none;
+        }
+
+        .ethorise-gallery-prev {
+            left: 12px;
+        }
+
+        .ethorise-gallery-next {
+            right: 12px;
+        }
+
+        .ethorise-gallery-position {
+            position: absolute;
+            right: 14px;
+            bottom: 14px;
+            padding: 6px 11px;
+            background: rgba(0,0,0,.65);
+            color: #fff;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 2;
+        }
+
+        .ethorise-gallery-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .ethorise-gallery-thumbnail {
+            width: 76px;
+            height: 76px;
+            flex: 0 0 76px;
+            padding: 4px;
+            background: #f5f6f8;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 3px;
+            color: #111;
+        }
+
+        .ethorise-gallery-thumbnail.active {
+            border-color: #ff6b35;
+        }
+
+        .ethorise-gallery-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .ethorise-video-icon {
+            font-size: 23px;
+            color: #ff6b35;
+        }
+
+        .ethorise-gallery-thumbnail small {
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .ethorise-video-unavailable {
+            padding: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .ethorise-image-viewer {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: rgba(0,0,0,.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px 20px;
+        }
+
+        .ethorise-image-viewer img {
+            max-width: 95%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .ethorise-viewer-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            border: 0;
+            border-radius: 50%;
+            background: #fff;
+            color: #111;
+            font-size: 32px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .ethorise-gallery-stage {
+                min-height: 260px;
+                border-radius: 14px;
+            }
+
+            .ethorise-gallery-arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 25px;
+            }
+
+            .ethorise-gallery-thumbnail {
+                width: 64px;
+                height: 64px;
+                flex-basis: 64px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .ethorise-media-gallery *,
+            .ethorise-image-viewer * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
 }
 
 /* ==========================================
@@ -267,22 +1001,21 @@ function addWishlist(id) {
 function renderProduct(product) {
     detailContainer.replaceChildren();
 
+    injectGalleryStyles();
+
     const grid = el(
         "div",
         "product-detail-grid"
     );
 
-    const imageBox = el(
+    const galleryBox = el(
         "div",
         "product-detail-image"
     );
 
-    const image = el("img");
-
-    image.src = product.image;
-    image.alt = product.name;
-
-    imageBox.appendChild(image);
+    galleryBox.appendChild(
+        createProductGallery(product)
+    );
 
     const info = el(
         "div",
@@ -292,7 +1025,7 @@ function renderProduct(product) {
     const category = el(
         "span",
         "eyebrow",
-        product.category
+        product.category || ""
     );
 
     const title = el(
@@ -318,26 +1051,32 @@ function renderProduct(product) {
         "product-features"
     );
 
-    featuresBox.appendChild(
-        el("h3", "", "Product Features")
-    );
+    const features = Array.isArray(product.features)
+        ? product.features
+        : [];
 
-    const list = el("ul");
-
-    (product.features || []).forEach(feature => {
-        list.appendChild(
-            el("li", "", feature)
+    if (features.length) {
+        featuresBox.appendChild(
+            el("h3", "", "Product Features")
         );
-    });
 
-    featuresBox.appendChild(list);
+        const list = el("ul");
+
+        features.forEach(feature => {
+            list.appendChild(
+                el("li", "", feature)
+            );
+        });
+
+        featuresBox.appendChild(list);
+    }
 
     const actions = el(
         "div",
         "product-detail-actions"
     );
 
-    /* ADD TO CART */
+    /* ADD TO SHOPPING LIST */
 
     const addButton = el(
         "button",
@@ -391,7 +1130,7 @@ function renderProduct(product) {
     );
 
     grid.append(
-        imageBox,
+        galleryBox,
         info
     );
 
@@ -430,9 +1169,21 @@ function recommendationCard(product) {
     );
 
     info.append(
-        el("p", "product-category", product.category),
-        el("h3", "", product.name),
-        el("p", "product-price", priceLabel(product))
+        el(
+            "p",
+            "product-category",
+            product.category || ""
+        ),
+        el(
+            "h3",
+            "",
+            product.name
+        ),
+        el(
+            "p",
+            "product-price",
+            priceLabel(product)
+        )
     );
 
     const details = el(
@@ -558,7 +1309,7 @@ function renderRecommendations(allProducts, current) {
         .filter(item =>
             explicitIds.has(item.product.id)
         )
-        .slice(0, 4)
+        .slice(0, MAX_RECOMMENDATIONS)
         .map(item => item.product);
 
     const used = new Set(
@@ -569,7 +1320,7 @@ function renderRecommendations(allProducts, current) {
         .filter(item =>
             !used.has(item.product.id)
         )
-        .slice(0, 4)
+        .slice(0, MAX_RECOMMENDATIONS)
         .map(item => item.product);
 
     showSection(
@@ -617,7 +1368,7 @@ function renderRecent(allProducts, current) {
         .filter(product =>
             product.status !== "inactive"
         )
-        .slice(0, 4);
+        .slice(0, MAX_RECOMMENDATIONS);
 
     showSection(
         "recentSection",
@@ -666,6 +1417,14 @@ async function init() {
 
     createCartNavigation();
 
+    if (!detailContainer) {
+        console.error(
+            "Missing #productDetail container."
+        );
+
+        return;
+    }
+
     try {
         if (
             !Number.isInteger(productId) ||
@@ -703,6 +1462,7 @@ async function init() {
         if (!product) {
             detailContainer.textContent =
                 "Product not found.";
+
             return;
         }
 
