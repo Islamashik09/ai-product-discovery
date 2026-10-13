@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
     <url>
         <loc>https://islamashik09.github.io/ethorise/</loc>
     </url>
-
     <url>
         <loc>https://islamashik09.github.io/ethorise/about.html</loc>
     </url>
-
     <url>
         <loc>https://islamashik09.github.io/ethorise/contact.html</loc>
     </url>
-
     <url>
         <loc>https://islamashik09.github.io/ethorise/privacy.html</loc>
     </url>
-
     <url>
         <loc>https://islamashik09.github.io/ethorise/affiliate-disclosure.html</loc>
     </url>
-
+    <url>
+        <loc>https://islamashik09.github.io/ethorise/product.html?id=9</loc>
+    </url>
 </urlset>
