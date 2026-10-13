@@ -1,27 +1,32 @@
 /* ==========================================
    ETHORISE — MAIN APPLICATION
-   Affiliate Commerce Platform
+   Premium Affiliate Product Discovery
 ========================================== */
 
 "use strict";
 
-/* GLOBAL DATA */
+/* ==========================================
+   APPLICATION STATE
+========================================== */
 
 let products = [];
 
 const MAX_COMPARE = 3;
 
+let wishlistOnly = false;
+
 function readSavedIds(key) {
     try {
-        const data = JSON.parse(
+        const saved = JSON.parse(
             localStorage.getItem(key) || "[]"
         );
 
-        if (!Array.isArray(data)) return [];
+        if (!Array.isArray(saved)) return [];
 
-        return data.filter(Number.isInteger);
+        return saved.filter(Number.isInteger);
 
-    } catch {
+    } catch (error) {
+        console.warn("Could not read saved data:", error);
         return [];
     }
 }
@@ -34,9 +39,9 @@ const comparison = new Set(
     readSavedIds("ethoriseComparison")
 );
 
-let wishlistOnly = false;
-
-/* DOM ELEMENTS */
+/* ==========================================
+   DOM ELEMENTS
+========================================== */
 
 const grid = document.getElementById("productGrid");
 
@@ -66,7 +71,9 @@ const compareModal = document.getElementById("compareModal");
 
 const compareContent = document.getElementById("compareContent");
 
-/* HELPER FUNCTIONS */
+/* ==========================================
+   HELPER FUNCTIONS
+========================================== */
 
 function createElement(tag, className = "", text) {
     const element = document.createElement(tag);
@@ -83,27 +90,36 @@ function createElement(tag, className = "", text) {
 }
 
 function formatPrice(product) {
+    const price = Number(product.price);
+
     if (
         product.price === null ||
         product.price === undefined ||
-        Number(product.price) <= 0
+        !Number.isFinite(price) ||
+        price <= 0
     ) {
         return product.affiliatePlatform === "Amazon"
             ? "Check Price on Amazon"
             : "Check Latest Price";
     }
 
-    return `$${Number(product.price).toFixed(2)} USD (Demo)`;
+    return `$${price.toFixed(2)} USD (Demo)`;
 }
 
-function saveSet(key, data) {
-    localStorage.setItem(
-        key,
-        JSON.stringify([...data])
-    );
+function saveSet(key, set) {
+    try {
+        localStorage.setItem(
+            key,
+            JSON.stringify([...set])
+        );
+    } catch (error) {
+        console.warn("Unable to save data:", error);
+    }
 }
 
-/* WISHLIST */
+/* ==========================================
+   WISHLIST
+========================================== */
 
 function saveWishlist() {
     saveSet("ethoriseWishlist", wishlist);
@@ -111,18 +127,20 @@ function saveWishlist() {
     wishlistCount.textContent = wishlist.size;
 }
 
-function toggleWishlist(id) {
-    if (wishlist.has(id)) {
-        wishlist.delete(id);
+function toggleWishlist(productId) {
+    if (wishlist.has(productId)) {
+        wishlist.delete(productId);
     } else {
-        wishlist.add(id);
+        wishlist.add(productId);
     }
 
     saveWishlist();
     applyFilters();
 }
 
-/* COMPARISON */
+/* ==========================================
+   PRODUCT COMPARISON
+========================================== */
 
 function saveComparison() {
     saveSet("ethoriseComparison", comparison);
@@ -135,43 +153,43 @@ function saveComparison() {
     compareBar.hidden = comparison.size === 0;
 }
 
-function toggleComparison(id) {
-    if (comparison.has(id)) {
-        comparison.delete(id);
-
+function toggleComparison(productId) {
+    if (comparison.has(productId)) {
+        comparison.delete(productId);
     } else {
         if (comparison.size >= MAX_COMPARE) {
             alert("You can compare up to 3 products.");
             return;
         }
 
-        comparison.add(id);
+        comparison.add(productId);
     }
 
     saveComparison();
     applyFilters();
 }
 
-/* AFFILIATE LINK */
+/* ==========================================
+   AFFILIATE LINKS
+========================================== */
 
 function createAffiliateLink(product) {
-    const isAmazon =
-        product.affiliatePlatform === "Amazon";
+    const platform = product.affiliatePlatform || "";
 
-    const link = createElement(
-        "a",
-        "",
-        isAmazon
-            ? "View on Amazon ↗"
-            : "View Product ↗"
-    );
+    const label = platform === "Amazon"
+        ? "View on Amazon ↗"
+        : platform === "AliExpress"
+            ? "View on AliExpress ↗"
+            : "View Product ↗";
+
+    const link = createElement("a", "", label);
 
     try {
         if (
             !product.affiliateLink ||
             product.affiliateLink === "#"
         ) {
-            throw new Error("No affiliate link");
+            throw new Error("Missing affiliate link");
         }
 
         const url = new URL(product.affiliateLink);
@@ -180,7 +198,7 @@ function createAffiliateLink(product) {
             url.protocol !== "https:" &&
             url.protocol !== "http:"
         ) {
-            throw new Error("Invalid protocol");
+            throw new Error("Unsupported protocol");
         }
 
         link.href = url.href;
@@ -202,7 +220,9 @@ function createAffiliateLink(product) {
     return link;
 }
 
-/* PRODUCT CARD */
+/* ==========================================
+   PRODUCT CARDS
+========================================== */
 
 function createProductCard(product) {
     const card = createElement(
@@ -305,6 +325,10 @@ function createProductCard(product) {
         String(comparison.has(product.id))
     );
 
+    if (comparison.has(product.id)) {
+        compareButton.classList.add("active");
+    }
+
     compareButton.addEventListener("click", () => {
         toggleComparison(product.id);
     });
@@ -338,7 +362,9 @@ function createProductCard(product) {
     return card;
 }
 
-/* RENDER PRODUCTS */
+/* ==========================================
+   RENDER PRODUCTS
+========================================== */
 
 function renderProducts(items) {
     grid.replaceChildren();
@@ -347,23 +373,34 @@ function renderProducts(items) {
         `${items.length} product${items.length === 1 ? "" : "s"} found`;
 
     if (!items.length) {
-        grid.textContent = wishlistOnly
+        const message = wishlistOnly
             ? "No saved products match your filters."
-            : "No products found.";
+            : "No products found in this category yet.";
 
+        const empty = createElement(
+            "div",
+            "empty-products",
+            message
+        );
+
+        grid.appendChild(empty);
         return;
     }
 
     const fragment = document.createDocumentFragment();
 
     items.forEach(product => {
-        fragment.appendChild(createProductCard(product));
+        fragment.appendChild(
+            createProductCard(product)
+        );
     });
 
     grid.appendChild(fragment);
 }
 
-/* SEARCH, FILTER AND SORT */
+/* ==========================================
+   SEARCH, FILTERING AND SORTING
+========================================== */
 
 function applyFilters() {
     const search = searchInput.value.toLowerCase().trim();
@@ -388,7 +425,7 @@ function applyFilters() {
 
         const matchesCountry =
             country === "All" ||
-            product.countries.includes(country);
+            (product.countries || []).includes(country);
 
         const matchesWishlist =
             !wishlistOnly ||
@@ -402,23 +439,26 @@ function applyFilters() {
         );
     });
 
-    // Products without verified prices go last.
-    const priceValue = product =>
-        Number(product.price) > 0
-            ? Number(product.price)
+    function verifiedPrice(product) {
+        const price = Number(product.price);
+
+        return Number.isFinite(price) && price > 0
+            ? price
             : null;
+    }
 
     if (sort === "price-low" || sort === "price-high") {
         filtered.sort((a, b) => {
-            const priceA = priceValue(a);
-            const priceB = priceValue(b);
+            const aPrice = verifiedPrice(a);
+            const bPrice = verifiedPrice(b);
 
-            if (priceA === null) return priceB === null ? 0 : 1;
-            if (priceB === null) return -1;
+            if (aPrice === null && bPrice === null) return 0;
+            if (aPrice === null) return 1;
+            if (bPrice === null) return -1;
 
             return sort === "price-low"
-                ? priceA - priceB
-                : priceB - priceA;
+                ? aPrice - bPrice
+                : bPrice - aPrice;
         });
     }
 
@@ -431,7 +471,9 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-/* CLEAR FILTERS */
+/* ==========================================
+   CLEAR FILTERS
+========================================== */
 
 document.getElementById("clearFilters")
     .addEventListener("click", () => {
@@ -445,15 +487,22 @@ document.getElementById("clearFilters")
         applyFilters();
     });
 
-/* QUICK VIEW */
+/* ==========================================
+   QUICK VIEW MODAL
+========================================== */
 
 function openQuickView(product) {
     modalBody.replaceChildren();
 
     const image = createElement("img");
-
     image.src = product.image;
     image.alt = product.name;
+
+    const category = createElement(
+        "p",
+        "product-category",
+        product.category
+    );
 
     const title = createElement(
         "h2",
@@ -492,6 +541,7 @@ function openQuickView(product) {
 
     modalBody.append(
         image,
+        category,
         title,
         price,
         description,
@@ -512,7 +562,9 @@ function closeQuickView() {
     modal.setAttribute("aria-hidden", "true");
 }
 
-/* COMPARISON MODAL */
+/* ==========================================
+   COMPARISON MODAL
+========================================== */
 
 function openComparison() {
     compareContent.replaceChildren();
@@ -526,19 +578,28 @@ function openComparison() {
         return;
     }
 
-    const table = createElement("table", "compare-table");
+    const table = createElement(
+        "table",
+        "compare-table"
+    );
+
     const tbody = createElement("tbody");
 
     function addRow(label, getValue) {
         const row = createElement("tr");
 
-        const heading = createElement("th", "", label);
-        heading.scope = "row";
+        const heading = createElement(
+            "th",
+            "",
+            label
+        );
 
+        heading.scope = "row";
         row.appendChild(heading);
 
         selected.forEach(product => {
             const cell = createElement("td");
+
             const value = getValue(product);
 
             if (value instanceof Node) {
@@ -571,13 +632,19 @@ function openComparison() {
         return wrapper;
     });
 
-    addRow("Price", product => formatPrice(product));
+    addRow(
+        "Price",
+        product => formatPrice(product)
+    );
 
-    addRow("Category", product => product.category);
+    addRow(
+        "Category",
+        product => product.category
+    );
 
     addRow(
         "Listed Markets (Demo)",
-        product => product.countries.join(", ")
+        product => (product.countries || []).join(", ")
     );
 
     addRow(
@@ -606,6 +673,7 @@ function openComparison() {
     });
 
     table.appendChild(tbody);
+
     compareContent.appendChild(table);
 
     compareModal.classList.add("active");
@@ -621,7 +689,9 @@ function closeComparison() {
     compareModal.setAttribute("aria-hidden", "true");
 }
 
-/* MODAL EVENTS */
+/* ==========================================
+   MODAL EVENTS
+========================================== */
 
 document.getElementById("closeModal")
     .addEventListener("click", closeQuickView);
@@ -630,11 +700,15 @@ document.getElementById("closeCompareModal")
     .addEventListener("click", closeComparison);
 
 modal.addEventListener("click", event => {
-    if (event.target === modal) closeQuickView();
+    if (event.target === modal) {
+        closeQuickView();
+    }
 });
 
 compareModal.addEventListener("click", event => {
-    if (event.target === compareModal) closeComparison();
+    if (event.target === compareModal) {
+        closeComparison();
+    }
 });
 
 document.addEventListener("keydown", event => {
@@ -644,7 +718,9 @@ document.addEventListener("keydown", event => {
     }
 });
 
-/* COMPARISON CONTROLS */
+/* ==========================================
+   COMPARISON CONTROLS
+========================================== */
 
 document.getElementById("openCompare")
     .addEventListener("click", openComparison);
@@ -655,11 +731,14 @@ document.getElementById("compareNavBtn")
 document.getElementById("clearCompare")
     .addEventListener("click", () => {
         comparison.clear();
+
         saveComparison();
         applyFilters();
     });
 
-/* WISHLIST NAVIGATION */
+/* ==========================================
+   WISHLIST NAVIGATION
+========================================== */
 
 document.getElementById("wishlistBtn")
     .addEventListener("click", () => {
@@ -673,31 +752,74 @@ document.getElementById("wishlistBtn")
         applyFilters();
 
         document.getElementById("shop")
-            .scrollIntoView({ behavior: "smooth" });
+            .scrollIntoView({
+                behavior: "smooth"
+            });
     });
 
-/* CATEGORY BUTTONS */
+/* ==========================================
+   CATEGORY SELECTION
+========================================== */
+
+function selectCategory(category) {
+    wishlistOnly = false;
+
+    searchInput.value = "";
+
+    countryFilter.value = "All";
+
+    sortFilter.value = "default";
+
+    const availableOptions = [
+        ...categoryFilter.options
+    ].map(option => option.value);
+
+    categoryFilter.value = availableOptions.includes(category)
+        ? category
+        : "All";
+
+    applyFilters();
+
+    document.getElementById("shop")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+}
 
 document.querySelectorAll(".category-card")
     .forEach(button => {
         button.addEventListener("click", () => {
-            wishlistOnly = false;
-
-            searchInput.value = "";
-            categoryFilter.value = button.dataset.category;
-            countryFilter.value = "All";
-
-            applyFilters();
-
-            document.getElementById("shop")
-                .scrollIntoView({ behavior: "smooth" });
+            selectCategory(
+                button.dataset.category
+            );
         });
     });
 
-/* MOBILE MENU */
+/* ==========================================
+   FEATURED COLLECTIONS
+========================================== */
 
-const menuToggle = document.getElementById("menuToggle");
-const navLinks = document.getElementById("navLinks");
+document.querySelectorAll(".collection-card")
+    .forEach(card => {
+        card.addEventListener("click", event => {
+            event.preventDefault();
+
+            const category =
+                card.dataset.collection;
+
+            selectCategory(category);
+        });
+    });
+
+/* ==========================================
+   MOBILE MENU
+========================================== */
+
+const menuToggle =
+    document.getElementById("menuToggle");
+
+const navLinks =
+    document.getElementById("navLinks");
 
 menuToggle.addEventListener("click", () => {
     navLinks.classList.toggle("active");
@@ -712,31 +834,47 @@ navLinks.querySelectorAll("a").forEach(link => {
     link.addEventListener("click", () => {
         navLinks.classList.remove("active");
 
-        menuToggle.setAttribute("aria-expanded", "false");
+        menuToggle.setAttribute(
+            "aria-expanded",
+            "false"
+        );
     });
 });
 
-/* FILTER EVENTS */
+/* ==========================================
+   FILTER EVENTS
+========================================== */
 
 searchInput.addEventListener("input", applyFilters);
+
 categoryFilter.addEventListener("change", applyFilters);
+
 countryFilter.addEventListener("change", applyFilters);
+
 sortFilter.addEventListener("change", applyFilters);
 
-/* LOAD PRODUCTS */
+/* ==========================================
+   LOAD PRODUCT DATABASE
+========================================== */
 
 async function loadProducts() {
     try {
-        const response = await fetch("data/products.json");
+        const response = await fetch(
+            "data/products.json"
+        );
 
         if (!response.ok) {
-            throw new Error("Unable to load products.");
+            throw new Error(
+                "Unable to load product database."
+            );
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            throw new Error("Invalid product database.");
+            throw new Error(
+                "Invalid product database format."
+            );
         }
 
         products = data;
@@ -746,11 +884,15 @@ async function loadProducts() {
         );
 
         for (const id of wishlist) {
-            if (!validIds.has(id)) wishlist.delete(id);
+            if (!validIds.has(id)) {
+                wishlist.delete(id);
+            }
         }
 
         for (const id of comparison) {
-            if (!validIds.has(id)) comparison.delete(id);
+            if (!validIds.has(id)) {
+                comparison.delete(id);
+            }
         }
 
         saveWishlist();
@@ -761,14 +903,19 @@ async function loadProducts() {
     } catch (error) {
         console.error(error);
 
-        grid.textContent = "Unable to load products.";
+        grid.textContent =
+            "Unable to load products. Please try again.";
 
-        productCount.textContent = "Products unavailable";
+        productCount.textContent =
+            "Products unavailable";
     }
 }
 
-/* INITIALIZE */
+/* ==========================================
+   INITIALIZE
+========================================== */
 
 saveWishlist();
 saveComparison();
+
 loadProducts();

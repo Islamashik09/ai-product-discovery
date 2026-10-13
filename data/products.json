@@ -1,150 +1,31 @@
 [
   {
-    "id": 1,
-    "name": "Premium Wireless Headphones",
-    "category": "Electronics",
-    "price": 49.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Headphones",
-    "description": "Explore wireless headphones designed for everyday listening and modern lifestyles.",
-    "features": [
-      "Wireless connectivity",
-      "Modern minimalist design",
-      "Portable form factor"
-    ],
-    "countries": ["USA", "UK", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 2,
-    "name": "Adjustable Laptop Stand",
-    "category": "Office",
-    "price": 29.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Laptop+Stand",
-    "description": "Discover an adjustable laptop stand concept for a cleaner and more comfortable workspace.",
-    "features": [
-      "Adjustable positioning",
-      "Minimalist appearance",
-      "Workspace organization"
-    ],
-    "countries": ["USA", "UK", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 3,
-    "name": "Smart Fitness Watch",
-    "category": "Fitness",
-    "price": 59.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Fitness+Watch",
-    "description": "Explore smartwatch options for fitness enthusiasts and everyday convenience.",
-    "features": [
-      "Smartwatch design",
-      "Fitness-oriented concept",
-      "Everyday wear"
-    ],
-    "countries": ["USA", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 4,
-    "name": "USB-C Multiport Hub",
-    "category": "Accessories",
-    "price": 34.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=USB-C+Hub",
-    "description": "Discover connectivity accessories designed to simplify modern desktop setups.",
-    "features": [
-      "USB-C connectivity concept",
-      "Compact design",
-      "Workspace accessories"
-    ],
-    "countries": ["USA", "UK"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 5,
-    "name": "Wireless Mechanical Keyboard",
-    "category": "Electronics",
-    "price": 79.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Keyboard",
-    "description": "Explore mechanical keyboard designs for productive workspaces and gaming setups.",
-    "features": [
-      "Mechanical keyboard concept",
-      "Wireless design",
-      "Modern desk aesthetics"
-    ],
-    "countries": ["USA", "UK", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 6,
-    "name": "Minimalist Desk Lamp",
-    "category": "Office",
-    "price": 39.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Desk+Lamp",
-    "description": "Explore modern desk lighting ideas for home offices and study spaces.",
-    "features": [
-      "Minimalist design",
-      "Desktop lighting concept",
-      "Modern workspace styling"
-    ],
-    "countries": ["USA", "UK", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 7,
-    "name": "Resistance Band Set",
-    "category": "Fitness",
-    "price": 24.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Fitness+Bands",
-    "description": "Discover resistance band options for convenient home fitness routines.",
-    "features": [
-      "Portable fitness accessory",
-      "Home workout concept",
-      "Compact storage"
-    ],
-    "countries": ["USA", "UK"],
-    "affiliateLink": "#"
-  },
-  {
-    "id": 8,
-    "name": "Portable Power Bank",
-    "category": "Accessories",
-    "price": 44.99,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=Power+Bank",
-    "description": "Explore portable charging accessories for travel and everyday convenience.",
-    "features": [
-      "Portable charging concept",
-      "Travel-friendly design",
-      "Everyday technology accessory"
-    ],
-    "countries": ["USA", "UK", "Canada"],
-    "affiliateLink": "#"
-  },
-  {
     "id": 9,
     "name": "JOIOT Adjustable Aluminum Laptop Stand",
+    "brand": "JOIOT",
     "category": "Office",
-    "price": 0,
-    "currency": "USD",
-    "image": "https://placehold.co/600x600/f5f5f5/111111?text=JOIOT+Laptop+Stand",
-    "description": "Explore the JOIOT adjustable aluminum laptop stand, listed for compatible 11–16 inch laptops. Visit Amazon to verify the latest specifications, pricing, and availability.",
+    "subcategory": "Laptop Accessories",
+    "description": "Explore the JOIOT adjustable aluminum laptop stand, listed for compatible 11–16 inch laptops. Visit Amazon to verify the latest product specifications, pricing, and availability.",
     "features": [
       "Adjustable laptop stand",
       "Aluminum construction",
       "Listed for 11–16 inch laptops",
+      "Designed for laptop desk setups",
       "Check current specifications on Amazon"
     ],
-    "countries": ["USA"],
+    "price": null,
+    "currency": "USD",
+    "image": "https://placehold.co/600x600/f5f5f5/111111?text=JOIOT+Laptop+Stand",
+    "images": [
+      "https://placehold.co/600x600/f5f5f5/111111?text=JOIOT+Laptop+Stand"
+    ],
+    "countries": [
+      "USA"
+    ],
+    "affiliatePlatform": "Amazon",
     "affiliateLink": "https://link.amazon/B09zPOFHf",
     "productUrl": "https://www.amazon.com/dp/B0B3DNYG5F",
-    "affiliatePlatform": "Amazon",
-    "asin": "B0B3DNYG5F"
+    "asin": "B0B3DNYG5F",
+    "status": "active"
   }
 ]
