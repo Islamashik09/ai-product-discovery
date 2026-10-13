@@ -1,100 +1,58 @@
-/* ==========================================
-   ETHORISE — MAIN APPLICATION
-   Premium Affiliate Product Discovery
-========================================== */
-
 "use strict";
 
-/* ==========================================
-   APPLICATION STATE
-========================================== */
+/* ETHORISE — MAIN APPLICATION */
 
 let products = [];
 
 const MAX_COMPARE = 3;
 
+const wishlist = new Set(readIds("ethoriseWishlist"));
+const comparison = new Set(readIds("ethoriseComparison"));
+
 let wishlistOnly = false;
 
-function readSavedIds(key) {
+const $ = id => document.getElementById(id);
+
+const grid = $("productGrid");
+const searchInput = $("searchInput");
+const categoryFilter = $("categoryFilter");
+const countryFilter = $("countryFilter");
+const sortFilter = $("sortFilter");
+
+const quickModal = $("quickViewModal");
+const compareModal = $("compareModal");
+
+function readIds(key) {
     try {
-        const saved = JSON.parse(
-            localStorage.getItem(key) || "[]"
-        );
-
-        if (!Array.isArray(saved)) return [];
-
-        return saved.filter(Number.isInteger);
-
-    } catch (error) {
-        console.warn("Could not read saved data:", error);
+        const data = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(data)
+            ? data.filter(Number.isInteger)
+            : [];
+    } catch {
         return [];
     }
 }
 
-const wishlist = new Set(
-    readSavedIds("ethoriseWishlist")
-);
-
-const comparison = new Set(
-    readSavedIds("ethoriseComparison")
-);
-
-/* ==========================================
-   DOM ELEMENTS
-========================================== */
-
-const grid = document.getElementById("productGrid");
-
-const searchInput = document.getElementById("searchInput");
-
-const categoryFilter = document.getElementById("categoryFilter");
-
-const countryFilter = document.getElementById("countryFilter");
-
-const sortFilter = document.getElementById("sortFilter");
-
-const productCount = document.getElementById("productCount");
-
-const wishlistCount = document.getElementById("wishlistCount");
-
-const compareCount = document.getElementById("compareCount");
-
-const compareBar = document.getElementById("compareBar");
-
-const compareBarCount = document.getElementById("compareBarCount");
-
-const modal = document.getElementById("quickViewModal");
-
-const modalBody = document.getElementById("modalBody");
-
-const compareModal = document.getElementById("compareModal");
-
-const compareContent = document.getElementById("compareContent");
-
-/* ==========================================
-   HELPER FUNCTIONS
-========================================== */
-
-function createElement(tag, className = "", text) {
-    const element = document.createElement(tag);
-
-    if (className) {
-        element.className = className;
+function saveIds(key, values) {
+    try {
+        localStorage.setItem(key, JSON.stringify([...values]));
+    } catch (error) {
+        console.warn("Storage unavailable:", error);
     }
-
-    if (text !== undefined) {
-        element.textContent = text;
-    }
-
-    return element;
 }
 
-function formatPrice(product) {
+function el(tag, className = "", text = null) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== null) node.textContent = text;
+    return node;
+}
+
+function priceLabel(product) {
     const price = Number(product.price);
 
     if (
-        product.price === null ||
-        product.price === undefined ||
+        product.price == null ||
         !Number.isFinite(price) ||
         price <= 0
     ) {
@@ -103,78 +61,11 @@ function formatPrice(product) {
             : "Check Latest Price";
     }
 
-    return `$${price.toFixed(2)} USD (Demo)`;
+    return `$${price.toFixed(2)} USD`;
 }
 
-function saveSet(key, set) {
-    try {
-        localStorage.setItem(
-            key,
-            JSON.stringify([...set])
-        );
-    } catch (error) {
-        console.warn("Unable to save data:", error);
-    }
-}
-
-/* ==========================================
-   WISHLIST
-========================================== */
-
-function saveWishlist() {
-    saveSet("ethoriseWishlist", wishlist);
-
-    wishlistCount.textContent = wishlist.size;
-}
-
-function toggleWishlist(productId) {
-    if (wishlist.has(productId)) {
-        wishlist.delete(productId);
-    } else {
-        wishlist.add(productId);
-    }
-
-    saveWishlist();
-    applyFilters();
-}
-
-/* ==========================================
-   PRODUCT COMPARISON
-========================================== */
-
-function saveComparison() {
-    saveSet("ethoriseComparison", comparison);
-
-    compareCount.textContent = comparison.size;
-
-    compareBarCount.textContent =
-        `${comparison.size} of ${MAX_COMPARE} products selected`;
-
-    compareBar.hidden = comparison.size === 0;
-}
-
-function toggleComparison(productId) {
-    if (comparison.has(productId)) {
-        comparison.delete(productId);
-    } else {
-        if (comparison.size >= MAX_COMPARE) {
-            alert("You can compare up to 3 products.");
-            return;
-        }
-
-        comparison.add(productId);
-    }
-
-    saveComparison();
-    applyFilters();
-}
-
-/* ==========================================
-   AFFILIATE LINKS
-========================================== */
-
-function createAffiliateLink(product) {
-    const platform = product.affiliatePlatform || "";
+function affiliateLink(product) {
+    const platform = product.affiliatePlatform;
 
     const label = platform === "Amazon"
         ? "View on Amazon ↗"
@@ -182,135 +73,110 @@ function createAffiliateLink(product) {
             ? "View on AliExpress ↗"
             : "View Product ↗";
 
-    const link = createElement("a", "", label);
+    const link = el("a", "", label);
 
     try {
-        if (
-            !product.affiliateLink ||
-            product.affiliateLink === "#"
-        ) {
-            throw new Error("Missing affiliate link");
-        }
-
         const url = new URL(product.affiliateLink);
 
-        if (
-            url.protocol !== "https:" &&
-            url.protocol !== "http:"
-        ) {
-            throw new Error("Unsupported protocol");
+        if (url.protocol !== "https:") {
+            throw new Error("Invalid link");
         }
 
         link.href = url.href;
         link.target = "_blank";
-
-        link.rel =
-            "sponsored nofollow noopener noreferrer";
+        link.rel = "sponsored nofollow noopener noreferrer";
 
     } catch {
         link.href = "#";
-
         link.addEventListener("click", event => {
             event.preventDefault();
-
-            alert("Product link coming soon.");
+            alert("Product link unavailable.");
         });
     }
 
     return link;
 }
 
-/* ==========================================
-   PRODUCT CARDS
-========================================== */
+function updateCounters() {
+    $("wishlistCount").textContent = wishlist.size;
+    $("compareCount").textContent = comparison.size;
 
-function createProductCard(product) {
-    const card = createElement(
-        "article",
-        "product-card"
-    );
+    $("compareBarCount").textContent =
+        `${comparison.size} of ${MAX_COMPARE} products selected`;
 
-    const imageBox = createElement(
-        "div",
-        "product-image"
-    );
+    $("compareBar").hidden = comparison.size === 0;
+}
 
-    const image = createElement("img");
+function toggleWishlist(id) {
+    wishlist.has(id) ? wishlist.delete(id) : wishlist.add(id);
+
+    saveIds("ethoriseWishlist", wishlist);
+    updateCounters();
+    filterProducts();
+}
+
+function toggleCompare(id) {
+    if (comparison.has(id)) {
+        comparison.delete(id);
+    } else {
+        if (comparison.size >= MAX_COMPARE) {
+            alert("Maximum 3 products can be compared.");
+            return;
+        }
+        comparison.add(id);
+    }
+
+    saveIds("ethoriseComparison", comparison);
+    updateCounters();
+    filterProducts();
+}
+
+function productCard(product) {
+    const card = el("article", "product-card");
+
+    const imageBox = el("div", "product-image");
+    const image = el("img");
 
     image.src = product.image;
     image.alt = product.name;
     image.loading = "lazy";
 
-    const wishlistButton = createElement(
+    const heart = el(
         "button",
         "wishlist-toggle",
         wishlist.has(product.id) ? "♥" : "♡"
     );
 
-    wishlistButton.type = "button";
-
-    wishlistButton.setAttribute(
-        "aria-label",
-        `Save ${product.name} to wishlist`
-    );
-
-    wishlistButton.setAttribute(
+    heart.type = "button";
+    heart.setAttribute("aria-label", "Toggle wishlist");
+    heart.setAttribute(
         "aria-pressed",
         String(wishlist.has(product.id))
     );
+    heart.onclick = () => toggleWishlist(product.id);
 
-    wishlistButton.addEventListener("click", () => {
-        toggleWishlist(product.id);
-    });
+    imageBox.append(image, heart);
 
-    imageBox.append(image, wishlistButton);
+    const info = el("div", "product-info");
 
-    const info = createElement(
-        "div",
-        "product-info"
-    );
-
-    const category = createElement(
+    const category = el(
         "p",
         "product-category",
         product.category
     );
 
-    const title = createElement(
-        "h3",
-        "",
-        product.name
-    );
+    const title = el("h3", "", product.name);
+    const price = el("p", "product-price", priceLabel(product));
 
-    const price = createElement(
-        "p",
-        "product-price",
-        formatPrice(product)
-    );
+    const actions = el("div", "product-actions");
 
-    const actions = createElement(
-        "div",
-        "product-actions"
-    );
+    const quick = el("button", "", "Quick View");
+    quick.type = "button";
+    quick.onclick = () => openQuickView(product);
 
-    const quickView = createElement(
-        "button",
-        "",
-        "Quick View"
-    );
+    actions.append(quick, affiliateLink(product));
 
-    quickView.type = "button";
-
-    quickView.addEventListener("click", () => {
-        openQuickView(product);
-    });
-
-    actions.append(
-        quickView,
-        createAffiliateLink(product)
-    );
-
-    const compareButton = createElement(
+    const compare = el(
         "button",
         "compare-toggle",
         comparison.has(product.id)
@@ -318,43 +184,30 @@ function createProductCard(product) {
             : "⚖ Add to Compare"
     );
 
-    compareButton.type = "button";
-
-    compareButton.setAttribute(
+    compare.type = "button";
+    compare.setAttribute(
         "aria-pressed",
         String(comparison.has(product.id))
     );
+    compare.onclick = () => toggleCompare(product.id);
 
-    if (comparison.has(product.id)) {
-        compareButton.classList.add("active");
-    }
-
-    compareButton.addEventListener("click", () => {
-        toggleComparison(product.id);
-    });
-
-    const detailsLink = createElement(
+    const details = el(
         "a",
         "product-details-link",
         "View Details →"
     );
 
-    detailsLink.href =
-        `product.html?id=${encodeURIComponent(product.id)}`;
-
-    detailsLink.style.display = "inline-block";
-    detailsLink.style.marginTop = "12px";
-    detailsLink.style.fontSize = "12px";
-    detailsLink.style.fontWeight = "600";
-    detailsLink.style.color = "#ff6b35";
+    details.href = `product.html?id=${encodeURIComponent(product.id)}`;
+    details.style.cssText =
+        "display:block;margin-top:12px;color:#ff6b35;font-size:12px;font-weight:600";
 
     info.append(
         category,
         title,
         price,
         actions,
-        compareButton,
-        detailsLink
+        compare,
+        details
     );
 
     card.append(imageBox, info);
@@ -362,560 +215,281 @@ function createProductCard(product) {
     return card;
 }
 
-/* ==========================================
-   RENDER PRODUCTS
-========================================== */
-
 function renderProducts(items) {
     grid.replaceChildren();
 
-    productCount.textContent =
+    $("productCount").textContent =
         `${items.length} product${items.length === 1 ? "" : "s"} found`;
 
     if (!items.length) {
-        const message = wishlistOnly
-            ? "No saved products match your filters."
-            : "No products found in this category yet.";
-
-        const empty = createElement(
-            "div",
-            "empty-products",
-            message
+        grid.appendChild(
+            el("p", "", "No products found.")
         );
-
-        grid.appendChild(empty);
         return;
     }
 
-    const fragment = document.createDocumentFragment();
-
     items.forEach(product => {
-        fragment.appendChild(
-            createProductCard(product)
-        );
+        grid.appendChild(productCard(product));
     });
-
-    grid.appendChild(fragment);
 }
 
-/* ==========================================
-   SEARCH, FILTERING AND SORTING
-========================================== */
-
-function applyFilters() {
-    const search = searchInput.value.toLowerCase().trim();
-
+function filterProducts() {
+    const search = searchInput.value.trim().toLowerCase();
     const category = categoryFilter.value;
-
     const country = countryFilter.value;
-
     const sort = sortFilter.value;
 
     const filtered = products.filter(product => {
-        const matchesSearch =
-            product.name.toLowerCase().includes(search) ||
-            product.category.toLowerCase().includes(search) ||
-            (product.description || "")
-                .toLowerCase()
-                .includes(search);
-
-        const matchesCategory =
-            category === "All" ||
-            product.category === category;
-
-        const matchesCountry =
-            country === "All" ||
-            (product.countries || []).includes(country);
-
-        const matchesWishlist =
-            !wishlistOnly ||
-            wishlist.has(product.id);
+        const text = [
+            product.name,
+            product.category,
+            product.description || "",
+            ...(product.tags || [])
+        ].join(" ").toLowerCase();
 
         return (
-            matchesSearch &&
-            matchesCategory &&
-            matchesCountry &&
-            matchesWishlist
+            text.includes(search) &&
+            (category === "All" || product.category === category) &&
+            (
+                country === "All" ||
+                (product.countries || []).includes(country)
+            ) &&
+            (!wishlistOnly || wishlist.has(product.id))
         );
     });
 
-    function verifiedPrice(product) {
-        const price = Number(product.price);
-
-        return Number.isFinite(price) && price > 0
-            ? price
-            : null;
+    if (sort === "name") {
+        filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
     if (sort === "price-low" || sort === "price-high") {
+        const getPrice = product => {
+            const price = Number(product.price);
+            return product.price == null || price <= 0
+                ? null
+                : price;
+        };
+
         filtered.sort((a, b) => {
-            const aPrice = verifiedPrice(a);
-            const bPrice = verifiedPrice(b);
+            const pa = getPrice(a);
+            const pb = getPrice(b);
 
-            if (aPrice === null && bPrice === null) return 0;
-            if (aPrice === null) return 1;
-            if (bPrice === null) return -1;
+            if (pa === null) return pb === null ? 0 : 1;
+            if (pb === null) return -1;
 
-            return sort === "price-low"
-                ? aPrice - bPrice
-                : bPrice - aPrice;
+            return sort === "price-low" ? pa - pb : pb - pa;
         });
-    }
-
-    if (sort === "name") {
-        filtered.sort(
-            (a, b) => a.name.localeCompare(b.name)
-        );
     }
 
     renderProducts(filtered);
 }
 
-/* ==========================================
-   CLEAR FILTERS
-========================================== */
+function selectCategory(category) {
+    wishlistOnly = false;
+    searchInput.value = "";
+    countryFilter.value = "All";
+    sortFilter.value = "default";
+    categoryFilter.value = category;
 
-document.getElementById("clearFilters")
-    .addEventListener("click", () => {
-        searchInput.value = "";
-        categoryFilter.value = "All";
-        countryFilter.value = "All";
-        sortFilter.value = "default";
+    filterProducts();
 
-        wishlistOnly = false;
-
-        applyFilters();
-    });
-
-/* ==========================================
-   QUICK VIEW MODAL
-========================================== */
+    $("shop").scrollIntoView({ behavior: "smooth" });
+}
 
 function openQuickView(product) {
-    modalBody.replaceChildren();
+    const body = $("modalBody");
+    body.replaceChildren();
 
-    const image = createElement("img");
+    const image = el("img");
     image.src = product.image;
     image.alt = product.name;
 
-    const category = createElement(
-        "p",
-        "product-category",
-        product.category
-    );
+    const title = el("h2", "", product.name);
+    const price = el("p", "product-price", priceLabel(product));
+    const description = el("p", "", product.description || "");
 
-    const title = createElement(
-        "h2",
-        "",
-        product.name
-    );
+    const details = el("a", "btn btn-outline", "Full Details →");
+    details.href = `product.html?id=${encodeURIComponent(product.id)}`;
 
-    const price = createElement(
-        "p",
-        "product-price",
-        formatPrice(product)
-    );
+    const link = affiliateLink(product);
+    link.className = "btn btn-primary";
 
-    const description = createElement(
-        "p",
-        "product-description",
-        product.description || ""
-    );
+    const actions = el("div", "product-detail-actions");
+    actions.append(details, link);
 
-    const detailsLink = createElement(
-        "a",
-        "btn btn-outline",
-        "Full Details →"
-    );
+    body.append(image, title, price, description, actions);
 
-    detailsLink.href =
-        `product.html?id=${encodeURIComponent(product.id)}`;
-
-    detailsLink.style.marginTop = "15px";
-    detailsLink.style.marginRight = "10px";
-
-    const affiliateLink = createAffiliateLink(product);
-
-    affiliateLink.className = "btn btn-primary";
-    affiliateLink.style.marginTop = "15px";
-
-    modalBody.append(
-        image,
-        category,
-        title,
-        price,
-        description,
-        detailsLink,
-        affiliateLink
-    );
-
-    modal.classList.add("active");
-
-    modal.setAttribute("aria-hidden", "false");
-
-    document.getElementById("closeModal").focus();
+    quickModal.classList.add("active");
+    quickModal.setAttribute("aria-hidden", "false");
+    $("closeModal").focus();
 }
 
-function closeQuickView() {
+function closeModal(modal) {
     modal.classList.remove("active");
-
     modal.setAttribute("aria-hidden", "true");
 }
 
-/* ==========================================
-   COMPARISON MODAL
-========================================== */
-
 function openComparison() {
-    compareContent.replaceChildren();
-
     const selected = products.filter(product =>
         comparison.has(product.id)
     );
 
     if (!selected.length) {
-        alert("Select products to compare.");
+        alert("Select products first.");
         return;
     }
 
-    const table = createElement(
-        "table",
-        "compare-table"
-    );
+    const container = $("compareContent");
+    container.replaceChildren();
 
-    const tbody = createElement("tbody");
+    const table = el("table", "compare-table");
+    const tbody = el("tbody");
 
-    function addRow(label, getValue) {
-        const row = createElement("tr");
+    const rows = [
+        ["Product", p => p.name],
+        ["Price", priceLabel],
+        ["Category", p => p.category],
+        ["Description", p => p.description || ""],
+        ["Features", p => (p.features || []).join(", ")]
+    ];
 
-        const heading = createElement(
-            "th",
-            "",
-            label
-        );
-
+    rows.forEach(([label, value]) => {
+        const row = el("tr");
+        const heading = el("th", "", label);
         heading.scope = "row";
         row.appendChild(heading);
 
         selected.forEach(product => {
-            const cell = createElement("td");
-
-            const value = getValue(product);
-
-            if (value instanceof Node) {
-                cell.appendChild(value);
-            } else {
-                cell.textContent = String(value);
-            }
-
-            row.appendChild(cell);
+            row.appendChild(el("td", "", value(product)));
         });
 
         tbody.appendChild(row);
-    }
-
-    addRow("Product", product => {
-        const wrapper = createElement("div");
-
-        const image = createElement("img");
-        image.src = product.image;
-        image.alt = product.name;
-
-        const name = createElement(
-            "strong",
-            "",
-            product.name
-        );
-
-        wrapper.append(image, name);
-
-        return wrapper;
-    });
-
-    addRow(
-        "Price",
-        product => formatPrice(product)
-    );
-
-    addRow(
-        "Category",
-        product => product.category
-    );
-
-    addRow(
-        "Listed Markets (Demo)",
-        product => (product.countries || []).join(", ")
-    );
-
-    addRow(
-        "Description",
-        product => product.description || "Not available"
-    );
-
-    addRow(
-        "Features",
-        product => (product.features || []).join(" • ")
-    );
-
-    addRow("Details", product => {
-        const link = createElement(
-            "a",
-            "",
-            "View Details →"
-        );
-
-        link.href =
-            `product.html?id=${encodeURIComponent(product.id)}`;
-
-        link.style.color = "#ff6b35";
-
-        return link;
     });
 
     table.appendChild(tbody);
-
-    compareContent.appendChild(table);
+    container.appendChild(table);
 
     compareModal.classList.add("active");
-
     compareModal.setAttribute("aria-hidden", "false");
-
-    document.getElementById("closeCompareModal").focus();
+    $("closeCompareModal").focus();
 }
 
-function closeComparison() {
-    compareModal.classList.remove("active");
+function setupEvents() {
+    searchInput.addEventListener("input", filterProducts);
+    categoryFilter.addEventListener("change", filterProducts);
+    countryFilter.addEventListener("change", filterProducts);
+    sortFilter.addEventListener("change", filterProducts);
 
-    compareModal.setAttribute("aria-hidden", "true");
-}
-
-/* ==========================================
-   MODAL EVENTS
-========================================== */
-
-document.getElementById("closeModal")
-    .addEventListener("click", closeQuickView);
-
-document.getElementById("closeCompareModal")
-    .addEventListener("click", closeComparison);
-
-modal.addEventListener("click", event => {
-    if (event.target === modal) {
-        closeQuickView();
-    }
-});
-
-compareModal.addEventListener("click", event => {
-    if (event.target === compareModal) {
-        closeComparison();
-    }
-});
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape") {
-        closeQuickView();
-        closeComparison();
-    }
-});
-
-/* ==========================================
-   COMPARISON CONTROLS
-========================================== */
-
-document.getElementById("openCompare")
-    .addEventListener("click", openComparison);
-
-document.getElementById("compareNavBtn")
-    .addEventListener("click", openComparison);
-
-document.getElementById("clearCompare")
-    .addEventListener("click", () => {
-        comparison.clear();
-
-        saveComparison();
-        applyFilters();
-    });
-
-/* ==========================================
-   WISHLIST NAVIGATION
-========================================== */
-
-document.getElementById("wishlistBtn")
-    .addEventListener("click", () => {
-        wishlistOnly = true;
-
+    $("clearFilters").onclick = () => {
+        wishlistOnly = false;
         searchInput.value = "";
         categoryFilter.value = "All";
         countryFilter.value = "All";
         sortFilter.value = "default";
+        filterProducts();
+    };
 
-        applyFilters();
+    $("wishlistBtn").onclick = () => {
+        wishlistOnly = true;
+        filterProducts();
+        $("shop").scrollIntoView({ behavior: "smooth" });
+    };
 
-        document.getElementById("shop")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+    $("compareNavBtn").onclick = openComparison;
+    $("openCompare").onclick = openComparison;
+
+    $("clearCompare").onclick = () => {
+        comparison.clear();
+        saveIds("ethoriseComparison", comparison);
+        updateCounters();
+        filterProducts();
+    };
+
+    $("closeModal").onclick = () => closeModal(quickModal);
+
+    $("closeCompareModal").onclick = () =>
+        closeModal(compareModal);
+
+    [quickModal, compareModal].forEach(modal => {
+        modal.addEventListener("click", event => {
+            if (event.target === modal) closeModal(modal);
+        });
     });
 
-/* ==========================================
-   CATEGORY SELECTION
-========================================== */
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            closeModal(quickModal);
+            closeModal(compareModal);
+        }
+    });
 
-function selectCategory(category) {
-    wishlistOnly = false;
+    document.querySelectorAll(".category-card").forEach(button => {
+        button.onclick = () => selectCategory(button.dataset.category);
+    });
 
-    searchInput.value = "";
+    document.querySelectorAll(".collection-card").forEach(card => {
+        card.onclick = event => {
+            event.preventDefault();
+            selectCategory(card.dataset.collection);
+        };
+    });
 
-    countryFilter.value = "All";
+    const menu = $("navLinks");
+    const toggle = $("menuToggle");
 
-    sortFilter.value = "default";
+    toggle.onclick = () => {
+        menu.classList.toggle("active");
+        toggle.setAttribute(
+            "aria-expanded",
+            String(menu.classList.contains("active"))
+        );
+    };
 
-    const availableOptions = [
-        ...categoryFilter.options
-    ].map(option => option.value);
-
-    categoryFilter.value = availableOptions.includes(category)
-        ? category
-        : "All";
-
-    applyFilters();
-
-    document.getElementById("shop")
-        .scrollIntoView({
-            behavior: "smooth"
-        });
+    menu.querySelectorAll("a").forEach(link => {
+        link.onclick = () => {
+            menu.classList.remove("active");
+            toggle.setAttribute("aria-expanded", "false");
+        };
+    });
 }
 
-document.querySelectorAll(".category-card")
-    .forEach(button => {
-        button.addEventListener("click", () => {
-            selectCategory(
-                button.dataset.category
-            );
-        });
-    });
+async function init() {
+    setupEvents();
 
-/* ==========================================
-   FEATURED COLLECTIONS
-========================================== */
-
-document.querySelectorAll(".collection-card")
-    .forEach(card => {
-        card.addEventListener("click", event => {
-            event.preventDefault();
-
-            const category =
-                card.dataset.collection;
-
-            selectCategory(category);
-        });
-    });
-
-/* ==========================================
-   MOBILE MENU
-========================================== */
-
-const menuToggle =
-    document.getElementById("menuToggle");
-
-const navLinks =
-    document.getElementById("navLinks");
-
-menuToggle.addEventListener("click", () => {
-    navLinks.classList.toggle("active");
-
-    menuToggle.setAttribute(
-        "aria-expanded",
-        String(navLinks.classList.contains("active"))
-    );
-});
-
-navLinks.querySelectorAll("a").forEach(link => {
-    link.addEventListener("click", () => {
-        navLinks.classList.remove("active");
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            "false"
-        );
-    });
-});
-
-/* ==========================================
-   FILTER EVENTS
-========================================== */
-
-searchInput.addEventListener("input", applyFilters);
-
-categoryFilter.addEventListener("change", applyFilters);
-
-countryFilter.addEventListener("change", applyFilters);
-
-sortFilter.addEventListener("change", applyFilters);
-
-/* ==========================================
-   LOAD PRODUCT DATABASE
-========================================== */
-
-async function loadProducts() {
     try {
-        const response = await fetch(
-            "data/products.json"
-        );
+        const response = await fetch("data/products.json");
 
-        if (!response.ok) {
-            throw new Error(
-                "Unable to load product database."
-            );
-        }
+        if (!response.ok) throw new Error("Product database unavailable");
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            throw new Error(
-                "Invalid product database format."
-            );
+            throw new Error("Invalid product data");
         }
 
-        products = data;
+        products = data.filter(p => p.status !== "inactive");
 
-        const validIds = new Set(
-            products.map(product => product.id)
-        );
+        const ids = new Set(products.map(p => p.id));
 
         for (const id of wishlist) {
-            if (!validIds.has(id)) {
-                wishlist.delete(id);
-            }
+            if (!ids.has(id)) wishlist.delete(id);
         }
 
         for (const id of comparison) {
-            if (!validIds.has(id)) {
-                comparison.delete(id);
-            }
+            if (!ids.has(id)) comparison.delete(id);
         }
 
-        saveWishlist();
-        saveComparison();
+        saveIds("ethoriseWishlist", wishlist);
+        saveIds("ethoriseComparison", comparison);
 
-        applyFilters();
+        updateCounters();
+        filterProducts();
 
     } catch (error) {
         console.error(error);
-
-        grid.textContent =
-            "Unable to load products. Please try again.";
-
-        productCount.textContent =
-            "Products unavailable";
+        grid.textContent = "Unable to load products.";
     }
 }
 
-/* ==========================================
-   INITIALIZE
-========================================== */
-
-saveWishlist();
-saveComparison();
-
-loadProducts();
+updateCounters();
+init();
