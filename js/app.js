@@ -2,7 +2,10 @@
 
 /* ==========================================
    ETHORISE — MAIN APPLICATION
+
    Premium Product Discovery
+   Cinematic Hero Slider
+   Fashion Background Video
    Wishlist + Comparison + Shopping List
 ========================================== */
 
@@ -13,6 +16,9 @@ const MAX_COMPARE = 3;
 const CART_KEY = "ethoriseCart";
 const WISHLIST_KEY = "ethoriseWishlist";
 const COMPARE_KEY = "ethoriseComparison";
+
+const HERO_VIDEO = "assets/videos/ethorise-fashion.mp4";
+const SLIDE_INTERVAL = 6500;
 
 const $ = id => document.getElementById(id);
 
@@ -110,6 +116,402 @@ function refreshSavedCollections() {
         .forEach(id => {
             comparison.add(id);
         });
+}
+
+/* ==========================================
+   CINEMATIC HERO SLIDER
+========================================== */
+
+function setupHeroSlider() {
+    const slider = $("heroSlider");
+
+    if (!slider) return;
+
+    const slides = [
+        ...slider.querySelectorAll(".hero-slide")
+    ];
+
+    const dots = [
+        ...slider.querySelectorAll(".hero-dot")
+    ];
+
+    const previousButton = $("heroPrev");
+    const nextButton = $("heroNext");
+    const pauseButton = $("heroPause");
+
+    if (!slides.length) return;
+
+    const reducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)"
+    );
+
+    let activeSlide = 0;
+    let timer = null;
+    let manuallyPaused = false;
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    let fashionVideo = null;
+
+    /* ======================================
+       FASHION BACKGROUND VIDEO
+    ====================================== */
+
+    function setupFashionVideo() {
+        if (reducedMotion.matches) return;
+
+        const firstSlide = slides[0];
+
+        const imageBox = firstSlide.querySelector(
+            ".hero-slide-image"
+        );
+
+        if (!imageBox) return;
+
+        const video = el(
+            "video",
+            "hero-background-video"
+        );
+
+        video.src = HERO_VIDEO;
+
+        video.muted = true;
+        video.loop = true;
+        video.autoplay = true;
+        video.playsInline = true;
+        video.preload = "metadata";
+
+        video.setAttribute("muted", "");
+        video.setAttribute("playsinline", "");
+
+        video.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+
+        Object.assign(video.style, {
+            position: "absolute",
+            inset: "0",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: "0",
+            transition: "opacity .8s ease"
+        });
+
+        video.addEventListener(
+            "playing",
+            () => {
+                video.style.opacity = "1";
+            }
+        );
+
+        video.addEventListener(
+            "error",
+            () => {
+                video.style.display = "none";
+            }
+        );
+
+        imageBox.appendChild(video);
+
+        fashionVideo = video;
+    }
+
+    function updateVideo() {
+        if (!fashionVideo) return;
+
+        if (
+            activeSlide === 0 &&
+            !manuallyPaused &&
+            !document.hidden
+        ) {
+            const playPromise = fashionVideo.play();
+
+            if (
+                playPromise &&
+                typeof playPromise.catch === "function"
+            ) {
+                playPromise.catch(() => {});
+            }
+        } else {
+            fashionVideo.pause();
+        }
+    }
+
+    /* ======================================
+       SLIDE CONTROLS
+    ====================================== */
+
+    function showSlide(index) {
+        activeSlide = (
+            index + slides.length
+        ) % slides.length;
+
+        slides.forEach((slide, slideIndex) => {
+            const active = slideIndex === activeSlide;
+
+            slide.classList.toggle(
+                "active",
+                active
+            );
+
+            slide.setAttribute(
+                "aria-hidden",
+                String(!active)
+            );
+
+            slide.querySelectorAll(
+                "a, button"
+            ).forEach(control => {
+                control.tabIndex = active ? 0 : -1;
+            });
+        });
+
+        dots.forEach((dot, dotIndex) => {
+            const active = dotIndex === activeSlide;
+
+            dot.classList.toggle(
+                "active",
+                active
+            );
+
+            if (active) {
+                dot.setAttribute(
+                    "aria-current",
+                    "true"
+                );
+            } else {
+                dot.removeAttribute(
+                    "aria-current"
+                );
+            }
+        });
+
+        updateVideo();
+    }
+
+    function clearTimer() {
+        if (timer !== null) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+
+    function startTimer() {
+        clearTimer();
+
+        if (
+            manuallyPaused ||
+            reducedMotion.matches ||
+            document.hidden
+        ) {
+            return;
+        }
+
+        timer = setInterval(() => {
+            showSlide(activeSlide + 1);
+        }, SLIDE_INTERVAL);
+    }
+
+    function moveSlide(direction) {
+        showSlide(activeSlide + direction);
+        startTimer();
+    }
+
+    function updatePauseButton() {
+        if (!pauseButton) return;
+
+        pauseButton.textContent =
+            manuallyPaused ? "▶" : "Ⅱ";
+
+        pauseButton.setAttribute(
+            "aria-label",
+            manuallyPaused
+                ? "Resume automatic slides"
+                : "Pause automatic slides"
+        );
+
+        pauseButton.setAttribute(
+            "aria-pressed",
+            String(manuallyPaused)
+        );
+    }
+
+    /* ======================================
+       BUTTON EVENTS
+    ====================================== */
+
+    if (previousButton) {
+        previousButton.onclick = () => {
+            moveSlide(-1);
+        };
+    }
+
+    if (nextButton) {
+        nextButton.onclick = () => {
+            moveSlide(1);
+        };
+    }
+
+    if (pauseButton) {
+        pauseButton.onclick = () => {
+            manuallyPaused = !manuallyPaused;
+
+            updatePauseButton();
+
+            if (manuallyPaused) {
+                clearTimer();
+            } else {
+                startTimer();
+            }
+
+            updateVideo();
+        };
+    }
+
+    dots.forEach(dot => {
+        dot.onclick = () => {
+            const index = Number(
+                dot.dataset.slideTo
+            );
+
+            if (Number.isInteger(index)) {
+                showSlide(index);
+                startTimer();
+            }
+        };
+    });
+
+    /* ======================================
+       MOBILE TOUCH SWIPE
+    ====================================== */
+
+    slider.addEventListener(
+        "touchstart",
+        event => {
+            if (!event.touches.length) return;
+
+            touchStartX = event.touches[0].clientX;
+            touchStartY = event.touches[0].clientY;
+        },
+        { passive: true }
+    );
+
+    slider.addEventListener(
+        "touchend",
+        event => {
+            if (!event.changedTouches.length) return;
+
+            const deltaX =
+                event.changedTouches[0].clientX -
+                touchStartX;
+
+            const deltaY =
+                event.changedTouches[0].clientY -
+                touchStartY;
+
+            if (
+                Math.abs(deltaX) > 55 &&
+                Math.abs(deltaX) > Math.abs(deltaY)
+            ) {
+                moveSlide(deltaX < 0 ? 1 : -1);
+            }
+        },
+        { passive: true }
+    );
+
+    /* ======================================
+       AUTO PLAY CONTROL
+    ====================================== */
+
+    slider.addEventListener(
+        "mouseenter",
+        clearTimer
+    );
+
+    slider.addEventListener(
+        "mouseleave",
+        startTimer
+    );
+
+    slider.addEventListener(
+        "focusin",
+        clearTimer
+    );
+
+    slider.addEventListener(
+        "focusout",
+        event => {
+            if (
+                !slider.contains(event.relatedTarget)
+            ) {
+                startTimer();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "visibilitychange",
+        () => {
+            if (document.hidden) {
+                clearTimer();
+            } else {
+                startTimer();
+            }
+
+            updateVideo();
+        }
+    );
+
+    function onMotionChange() {
+        if (reducedMotion.matches) {
+            clearTimer();
+
+            if (fashionVideo) {
+                fashionVideo.pause();
+                fashionVideo.style.opacity = "0";
+            }
+        } else {
+            startTimer();
+            updateVideo();
+        }
+    }
+
+    if (typeof reducedMotion.addEventListener === "function") {
+        reducedMotion.addEventListener(
+            "change",
+            onMotionChange
+        );
+    }
+
+    setupFashionVideo();
+
+    showSlide(0);
+
+    updatePauseButton();
+
+    startTimer();
+
+    /* ======================================
+       HERO CATEGORY BUTTONS
+    ====================================== */
+
+    slider.querySelectorAll(
+        "[data-hero-category]"
+    ).forEach(link => {
+        link.addEventListener(
+            "click",
+            event => {
+                event.preventDefault();
+
+                selectCategory(
+                    link.dataset.heroCategory
+                );
+            }
+        );
+    });
 }
 
 /* ==========================================
@@ -885,8 +1287,6 @@ function setupEvents() {
         };
     }
 
-    /* DEDICATED WISHLIST PAGE */
-
     const wishlistButton = $("wishlistBtn");
 
     if (wishlistButton) {
@@ -895,8 +1295,6 @@ function setupEvents() {
         };
     }
 
-    /* DEDICATED COMPARE PAGE */
-
     const compareButton = $("compareNavBtn");
 
     if (compareButton) {
@@ -904,8 +1302,6 @@ function setupEvents() {
             window.location.href = "compare.html";
         };
     }
-
-    /* KEEP EXISTING COMPARISON MODAL */
 
     const openCompare = $("openCompare");
 
@@ -976,7 +1372,7 @@ function setupEvents() {
     });
 
     document.querySelectorAll(
-        ".collection-card"
+        ".collection-card, .fashion-editorial-content [data-collection], .technology-editorial-content [data-collection]"
     ).forEach(card => {
         card.onclick = event => {
             event.preventDefault();
@@ -1013,8 +1409,6 @@ function setupEvents() {
             };
         });
     }
-
-    /* KEEP COUNTERS SYNCHRONIZED */
 
     window.addEventListener(
         "pageshow",
@@ -1055,6 +1449,8 @@ async function init() {
     createCartNavigation();
 
     setupEvents();
+
+    setupHeroSlider();
 
     updateCounters();
 
