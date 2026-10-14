@@ -36,5 +36,153 @@
     "productUrl": "https://www.amazon.com/dp/B0B3DNYG5F",
     "asin": "B0B3DNYG5F",
     "status": "active"
+  },
+  {
+    "id": 10,
+    "name": "MOKiN 13-in-1 USB-C Laptop Docking Station",
+    "brand": "MOKiN",
+    "category": "Electronics",
+    "subcategory": "USB-C Hubs & Docking Stations",
+    "description": "MOKiN 13-in-1 USB-C docking station for compatible laptops. The listing describes HDMI, DisplayPort, USB, Ethernet, power delivery, card reader and audio connectivity. Multi-monitor functionality depends on laptop and operating-system compatibility. Verify specifications with Amazon.",
+    "features": [
+      "13-in-1 USB-C docking station",
+      "Dual HDMI and DisplayPort outputs",
+      "Advertised 4K display support",
+      "USB connectivity",
+      "RJ45 Ethernet",
+      "Advertised 100W Power Delivery support",
+      "Card reader",
+      "Audio and microphone connectivity"
+    ],
+    "tags": [
+      "usb c hub",
+      "docking station",
+      "laptop accessories",
+      "desk setup"
+    ],
+    "relatedProductIds": [],
+    "price": null,
+    "currency": "USD",
+    "image": "https://placehold.co/800x800/111111/ffffff?text=MOKiN+USB-C+Dock",
+    "images": [
+      "https://placehold.co/800x800/111111/ffffff?text=MOKiN+USB-C+Dock"
+    ],
+    "video": "",
+    "countries": [
+      "USA"
+    ],
+    "affiliatePlatform": "Amazon",
+    "affiliateLink": "https://link.amazon/B0eNGgWWl",
+    "productUrl": "https://www.amazon.com/dp/B0DQPKQMCC",
+    "asin": "B0DQPKQMCC",
+    "status": "active"
+  },
+  {
+    "id": 11,
+    "name": "Razer Basilisk V4 HyperSpeed Wireless Gaming Mouse, White",
+    "brand": "Razer",
+    "category": "Electronics",
+    "subcategory": "Gaming Mice",
+    "description": "Razer Basilisk V4 HyperSpeed wireless gaming mouse in white. The supplied product title advertises up to 140 hours of battery life. Verify the model, connectivity, battery-life conditions and compatibility on Amazon.",
+    "features": [
+      "Wireless gaming mouse",
+      "White color",
+      "Advertised battery life up to 140 hours",
+      "Designed for gaming setups"
+    ],
+    "tags": [
+      "gaming",
+      "wireless mouse",
+      "computer accessories",
+      "desk setup"
+    ],
+    "relatedProductIds": [],
+    "price": null,
+    "currency": "USD",
+    "image": "https://placehold.co/800x800/111111/ffffff?text=Razer+Gaming+Mouse",
+    "images": [
+      "https://placehold.co/800x800/111111/ffffff?text=Razer+Gaming+Mouse"
+    ],
+    "video": "",
+    "countries": [
+      "USA"
+    ],
+    "affiliatePlatform": "Amazon",
+    "affiliateLink": "https://link.amazon/B0ifKA9F1",
+    "productUrl": "https://www.amazon.com/dp/B0HJB4YPQJ",
+    "asin": "B0HJB4YPQJ",
+    "status": "active"
+  },
+  {
+    "id": 12,
+    "name": "JOYEKY 360-Degree Rotating Aluminum Laptop Stand",
+    "brand": "JOYEKY",
+    "category": "Office",
+    "subcategory": "Laptop Stands",
+    "description": "JOYEKY aluminum laptop riser for desk setups with an advertised 360-degree rotating design. The supplied listing describes compatibility with 10?16-inch laptops. Verify dimensions and weight compatibility on Amazon.",
+    "features": [
+      "360-degree rotating design",
+      "Aluminum laptop riser",
+      "Designed for desktop use",
+      "Advertised compatibility with 10?16-inch laptops"
+    ],
+    "tags": [
+      "laptop stand",
+      "desk setup",
+      "office accessories",
+      "ergonomics"
+    ],
+    "relatedProductIds": [],
+    "price": null,
+    "currency": "USD",
+    "image": "https://placehold.co/800x800/111111/ffffff?text=JOYEKY+Laptop+Stand",
+    "images": [
+      "https://placehold.co/800x800/111111/ffffff?text=JOYEKY+Laptop+Stand"
+    ],
+    "video": "",
+    "countries": [
+      "USA"
+    ],
+    "affiliatePlatform": "Amazon",
+    "affiliateLink": "https://link.amazon/B0c93Q9ve",
+    "productUrl": "https://www.amazon.com/dp/B09PYPPD9L",
+    "asin": "B09PYPPD9L",
+    "status": "active"
+  },
+  {
+    "id": 13,
+    "name": "UGREEN Nexode 100W GaN USB-C Charger, 4-Port",
+    "brand": "UGREEN",
+    "category": "Electronics",
+    "subcategory": "USB-C Chargers",
+    "description": "UGREEN Nexode 100W GaN multiport charger. The supplied product listing describes four charging ports and up to 100W output. Actual output depends on port configuration and connected devices. Verify specifications and compatibility on Amazon.",
+    "features": [
+      "GaN charging technology",
+      "Four charging ports",
+      "Advertised maximum 100W output",
+      "Designed for compatible laptops and other devices"
+    ],
+    "tags": [
+      "usb c charger",
+      "GaN charger",
+      "laptop charger",
+      "charging accessories"
+    ],
+    "relatedProductIds": [],
+    "price": null,
+    "currency": "USD",
+    "image": "https://placehold.co/800x800/111111/ffffff?text=UGREEN+100W+Charger",
+    "images": [
+      "https://placehold.co/800x800/111111/ffffff?text=UGREEN+100W+Charger"
+    ],
+    "video": "",
+    "countries": [
+      "USA"
+    ],
+    "affiliatePlatform": "Amazon",
+    "affiliateLink": "https://link.amazon/B04YMsvtJ",
+    "productUrl": "https://www.amazon.com/dp/B091Z6JNX4",
+    "asin": "B091Z6JNX4",
+    "status": "active"
   }
 ]
