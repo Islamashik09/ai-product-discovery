@@ -1,18 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="ETHORISE — Discover extraordinary tech, fashion, beauty, home essentials and lifestyle products.">
+          content="Discover extraordinary fashion, technology, home essentials, beauty, fitness and lifestyle products at ETHORISE.">
 
     <meta name="theme-color" content="#ffffff">
 
+    <meta name="robots" content="index, follow">
+
     <title>ETHORISE | Discover Extraordinary</title>
 
-    <link rel="canonical"
-          href="https://islamashik09.github.io/ethorise/">
+    <link
+        rel="canonical"
+        href="https://islamashik09.github.io/ethorise/"
+    >
+
+    <meta
+        name="google-site-verification"
+        content="Ka9pjY9bf0Agcpjv-4D8WHSSKQduAqZsFLwL8-g0Cf0"
+    >
+
+    <!-- SOCIAL SHARING -->
+
+    <meta property="og:type" content="website">
+
+    <meta property="og:site_name" content="ETHORISE">
+
+    <meta
+        property="og:title"
+        content="ETHORISE | Discover Extraordinary"
+    >
+
+    <meta
+        property="og:description"
+        content="Explore fashion, technology, home and lifestyle discoveries at ETHORISE."
+    >
+
+    <meta
+        property="og:url"
+        content="https://islamashik09.github.io/ethorise/"
+    >
+
+    <meta name="twitter:card" content="summary">
+
+    <!-- FONTS -->
 
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
@@ -22,36 +59,55 @@
           crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     >
 
     <link rel="stylesheet" href="css/style.css">
-    <meta name="google-site-verification" content="Ka9pjY9bf0Agcpjv-4D8WHSSKQduAqZsFLwL8-g0Cf0" />
+
 </head>
 
 <body>
 
-    <!-- ANNOUNCEMENT BAR -->
+    <!-- =====================================
+         ANNOUNCEMENT
+    ====================================== -->
+
     <div class="announcement">
-        ✦ Discover Extraordinary. Elevate Everyday.
+        ✦ DISCOVER EXTRAORDINARY. ELEVATE EVERYDAY.
     </div>
 
-    <!-- NAVIGATION -->
+
+    <!-- =====================================
+         NAVIGATION
+    ====================================== -->
+
     <header class="header">
+
         <nav class="navbar container">
 
-            <a href="index.html" class="logo">
+            <a href="index.html"
+               class="logo"
+               aria-label="ETHORISE homepage">
+
                 ETHORISE<span>.</span>
+
             </a>
 
             <div class="nav-links" id="navLinks">
+
                 <a href="#home">Home</a>
+
                 <a href="#shop">Shop</a>
+
                 <a href="#categories">Categories</a>
+
                 <a href="#collections">Collections</a>
+
                 <a href="about.html">About</a>
+
                 <a href="contact.html">Contact</a>
+
             </div>
 
             <div class="nav-actions">
@@ -63,6 +119,7 @@
                     type="button"
                 >
                     ♡
+
                     <span id="wishlistCount">0</span>
                 </button>
 
@@ -73,6 +130,7 @@
                     type="button"
                 >
                     ⚖
+
                     <span id="compareCount">0</span>
                 </button>
 
@@ -88,281 +146,957 @@
                 </button>
 
             </div>
+
         </nav>
+
     </header>
 
-    <!-- AFFILIATE DISCLOSURE -->
+
+    <!-- =====================================
+         AFFILIATE DISCLOSURE
+    ====================================== -->
+
     <div class="affiliate-notice">
+
         <div class="container">
+
             <p>
-                As an Amazon Associate I earn from qualifying purchases.
-                Some links may earn us a commission.
-                <a href="affiliate-disclosure.html">Learn More</a>
+                As an Amazon Associate I earn from
+                qualifying purchases.
+
+                Some links may earn ETHORISE a commission.
+
+                <a href="affiliate-disclosure.html">
+                    Learn More
+                </a>
             </p>
+
         </div>
+
     </div>
+
 
     <main>
 
-        <!-- HERO -->
-        <section class="hero hero-premium" id="home">
-            <div class="container hero-grid">
+        <!-- =================================
+             CINEMATIC HERO SLIDER
+        ================================== -->
 
-                <div class="hero-content">
+        <section
+            class="cinematic-hero"
+            id="home"
+            aria-label="Featured ETHORISE collections"
+        >
 
-                    <div class="hero-label">
-                        <span class="hero-label-dot"></span>
-                        THE ART OF DISCOVERY
+            <div
+                class="hero-slider"
+                id="heroSlider"
+                aria-roledescription="carousel"
+                aria-label="Explore ETHORISE collections"
+            >
+
+                <!-- SLIDE 1: FASHION -->
+
+                <article
+                    class="hero-slide active"
+                    data-slide="0"
+                    aria-label="Fashion collection"
+                >
+
+                    <div class="hero-slide-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1920&q=85"
+                            alt="Contemporary fashion and personal style"
+                            fetchpriority="high"
+                        >
+
                     </div>
 
-                    <h1>
-                        Discover<br>
-                        <span>Extraordinary.</span>
-                    </h1>
+                    <div class="hero-slide-overlay"></div>
 
-                    <p class="hero-description">
-                        Explore a world of innovative technology,
-                        modern fashion, beauty, home essentials,
-                        and lifestyle products thoughtfully
-                        selected for everyday discovery.
-                    </p>
+                    <div class="container hero-slide-container">
 
-                    <div class="hero-buttons">
+                        <div class="hero-slide-content">
 
-                        <a href="#shop" class="btn btn-primary">
-                            Explore Products ↗
-                        </a>
-
-                        <a href="#categories" class="btn btn-outline">
-                            Browse Categories
-                        </a>
-
-                    </div>
-
-                    <div class="hero-bottom-text">
-                        <span>✦</span>
-                        Your next discovery starts here.
-                    </div>
-
-                </div>
-
-                <div class="hero-visual hero-visual-v2">
-
-                    <div class="hero-showcase">
-                        <div class="showcase-glow"></div>
-
-                        <div class="showcase-content">
-
-                            <span class="showcase-label">
-                                ETHORISE / DISCOVER MORE
+                            <span class="hero-slide-eyebrow">
+                                ETHORISE / STYLE EDITION
                             </span>
 
-                            <div class="showcase-symbol">
-                                ✦
-                            </div>
+                            <h1>
+                                Redefine<br>
+                                <em>Your Style.</em>
+                            </h1>
 
-                            <div class="showcase-bottom">
+                            <p>
+                                Discover contemporary fashion,
+                                expressive accessories and
+                                everyday style inspiration.
+                            </p>
 
-                                <div>
-                                    <span>
-                                        MODERN LIVING, REIMAGINED
-                                    </span>
+                            <div class="hero-slide-actions">
 
-                                    <h2>
-                                        Find Your Next Favorite.
-                                    </h2>
-                                </div>
+                                <a
+                                    href="#shop"
+                                    class="btn btn-primary hero-shop-btn"
+                                    data-hero-category="Fashion"
+                                >
+                                    Explore Fashion ↗
+                                </a>
 
-                                <a href="#shop"
-                                   aria-label="Explore products">
-                                    ↗
+                                <a
+                                    href="#categories"
+                                    class="btn btn-outline hero-secondary-btn"
+                                >
+                                    Discover More
                                 </a>
 
                             </div>
+
                         </div>
+
                     </div>
 
-                    <div class="floating-badge floating-badge-one">
-                        <span>✦</span>
-                        <div>
-                            <strong>Explore New Ideas</strong>
-                            <small>Products for modern living</small>
-                        </div>
+                    <div class="hero-slide-number">
+                        01 / 04
                     </div>
 
-                    <div class="floating-badge floating-badge-two">
-                        <span>↗</span>
-                        <div>
-                            <strong>Discover More</strong>
-                            <small>Find your next favorite</small>
+                </article>
+
+
+                <!-- SLIDE 2: TECHNOLOGY -->
+
+                <article
+                    class="hero-slide"
+                    data-slide="1"
+                    aria-label="Technology collection"
+                    aria-hidden="true"
+                >
+
+                    <div class="hero-slide-image">
+
+                        <img
+                            src="assets/images/ethorise-electronics.jpg"
+                            alt="Modern technology workspace"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <div class="hero-slide-overlay"></div>
+
+                    <div class="container hero-slide-container">
+
+                        <div class="hero-slide-content">
+
+                            <span class="hero-slide-eyebrow">
+                                ETHORISE / TECH EDITION
+                            </span>
+
+                            <h2>
+                                Innovation<br>
+                                <em>Meets Everyday.</em>
+                            </h2>
+
+                            <p>
+                                Explore modern technology,
+                                useful accessories and
+                                thoughtfully designed
+                                digital essentials.
+                            </p>
+
+                            <div class="hero-slide-actions">
+
+                                <a
+                                    href="#shop"
+                                    class="btn btn-primary hero-shop-btn"
+                                    data-hero-category="Electronics"
+                                >
+                                    Explore Technology ↗
+                                </a>
+
+                                <a
+                                    href="#categories"
+                                    class="btn btn-outline hero-secondary-btn"
+                                >
+                                    Discover More
+                                </a>
+
+                            </div>
+
                         </div>
+
+                    </div>
+
+                    <div class="hero-slide-number">
+                        02 / 04
+                    </div>
+
+                </article>
+
+
+                <!-- SLIDE 3: HOME -->
+
+                <article
+                    class="hero-slide"
+                    data-slide="2"
+                    aria-label="Home collection"
+                    aria-hidden="true"
+                >
+
+                    <div class="hero-slide-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1920&q=85"
+                            alt="Elegant modern home interior"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <div class="hero-slide-overlay"></div>
+
+                    <div class="container hero-slide-container">
+
+                        <div class="hero-slide-content">
+
+                            <span class="hero-slide-eyebrow">
+                                ETHORISE / LIVING EDITION
+                            </span>
+
+                            <h2>
+                                Make Space<br>
+                                <em>For Better Living.</em>
+                            </h2>
+
+                            <p>
+                                Discover beautiful home
+                                essentials, thoughtful details
+                                and inspiration for
+                                modern living.
+                            </p>
+
+                            <div class="hero-slide-actions">
+
+                                <a
+                                    href="#shop"
+                                    class="btn btn-primary hero-shop-btn"
+                                    data-hero-category="Home"
+                                >
+                                    Explore Home ↗
+                                </a>
+
+                                <a
+                                    href="#categories"
+                                    class="btn btn-outline hero-secondary-btn"
+                                >
+                                    Discover More
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="hero-slide-number">
+                        03 / 04
+                    </div>
+
+                </article>
+
+
+                <!-- SLIDE 4: FITNESS -->
+
+                <article
+                    class="hero-slide"
+                    data-slide="3"
+                    aria-label="Fitness collection"
+                    aria-hidden="true"
+                >
+
+                    <div class="hero-slide-image">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1920&q=85"
+                            alt="Fitness training and active lifestyle"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <div class="hero-slide-overlay"></div>
+
+                    <div class="container hero-slide-container">
+
+                        <div class="hero-slide-content">
+
+                            <span class="hero-slide-eyebrow">
+                                ETHORISE / ACTIVE EDITION
+                            </span>
+
+                            <h2>
+                                Move Beyond<br>
+                                <em>Your Limits.</em>
+                            </h2>
+
+                            <p>
+                                Explore fitness essentials,
+                                training accessories and
+                                products for an
+                                active lifestyle.
+                            </p>
+
+                            <div class="hero-slide-actions">
+
+                                <a
+                                    href="#shop"
+                                    class="btn btn-primary hero-shop-btn"
+                                    data-hero-category="Fitness"
+                                >
+                                    Explore Fitness ↗
+                                </a>
+
+                                <a
+                                    href="#categories"
+                                    class="btn btn-outline hero-secondary-btn"
+                                >
+                                    Discover More
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="hero-slide-number">
+                        04 / 04
+                    </div>
+
+                </article>
+
+
+                <!-- SLIDER CONTROLS -->
+
+                <div class="hero-slider-controls">
+
+                    <div class="hero-slider-dots"
+                         id="heroSliderDots"
+                         aria-label="Choose featured collection">
+
+                        <button
+                            class="hero-dot active"
+                            data-slide-to="0"
+                            aria-label="Show fashion collection"
+                            aria-current="true"
+                            type="button"
+                        ></button>
+
+                        <button
+                            class="hero-dot"
+                            data-slide-to="1"
+                            aria-label="Show technology collection"
+                            type="button"
+                        ></button>
+
+                        <button
+                            class="hero-dot"
+                            data-slide-to="2"
+                            aria-label="Show home collection"
+                            type="button"
+                        ></button>
+
+                        <button
+                            class="hero-dot"
+                            data-slide-to="3"
+                            aria-label="Show fitness collection"
+                            type="button"
+                        ></button>
+
+                    </div>
+
+                    <div class="hero-slider-arrows">
+
+                        <button
+                            id="heroPrev"
+                            class="hero-slider-arrow"
+                            type="button"
+                            aria-label="Previous slide"
+                        >
+                            ←
+                        </button>
+
+                        <button
+                            id="heroNext"
+                            class="hero-slider-arrow"
+                            type="button"
+                            aria-label="Next slide"
+                        >
+                            →
+                        </button>
+
+                        <button
+                            id="heroPause"
+                            class="hero-slider-arrow"
+                            type="button"
+                            aria-label="Pause automatic slides"
+                            aria-pressed="false"
+                        >
+                            Ⅱ
+                        </button>
+
                     </div>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- TRUST FEATURES -->
+
+        <!-- =================================
+             TRUST STRIP
+        ================================== -->
+
         <section class="trust container">
 
             <div class="trust-item">
+
                 <span>✦</span>
+
                 <div>
-                    <h3>Product Discovery</h3>
-                    <p>Explore different product categories</p>
+                    <h3>Discover More</h3>
+
+                    <p>
+                        Explore products across
+                        different lifestyles.
+                    </p>
                 </div>
+
             </div>
 
             <div class="trust-item">
+
                 <span>⌕</span>
+
                 <div>
-                    <h3>Smart Search</h3>
-                    <p>Find products that interest you</p>
+                    <h3>Explore Smarter</h3>
+
+                    <p>
+                        Search, save and compare
+                        your discoveries.
+                    </p>
                 </div>
+
             </div>
 
             <div class="trust-item">
+
                 <span>♡</span>
+
                 <div>
-                    <h3>Save Favorites</h3>
-                    <p>Keep track of interesting products</p>
+                    <h3>Save Your Favorites</h3>
+
+                    <p>
+                        Build your personal
+                        shopping list.
+                    </p>
                 </div>
+
             </div>
 
         </section>
 
-        <!-- CATEGORIES -->
-        <section class="section container" id="categories">
 
-            <div class="section-heading">
-                <div>
-                    <span class="eyebrow">EXPLORE ETHORISE</span>
-                    <h2>Discover by Category</h2>
+        <!-- =================================
+             BRAND INTRODUCTION
+        ================================== -->
+
+        <section class="editorial-intro section">
+
+            <div class="container">
+
+                <div class="editorial-intro-content">
+
+                    <span class="eyebrow">
+                        WELCOME TO ETHORISE
+                    </span>
+
+                    <h2>
+                        More Than Shopping.<br>
+                        <em>A World of Discovery.</em>
+                    </h2>
+
+                    <p>
+                        Style that inspires.
+                        Technology that simplifies.
+                        Spaces that feel like home.
+
+                        Discover products and ideas
+                        for the way you live.
+                    </p>
+
+                    <a
+                        href="#shop"
+                        class="editorial-text-link"
+                    >
+                        Explore Our Discoveries ↗
+                    </a>
+
                 </div>
 
-                <p>Something for every lifestyle.</p>
             </div>
 
-            <div class="category-grid category-grid-premium">
-
-                <button class="category-card"
-                        data-category="Electronics"
-                        type="button">
-                    <span>💻</span>
-                    <h3>Electronics</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Home"
-                        type="button">
-                    <span>🏠</span>
-                    <h3>Home & Living</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Fashion"
-                        type="button">
-                    <span>👗</span>
-                    <h3>Fashion</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Beauty"
-                        type="button">
-                    <span>✨</span>
-                    <h3>Beauty</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Fitness"
-                        type="button">
-                    <span>🏋️</span>
-                    <h3>Fitness</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Accessories"
-                        type="button">
-                    <span>📱</span>
-                    <h3>Accessories</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Office"
-                        type="button">
-                    <span>🖥️</span>
-                    <h3>Home Office</h3>
-                    <p>Explore →</p>
-                </button>
-
-                <button class="category-card"
-                        data-category="Lifestyle"
-                        type="button">
-                    <span>🌟</span>
-                    <h3>Lifestyle</h3>
-                    <p>Explore →</p>
-                </button>
-
-            </div>
         </section>
 
-        <!-- FEATURED COLLECTIONS -->
-        <section class="section collections-section" id="collections">
+
+        <!-- =================================
+             VISUAL CATEGORIES
+        ================================== -->
+
+        <section
+            class="section visual-categories-section"
+            id="categories"
+        >
 
             <div class="container">
 
                 <div class="section-heading">
+
                     <div>
-                        <span class="eyebrow">CURATED DISCOVERIES</span>
-                        <h2>Explore Collections</h2>
+
+                        <span class="eyebrow">
+                            EXPLORE YOUR WORLD
+                        </span>
+
+                        <h2>Discover by Category</h2>
+
                     </div>
-                    <p>Discover products for modern living.</p>
+
+                    <p>
+                        Every interest.
+                        Every lifestyle.
+                    </p>
+
                 </div>
+
+
+                <div class="category-grid category-grid-premium">
+
+                    <!-- ELECTRONICS -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Electronics"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="assets/images/ethorise-electronics.jpg"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>01</span>
+
+                            <h3>Electronics</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- HOME -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Home"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>02</span>
+
+                            <h3>Home & Living</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- FASHION -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Fashion"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>03</span>
+
+                            <h3>Fashion</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- BEAUTY -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Beauty"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>04</span>
+
+                            <h3>Beauty</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- FITNESS -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Fitness"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>05</span>
+
+                            <h3>Fitness</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- ACCESSORIES -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Accessories"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>06</span>
+
+                            <h3>Accessories</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- OFFICE -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Office"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>07</span>
+
+                            <h3>Home Office</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+
+                    <!-- LIFESTYLE -->
+
+                    <button
+                        class="category-card visual-category-card"
+                        data-category="Lifestyle"
+                        type="button"
+                    >
+
+                        <div class="visual-category-image">
+
+                            <img
+                                src="https://images.unsplash.com/photo-1511988617509-a57c8a288659?auto=format&fit=crop&w=700&q=80"
+                                alt=""
+                                loading="lazy"
+                            >
+
+                        </div>
+
+                        <div class="visual-category-content">
+
+                            <span>08</span>
+
+                            <h3>Lifestyle</h3>
+
+                            <p>Explore Collection ↗</p>
+
+                        </div>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             FASHION EDITORIAL
+        ================================== -->
+
+        <section class="fashion-editorial-section">
+
+            <div class="fashion-editorial-grid">
+
+                <div class="fashion-editorial-image">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1400&q=85"
+                        alt="Modern fashion editorial photography"
+                        loading="lazy"
+                    >
+
+                </div>
+
+                <div class="fashion-editorial-content">
+
+                    <span class="eyebrow">
+                        THE STYLE EDIT
+                    </span>
+
+                    <h2>
+                        Style Is<br>
+                        <em>Personal.</em>
+                    </h2>
+
+                    <p>
+                        Fashion is more than what you wear.
+
+                        It's how you express yourself.
+
+                        Explore contemporary style,
+                        distinctive details and
+                        everyday inspiration.
+                    </p>
+
+                    <a
+                        href="#shop"
+                        class="btn btn-primary"
+                        data-collection="Fashion"
+                    >
+                        Discover Fashion ↗
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             PREMIUM COLLECTIONS
+        ================================== -->
+
+        <section
+            class="section collections-section"
+            id="collections"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            THE ETHORISE EDIT
+                        </span>
+
+                        <h2>Explore Collections</h2>
+
+                    </div>
+
+                    <p>
+                        Inspiration for modern living.
+                    </p>
+
+                </div>
+
 
                 <div class="collections-grid">
 
-                    <a href="#shop"
-                       class="collection-card collection-tech"
-                       data-collection="Electronics">
+                    <a
+                        href="#shop"
+                        class="collection-card collection-tech"
+                        data-collection="Electronics"
+                    >
 
                         <div class="collection-content">
+
                             <span>COLLECTION 01</span>
+
                             <h3>Everyday Tech</h3>
-                            <p>Technology for your lifestyle.</p>
-                            <strong>Explore Collection ↗</strong>
+
+                            <p>
+                                Discover useful technology
+                                and modern essentials.
+                            </p>
+
+                            <strong>
+                                Explore Collection ↗
+                            </strong>
+
                         </div>
 
                     </a>
 
-                    <a href="#shop"
-                       class="collection-card collection-home"
-                       data-collection="Home">
+
+                    <a
+                        href="#shop"
+                        class="collection-card collection-home"
+                        data-collection="Home"
+                    >
 
                         <div class="collection-content">
+
                             <span>COLLECTION 02</span>
+
                             <h3>Modern Living</h3>
-                            <p>Explore home essentials.</p>
-                            <strong>Explore Collection ↗</strong>
+
+                            <p>
+                                Inspiration for thoughtful
+                                living spaces.
+                            </p>
+
+                            <strong>
+                                Explore Collection ↗
+                            </strong>
+
                         </div>
 
                     </a>
 
-                    <a href="#shop"
-                       class="collection-card collection-style"
-                       data-collection="Fashion">
+
+                    <a
+                        href="#shop"
+                        class="collection-card collection-style"
+                        data-collection="Fashion"
+                    >
 
                         <div class="collection-content">
+
                             <span>COLLECTION 03</span>
+
                             <h3>Style & Lifestyle</h3>
-                            <p>Discover everyday inspiration.</p>
-                            <strong>Explore Collection ↗</strong>
+
+                            <p>
+                                Explore everyday style
+                                and fresh ideas.
+                            </p>
+
+                            <strong>
+                                Explore Collection ↗
+                            </strong>
+
                         </div>
 
                     </a>
@@ -370,10 +1104,71 @@
                 </div>
 
             </div>
+
         </section>
 
-        <!-- TRENDING DISCOVERIES -->
-        <section class="section trending-section" id="trending">
+
+        <!-- =================================
+             TECHNOLOGY EDITORIAL
+        ================================== -->
+
+        <section class="technology-editorial-section">
+
+            <div class="technology-editorial-grid">
+
+                <div class="technology-editorial-content">
+
+                    <span class="eyebrow">
+                        INNOVATION FOR EVERYDAY
+                    </span>
+
+                    <h2>
+                        Think Smarter.<br>
+                        <em>Live Better.</em>
+                    </h2>
+
+                    <p>
+                        Explore technology that fits
+                        into your everyday world.
+
+                        From productive workspaces
+                        to useful digital accessories,
+                        discover ideas worth exploring.
+                    </p>
+
+                    <a
+                        href="#shop"
+                        class="btn btn-primary"
+                        data-collection="Electronics"
+                    >
+                        Explore Technology ↗
+                    </a>
+
+                </div>
+
+                <div class="technology-editorial-image">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=85"
+                        alt="Minimal modern technology workspace"
+                        loading="lazy"
+                    >
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================
+             DISCOVERY BANNER
+        ================================== -->
+
+        <section
+            class="section trending-section"
+            id="trending"
+        >
 
             <div class="container">
 
@@ -391,45 +1186,73 @@
                         </h2>
 
                         <p>
-                            Explore useful gadgets,
-                            modern essentials,
-                            and new product ideas.
+                            Explore innovative gadgets,
+                            modern essentials and
+                            products for everyday life.
                         </p>
 
-                        <a href="#shop" class="btn btn-primary">
+                        <a
+                            href="#shop"
+                            class="btn btn-primary"
+                        >
                             Discover Products →
                         </a>
 
                     </div>
 
-                    <div class="trending-visual" aria-hidden="true">
+                    <div
+                        class="trending-visual"
+                        aria-hidden="true"
+                    >
                         ✦
                     </div>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- PRODUCT SHOP -->
-        <section class="section shop-section" id="shop">
+
+        <!-- =================================
+             PRODUCT CATALOG
+        ================================== -->
+
+        <section
+            class="section shop-section"
+            id="shop"
+        >
 
             <div class="container">
 
                 <div class="section-heading">
+
                     <div>
-                        <span class="eyebrow">THE ETHORISE EDIT</span>
-                        <h2>Explore Products</h2>
+
+                        <span class="eyebrow">
+                            EXPLORE ETHORISE
+                        </span>
+
+                        <h2>Discover Products</h2>
+
                     </div>
 
-                    <p>Discover products worth exploring.</p>
+                    <p>
+                        Find your next favorite.
+                    </p>
+
                 </div>
 
+
+                <!-- AFFILIATE DISCLOSURE -->
+
                 <div class="shop-disclosure">
+
                     <p>
-                        Affiliate Disclosure:
-                        As an Amazon Associate I earn from
-                        qualifying purchases.
+                        <strong>Affiliate Disclosure:</strong>
+
+                        As an Amazon Associate I earn
+                        from qualifying purchases.
 
                         Some product links may earn
                         ETHORISE a commission.
@@ -438,9 +1261,12 @@
                             Read Full Disclosure
                         </a>
                     </p>
+
                 </div>
 
-                <!-- SEARCH & FILTERS -->
+
+                <!-- SEARCH AND FILTERS -->
+
                 <div class="shop-toolbar">
 
                     <input
@@ -450,108 +1276,197 @@
                         aria-label="Search products"
                     >
 
-                    <select id="categoryFilter"
-                            aria-label="Filter by category">
+                    <select
+                        id="categoryFilter"
+                        aria-label="Filter by category"
+                    >
 
-                        <option value="All">All Categories</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Home">Home & Living</option>
-                        <option value="Fashion">Fashion</option>
-                        <option value="Beauty">Beauty</option>
-                        <option value="Fitness">Fitness</option>
-                        <option value="Accessories">Accessories</option>
-                        <option value="Office">Home Office</option>
-                        <option value="Lifestyle">Lifestyle</option>
+                        <option value="All">
+                            All Categories
+                        </option>
+
+                        <option value="Electronics">
+                            Electronics
+                        </option>
+
+                        <option value="Home">
+                            Home & Living
+                        </option>
+
+                        <option value="Fashion">
+                            Fashion
+                        </option>
+
+                        <option value="Beauty">
+                            Beauty
+                        </option>
+
+                        <option value="Fitness">
+                            Fitness
+                        </option>
+
+                        <option value="Accessories">
+                            Accessories
+                        </option>
+
+                        <option value="Office">
+                            Home Office
+                        </option>
+
+                        <option value="Lifestyle">
+                            Lifestyle
+                        </option>
 
                     </select>
 
-                    <select id="countryFilter"
-                            aria-label="Filter by country">
 
-                        <option value="All">All Countries</option>
-                        <option value="USA">USA</option>
-                        <option value="UK">UK</option>
-                        <option value="Canada">Canada</option>
+                    <select
+                        id="countryFilter"
+                        aria-label="Filter by country"
+                    >
+
+                        <option value="All">
+                            All Countries
+                        </option>
+
+                        <option value="USA">
+                            USA
+                        </option>
+
+                        <option value="UK">
+                            UK
+                        </option>
+
+                        <option value="Canada">
+                            Canada
+                        </option>
 
                     </select>
 
-                    <select id="sortFilter"
-                            aria-label="Sort products">
 
-                        <option value="default">Sort: Featured</option>
-                        <option value="price-low">Price: Low to High</option>
-                        <option value="price-high">Price: High to Low</option>
-                        <option value="name">Name: A to Z</option>
+                    <select
+                        id="sortFilter"
+                        aria-label="Sort products"
+                    >
+
+                        <option value="default">
+                            Sort: Featured
+                        </option>
+
+                        <option value="price-low">
+                            Price: Low to High
+                        </option>
+
+                        <option value="price-high">
+                            Price: High to Low
+                        </option>
+
+                        <option value="name">
+                            Name: A to Z
+                        </option>
 
                     </select>
 
                 </div>
 
+
                 <div class="product-results">
 
-                    <p id="productCount" aria-live="polite">
+                    <p
+                        id="productCount"
+                        aria-live="polite"
+                    >
                         Loading products...
                     </p>
 
-                    <button id="clearFilters"
-                            class="clear-filters"
-                            type="button">
+                    <button
+                        id="clearFilters"
+                        class="clear-filters"
+                        type="button"
+                    >
                         Clear Filters
                     </button>
 
                 </div>
 
-                <div id="productGrid"
-                     class="product-grid"
-                     aria-live="polite">
 
+                <div
+                    id="productGrid"
+                    class="product-grid"
+                    aria-live="polite"
+                >
                     Loading products...
-
                 </div>
 
             </div>
+
         </section>
 
-        <!-- FAQ -->
-        <section class="section faq-section" id="faq">
+
+        <!-- =================================
+             FAQ
+        ================================== -->
+
+        <section
+            class="section faq-section"
+            id="faq"
+        >
 
             <div class="container">
 
                 <div class="section-heading">
+
                     <div>
-                        <span class="eyebrow">HELP CENTER</span>
-                        <h2>Frequently Asked Questions</h2>
+
+                        <span class="eyebrow">
+                            HELP CENTER
+                        </span>
+
+                        <h2>
+                            Frequently Asked Questions
+                        </h2>
+
                     </div>
+
                 </div>
+
 
                 <div class="faq-container">
 
                     <details class="faq-item">
+
                         <summary>
                             What is ETHORISE?
                         </summary>
 
                         <p>
-                            ETHORISE is an independent product
-                            discovery website where visitors
-                            can explore product information
+                            ETHORISE is an independent
+                            affiliate product discovery
+                            platform where visitors can
+                            explore product information
                             and follow links to retailers.
                         </p>
+
                     </details>
 
+
                     <details class="faq-item">
+
                         <summary>
                             Does ETHORISE sell products directly?
                         </summary>
 
                         <p>
-                            Not currently. Purchases are completed
-                            on third-party retailer websites,
+                            No. Purchases are completed on
+                            third-party retailer websites,
                             such as Amazon or AliExpress.
                         </p>
+
                     </details>
 
+
                     <details class="faq-item">
+
                         <summary>
                             How do affiliate links work?
                         </summary>
@@ -561,21 +1476,47 @@
                             a commission when an eligible
                             purchase is completed.
                         </p>
+
                     </details>
 
+
                     <details class="faq-item">
+
                         <summary>
                             How can I check product prices?
                         </summary>
 
                         <p>
-                            Visit the linked retailer to
-                            check current product prices,
-                            specifications and availability.
+                            Visit the retailer to check
+                            current prices, product details
+                            and availability.
                         </p>
+
                     </details>
 
+
                     <details class="faq-item">
+
+                        <summary>
+                            Can I buy multiple products together?
+                        </summary>
+
+                        <p>
+                            You can organize multiple products
+                            in your ETHORISE Shopping List.
+
+                            Each product's purchase link
+                            opens its retailer.
+
+                            Quantities are not automatically
+                            transferred to retailer checkout.
+                        </p>
+
+                    </details>
+
+
+                    <details class="faq-item">
+
                         <summary>
                             Who handles shipping and returns?
                         </summary>
@@ -585,15 +1526,24 @@
                             your order handles applicable
                             shipping, returns and refunds.
                         </p>
+
                     </details>
 
                 </div>
 
             </div>
+
         </section>
 
-        <!-- ABOUT CTA -->
-        <section class="about-section" id="about">
+
+        <!-- =================================
+             ABOUT CTA
+        ================================== -->
+
+        <section
+            class="about-section"
+            id="about"
+        >
 
             <div class="container about-content">
 
@@ -609,28 +1559,40 @@
                 <p>
                     We believe great discoveries
                     start with curiosity.
+
                     Explore technology, fashion,
                     home essentials and more.
                 </p>
 
-                <a href="about.html"
-                   class="btn btn-primary">
+                <a
+                    href="about.html"
+                    class="btn btn-primary"
+                >
                     Discover Our Story →
                 </a>
 
             </div>
+
         </section>
 
-        <!-- NEWSLETTER PREVIEW -->
+
+        <!-- =================================
+             NEWSLETTER PREVIEW
+        ================================== -->
+
         <section class="newsletter container">
 
-            <span class="eyebrow">STAY INSPIRED</span>
+            <span class="eyebrow">
+                STAY INSPIRED
+            </span>
 
-            <h2>Stay Ahead of the Trend.</h2>
+            <h2>
+                Inspiration Starts Here.
+            </h2>
 
             <p>
                 Discover new products,
-                innovative ideas and shopping inspiration.
+                fresh ideas and shopping inspiration.
             </p>
 
             <p class="newsletter-note">
@@ -641,72 +1603,108 @@
 
     </main>
 
-    <!-- COMPARISON BAR -->
-    <div id="compareBar"
-         class="compare-bar"
-         aria-label="Product comparison"
-         hidden>
+
+    <!-- =====================================
+         COMPARISON BAR
+    ====================================== -->
+
+    <div
+        id="compareBar"
+        class="compare-bar"
+        aria-label="Product comparison"
+        hidden
+    >
 
         <div class="container compare-bar-inner">
 
             <div>
-                <strong>Compare Products</strong>
+
+                <strong>
+                    Compare Products
+                </strong>
+
                 <p id="compareBarCount">
                     0 of 3 products selected
                 </p>
+
             </div>
 
             <div class="compare-bar-actions">
 
-                <button id="clearCompare"
-                        class="btn btn-outline"
-                        type="button">
+                <button
+                    id="clearCompare"
+                    class="btn btn-outline"
+                    type="button"
+                >
                     Clear
                 </button>
 
-                <button id="openCompare"
-                        class="btn btn-primary"
-                        type="button">
+                <button
+                    id="openCompare"
+                    class="btn btn-primary"
+                    type="button"
+                >
                     Compare Now →
                 </button>
 
             </div>
 
         </div>
+
     </div>
 
-    <!-- FOOTER -->
+
+    <!-- =====================================
+         FOOTER
+    ====================================== -->
+
     <footer class="footer">
 
         <div class="container footer-grid">
 
             <div>
 
-                <h2>ETHORISE<span>.</span></h2>
+                <h2>
+                    ETHORISE<span>.</span>
+                </h2>
 
                 <p>
                     Discover Extraordinary.<br>
                     Elevate Everyday.
                 </p>
 
-                <a href="mailto:ethorise.contact@gmail.com"
-                   class="footer-business-email">
+                <a
+                    href="mailto:ethorise.contact@gmail.com"
+                    class="footer-business-email"
+                >
                     ethorise.contact@gmail.com
                 </a>
 
             </div>
+
 
             <div>
 
                 <h3>Explore</h3>
 
                 <a href="index.html">Home</a>
+
                 <a href="#shop">Products</a>
+
                 <a href="#categories">Categories</a>
+
+                <a href="wishlist.html">Wishlist</a>
+
+                <a href="compare.html">Compare</a>
+
+                <a href="cart.html">Shopping List</a>
+
                 <a href="about.html">About Us</a>
+
                 <a href="contact.html">Contact</a>
 
             </div>
+
 
             <div>
 
@@ -734,6 +1732,7 @@
 
         </div>
 
+
         <div class="footer-bottom">
 
             <p>
@@ -741,53 +1740,78 @@
             </p>
 
             <div class="footer-bottom-links">
-                <a href="privacy.html">Privacy Policy</a>
+
+                <a href="privacy.html">
+                    Privacy Policy
+                </a>
+
                 <a href="affiliate-disclosure.html">
                     Affiliate Disclosure
                 </a>
-                <a href="contact.html">Contact</a>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
             </div>
 
         </div>
 
     </footer>
 
-    <!-- QUICK VIEW MODAL -->
-    <div class="modal"
-         id="quickViewModal"
-         role="dialog"
-         aria-modal="true"
-         aria-label="Product quick view"
-         aria-hidden="true">
+
+    <!-- =====================================
+         QUICK VIEW MODAL
+    ====================================== -->
+
+    <div
+        class="modal"
+        id="quickViewModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Product quick view"
+        aria-hidden="true"
+    >
 
         <div class="modal-content">
 
-            <button id="closeModal"
-                    class="modal-close"
-                    aria-label="Close quick view"
-                    type="button">
+            <button
+                id="closeModal"
+                class="modal-close"
+                aria-label="Close quick view"
+                type="button"
+            >
                 ×
             </button>
 
             <div id="modalBody"></div>
 
         </div>
+
     </div>
 
-    <!-- COMPARISON MODAL -->
-    <div class="modal"
-         id="compareModal"
-         role="dialog"
-         aria-modal="true"
-         aria-label="Compare products"
-         aria-hidden="true">
+
+    <!-- =====================================
+         COMPARISON MODAL
+    ====================================== -->
+
+    <div
+        class="modal"
+        id="compareModal"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Compare products"
+        aria-hidden="true"
+    >
 
         <div class="modal-content compare-modal-content">
 
-            <button id="closeCompareModal"
-                    class="modal-close"
-                    aria-label="Close comparison"
-                    type="button">
+            <button
+                id="closeCompareModal"
+                class="modal-close"
+                aria-label="Close comparison"
+                type="button"
+            >
                 ×
             </button>
 
@@ -797,13 +1821,22 @@
                 Compare selected products side by side.
             </p>
 
-            <div id="compareContent"
-                 class="compare-content"></div>
+            <div
+                id="compareContent"
+                class="compare-content"
+            ></div>
 
         </div>
+
     </div>
+
+
+    <!-- =====================================
+         JAVASCRIPT
+    ====================================== -->
 
     <script src="js/app.js"></script>
 
 </body>
+
 </html>
