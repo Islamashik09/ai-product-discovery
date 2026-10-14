@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
 
@@ -7,7 +8,11 @@
           content="width=device-width, initial-scale=1.0">
 
     <meta name="description"
-          content="Review your saved shopping list on ETHORISE and visit retailers to complete purchases.">
+          content="Review your ETHORISE shopping list and visit Amazon or AliExpress to complete purchases.">
+
+    <meta name="theme-color" content="#ffffff">
+
+    <meta name="robots" content="noindex, follow">
 
     <title>Your Shopping List | ETHORISE</title>
 
@@ -29,6 +34,7 @@
         .cart-page {
             padding: 85px 0 110px;
             min-height: 65vh;
+            background: #ffffff;
         }
 
         .cart-heading {
@@ -36,32 +42,41 @@
         }
 
         .cart-heading h1 {
-            font-size: clamp(36px, 5vw, 52px);
+            font-size: clamp(36px, 5vw, 54px);
             letter-spacing: -2px;
             margin: 15px 0;
+            line-height: 1.2;
         }
 
         .cart-heading p {
             color: #6b7280;
+            max-width: 700px;
+            line-height: 1.8;
         }
 
         .cart-notice {
-            padding: 20px 25px;
+            padding: 22px 25px;
             background: #fff7f2;
             border: 1px solid #ffe1d2;
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 35px;
         }
 
         .cart-notice p {
             font-size: 13px;
-            color: #555;
-            line-height: 1.8;
+            color: #555555;
+            line-height: 1.9;
+        }
+
+        .cart-notice a {
+            color: #d94f1c;
+            font-weight: 600;
+            text-decoration: underline;
         }
 
         .cart-grid {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: minmax(0, 1fr) 330px;
             gap: 35px;
             align-items: start;
         }
@@ -69,66 +84,143 @@
         .cart-items {
             display: grid;
             gap: 20px;
+            min-width: 0;
         }
 
         .cart-item {
             display: grid;
-            grid-template-columns: 130px 1fr;
+            grid-template-columns: 145px minmax(0, 1fr);
             gap: 25px;
             padding: 25px;
             border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            background: white;
+            border-radius: 18px;
+            background: #ffffff;
+            transition: border-color .2s, box-shadow .2s;
         }
 
-        .cart-item img {
-            width: 130px;
-            height: 130px;
+        .cart-item:hover {
+            border-color: #dddddd;
+            box-shadow: 0 12px 35px rgba(0,0,0,.04);
+        }
+
+        .cart-item-image {
+            display: block;
+            width: 145px;
+            height: 145px;
             object-fit: contain;
             background: #f8f9fa;
-            border-radius: 10px;
+            border-radius: 12px;
+            padding: 10px;
         }
 
-        .cart-item h3 {
+        .cart-item-info {
+            min-width: 0;
+        }
+
+        .cart-item-info h3 {
             font-size: 17px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .cart-item-info p {
+            color: #6b7280;
+            font-size: 13px;
             margin-bottom: 10px;
         }
 
-        .cart-item p {
-            color: #6b7280;
-            font-size: 13px;
-            margin-bottom: 12px;
+        .cart-item-price {
+            color: #ff6b35 !important;
+            font-weight: 700;
+        }
+
+        .cart-quantity {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .cart-quantity button {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            background: #f8f9fa;
+            color: #111111;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .cart-quantity button:hover {
+            background: #fff0e9;
+            color: #d94f1c;
+        }
+
+        .cart-quantity span {
+            min-width: 45px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
         }
 
         .cart-item-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
             flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 18px;
         }
 
-        .cart-item-actions button {
-            border: 1px solid #e5e7eb;
-            background: white;
-            border-radius: 7px;
-            padding: 8px 12px;
-        }
-
-        .cart-item-actions button:hover {
-            border-color: #ff6b35;
-        }
-
-        .cart-item-actions a {
-            display: inline-block;
-            padding: 10px 15px;
-            background: #111;
-            color: white;
-            border-radius: 7px;
+        .cart-item-actions .btn {
+            min-height: 44px;
+            padding: 11px 16px;
             font-size: 12px;
+        }
+
+        .cart-remove {
+            border: 0;
+            background: transparent;
+            color: #b42318;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 10px;
+        }
+
+        .cart-remove:hover {
+            text-decoration: underline;
+        }
+
+        .cart-retailer-link {
+            background: #ff6b35;
+            color: #ffffff;
+            border: 1px solid #ff6b35;
+        }
+
+        .cart-retailer-link:hover {
+            background: #e85a26;
+            color: #ffffff;
+        }
+
+        .cart-retailer-link[aria-disabled="true"] {
+            background: #e5e7eb;
+            border-color: #e5e7eb;
+            color: #6b7280;
+            pointer-events: none;
+        }
+
+        .cart-retailer-note {
+            font-size: 12px !important;
+            line-height: 1.7;
+            margin-top: 15px;
         }
 
         .cart-summary {
             background: #f8f9fa;
+            border: 1px solid #eeeeee;
             border-radius: 18px;
             padding: 30px;
             position: sticky;
@@ -137,26 +229,66 @@
 
         .cart-summary h2 {
             font-size: 22px;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
+        }
+
+        .cart-summary-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 13px 0;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 13px;
+        }
+
+        .cart-summary-row span {
+            color: #6b7280;
+        }
+
+        .cart-summary-row strong {
+            font-size: 15px;
         }
 
         .cart-summary p {
             color: #6b7280;
             font-size: 13px;
             line-height: 1.8;
-            margin-bottom: 15px;
+            margin: 20px 0;
         }
 
-        .cart-summary a {
+        .cart-summary .btn {
             width: 100%;
             margin-top: 10px;
         }
 
+        .cart-clear {
+            width: 100%;
+            margin-top: 15px;
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #b42318;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .cart-clear:hover {
+            border-color: #b42318;
+        }
+
         .cart-empty {
-            padding: 65px 25px;
+            padding: 75px 25px;
             text-align: center;
             background: #f8f9fa;
+            border: 1px solid #eeeeee;
             border-radius: 18px;
+        }
+
+        .cart-empty-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
         }
 
         .cart-empty h2 {
@@ -176,7 +308,7 @@
             font-size: 23px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .cart-grid {
                 grid-template-columns: 1fr;
             }
@@ -188,7 +320,11 @@
 
         @media (max-width: 768px) {
             #cartMenuToggle {
-                display: block;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 42px;
+                min-height: 42px;
             }
 
             .cart-page {
@@ -196,14 +332,23 @@
             }
         }
 
-        @media (max-width: 500px) {
+        @media (max-width: 540px) {
             .cart-item {
                 grid-template-columns: 1fr;
+                padding: 18px;
             }
 
-            .cart-item img {
+            .cart-item-image {
                 width: 100%;
-                height: 220px;
+                height: 230px;
+            }
+
+            .cart-item-actions .btn {
+                width: 100%;
+            }
+
+            .cart-summary {
+                padding: 22px;
             }
         }
     </style>
@@ -232,6 +377,14 @@
 
                 <a href="index.html#categories">Categories</a>
 
+                <a href="wishlist.html">Wishlist</a>
+
+                <a href="compare.html">Compare</a>
+
+                <a href="cart.html" aria-current="page">
+                    Shopping List
+                </a>
+
                 <a href="about.html">About</a>
 
                 <a href="contact.html">Contact</a>
@@ -242,6 +395,7 @@
 
                 <button
                     id="cartMenuToggle"
+                    class="menu-toggle"
                     type="button"
                     aria-label="Toggle navigation"
                     aria-controls="cartNavLinks"
@@ -256,6 +410,25 @@
 
     </header>
 
+    <div class="affiliate-notice">
+
+        <div class="container">
+
+            <p>
+                As an Amazon Associate I earn from
+                qualifying purchases.
+
+                Some links may earn ETHORISE a commission.
+
+                <a href="affiliate-disclosure.html">
+                    Learn More
+                </a>
+            </p>
+
+        </div>
+
+    </div>
+
     <main class="cart-page">
 
         <div class="container">
@@ -266,11 +439,12 @@
                     YOUR ETHORISE PICKS
                 </span>
 
-                <h1>Your Shopping List</h1>
+                <h1>Your Shopping List<span style="color:#ff6b35">.</span></h1>
 
                 <p>
-                    Review products you are interested in
-                    before visiting the retailer.
+                    Review products you're interested in,
+                    adjust your list and visit the retailer
+                    when you're ready to purchase.
                 </p>
 
             </div>
@@ -278,48 +452,84 @@
             <div class="cart-notice">
 
                 <p>
-                    <strong>Important:</strong>
-                    ETHORISE does not process product orders
-                    or payments. You will complete purchases
-                    on Amazon, AliExpress, or another retailer's
-                    website.
+                    <strong>How purchasing works:</strong>
+
+                    ETHORISE is an independent affiliate
+                    product discovery platform.
+
+                    We do not process orders or payments.
+
+                    Each product's purchase button opens
+                    the relevant retailer website.
+
+                    <strong>
+                        Shopping List quantities are not
+                        automatically transferred to retailer checkout.
+                    </strong>
+
+                    Confirm product options, quantities,
+                    prices, shipping and availability
+                    directly with the retailer.
 
                     As an Amazon Associate I earn from
                     qualifying purchases.
+
+                    <a href="affiliate-disclosure.html">
+                        Read Full Disclosure →
+                    </a>
                 </p>
 
             </div>
 
             <div class="cart-grid">
 
-                <div id="cartItems" class="cart-items">
-
+                <div
+                    id="cartItems"
+                    class="cart-items"
+                    aria-live="polite"
+                >
                     Loading your shopping list...
-
                 </div>
 
                 <aside class="cart-summary">
 
                     <h2>Shopping List Summary</h2>
 
-                    <p id="cartItemCount">
-                        0 products selected
-                    </p>
+                    <div class="cart-summary-row">
+                        <span>Unique Products</span>
+                        <strong id="cartUniqueCount">0</strong>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Total List Quantity</span>
+                        <strong id="cartTotalQuantity">0</strong>
+                    </div>
 
                     <p>
                         Prices and availability are confirmed
-                        on the retailer's website.
+                        on retailer websites. ETHORISE
+                        does not calculate a checkout total.
                     </p>
 
                     <p>
-                        Each product opens its respective
-                        retailer's website for purchase.
+                        Each product must be purchased
+                        through its respective retailer.
                     </p>
 
-                    <a href="index.html#shop"
-                       class="btn btn-primary">
+                    <a
+                        href="index.html#shop"
+                        class="btn btn-primary"
+                    >
                         Continue Exploring →
                     </a>
+
+                    <button
+                        id="clearCart"
+                        class="cart-clear"
+                        type="button"
+                    >
+                        Clear Shopping List
+                    </button>
 
                 </aside>
 
@@ -342,6 +552,13 @@
                     Elevate Everyday.
                 </p>
 
+                <a
+                    href="mailto:ethorise.contact@gmail.com"
+                    class="footer-business-email"
+                >
+                    ethorise.contact@gmail.com
+                </a>
+
             </div>
 
             <div>
@@ -350,6 +567,9 @@
 
                 <a href="index.html">Home</a>
                 <a href="index.html#shop">Products</a>
+                <a href="wishlist.html">Wishlist</a>
+                <a href="compare.html">Compare</a>
+                <a href="cart.html">Shopping List</a>
                 <a href="about.html">About Us</a>
                 <a href="contact.html">Contact</a>
 
@@ -372,12 +592,25 @@
                     from qualifying purchases.
                 </p>
 
+                <p>
+                    Purchases are completed on
+                    third-party retailer websites.
+                </p>
+
             </div>
 
         </div>
 
         <div class="footer-bottom">
-            © 2026 ETHORISE. All rights reserved.
+
+            <p>© 2026 ETHORISE. All rights reserved.</p>
+
+            <div class="footer-bottom-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="affiliate-disclosure.html">Affiliate Disclosure</a>
+                <a href="contact.html">Contact</a>
+            </div>
+
         </div>
 
     </footer>
@@ -385,4 +618,5 @@
     <script src="js/cart.js"></script>
 
 </body>
+
 </html>
