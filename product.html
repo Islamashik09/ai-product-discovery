@@ -12,19 +12,101 @@
 
     <meta name="theme-color" content="#ffffff">
 
+    <meta name="robots" content="index, follow">
+
     <title>Product Details | ETHORISE</title>
 
-    <link rel="preconnect"
-          href="https://fonts.googleapis.com">
+    <!-- SEO: Updated dynamically by product.js -->
 
-    <link rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossorigin>
+    <link
+        rel="canonical"
+        id="productCanonical"
+        href="https://islamashik09.github.io/ethorise/product.html"
+    >
+
+    <meta
+        property="og:type"
+        content="product"
+    >
+
+    <meta
+        property="og:site_name"
+        content="ETHORISE"
+    >
+
+    <meta
+        property="og:title"
+        id="productOgTitle"
+        content="Product Details | ETHORISE"
+    >
+
+    <meta
+        property="og:description"
+        id="productOgDescription"
+        content="Explore product details on ETHORISE."
+    >
+
+    <meta
+        property="og:image"
+        id="productOgImage"
+        content=""
+    >
+
+    <meta
+        property="og:url"
+        id="productOgUrl"
+        content="https://islamashik09.github.io/ethorise/product.html"
+    >
+
+    <meta
+        name="twitter:card"
+        content="summary_large_image"
+    >
+
+    <meta
+        name="twitter:title"
+        id="productTwitterTitle"
+        content="Product Details | ETHORISE"
+    >
+
+    <meta
+        name="twitter:description"
+        id="productTwitterDescription"
+        content="Explore product details on ETHORISE."
+    >
+
+    <meta
+        name="twitter:image"
+        id="productTwitterImage"
+        content=""
+    >
+
+    <!-- PRODUCT STRUCTURED DATA -->
+
+    <script
+        type="application/ld+json"
+        id="productStructuredData"
+    ></script>
+
+    <!-- FONTS -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet"
     >
+
+    <!-- STYLES -->
 
     <link rel="stylesheet" href="css/style.css">
 
@@ -62,9 +144,18 @@
             overflow-wrap: anywhere;
         }
 
+        .product-recommendation-section {
+            padding-top: 75px;
+            padding-bottom: 75px;
+        }
+
         @media (max-width: 768px) {
             #productMenuToggle {
-                display: block;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 42px;
+                min-height: 42px;
             }
         }
     </style>
@@ -76,9 +167,8 @@
     <!-- ANNOUNCEMENT -->
 
     <div class="announcement">
-        ✦ Discover extraordinary products with ETHORISE
+        ✦ Discover Extraordinary. Elevate Everyday.
     </div>
-
 
     <!-- NAVIGATION -->
 
@@ -96,7 +186,13 @@
 
                 <a href="index.html#shop">Shop</a>
 
-                <a href="index.html#categories">Collections</a>
+                <a href="index.html#categories">Categories</a>
+
+                <a href="wishlist.html">Wishlist</a>
+
+                <a href="compare.html">Compare</a>
+
+                <a href="cart.html">Shopping List</a>
 
                 <a href="about.html">About</a>
 
@@ -108,6 +204,7 @@
 
                 <button
                     id="productMenuToggle"
+                    class="menu-toggle"
                     aria-label="Toggle navigation"
                     aria-controls="productNavLinks"
                     aria-expanded="false"
@@ -122,10 +219,30 @@
 
     </header>
 
+    <!-- AFFILIATE DISCLOSURE -->
 
-    <!-- PRODUCT DETAILS -->
+    <div class="affiliate-notice">
+
+        <div class="container">
+
+            <p>
+                As an Amazon Associate I earn from
+                qualifying purchases.
+
+                Some links may earn ETHORISE a commission.
+
+                <a href="affiliate-disclosure.html">
+                    Learn More
+                </a>
+            </p>
+
+        </div>
+
+    </div>
 
     <main>
+
+        <!-- PRODUCT DETAILS -->
 
         <section class="product-detail-section">
 
@@ -138,17 +255,13 @@
                     ← Back to Products
                 </a>
 
-
-                <!-- PRODUCT INFORMATION -->
-
-                <div id="productDetail">
+                <div id="productDetail" aria-live="polite">
 
                     <p>
                         Loading product details...
                     </p>
 
                 </div>
-
 
                 <!-- AFFILIATE DISCLOSURE -->
 
@@ -179,10 +292,51 @@
 
         </section>
 
+        <!-- COMPLETE YOUR SETUP -->
+
+        <section
+            class="section product-recommendation-section"
+            id="setupSection"
+            hidden
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            HANDPICKED CONNECTIONS
+                        </span>
+
+                        <h2>Complete Your Setup</h2>
+
+                    </div>
+
+                    <p>
+                        Explore products that complement
+                        your current discovery.
+                    </p>
+
+                </div>
+
+                <div
+                    id="setupProducts"
+                    class="product-grid"
+                ></div>
+
+            </div>
+
+        </section>
 
         <!-- RELATED PRODUCTS -->
 
-        <section class="section shop-section">
+        <section
+            class="section shop-section product-recommendation-section"
+            id="relatedSection"
+            hidden
+        >
 
             <div class="container">
 
@@ -194,11 +348,13 @@
                             YOU MAY ALSO LIKE
                         </span>
 
-                        <h2>
-                            Related Products
-                        </h2>
+                        <h2>Related Products</h2>
 
                     </div>
+
+                    <p>
+                        More products worth exploring.
+                    </p>
 
                 </div>
 
@@ -211,8 +367,44 @@
 
         </section>
 
-    </main>
+        <!-- RECENTLY VIEWED -->
 
+        <section
+            class="section product-recommendation-section"
+            id="recentSection"
+            hidden
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            CONTINUE DISCOVERING
+                        </span>
+
+                        <h2>Recently Viewed</h2>
+
+                    </div>
+
+                    <p>
+                        Pick up where you left off.
+                    </p>
+
+                </div>
+
+                <div
+                    id="recentProducts"
+                    class="product-grid"
+                ></div>
+
+            </div>
+
+        </section>
+
+    </main>
 
     <!-- FOOTER -->
 
@@ -240,7 +432,6 @@
 
             </div>
 
-
             <div>
 
                 <h3>Explore</h3>
@@ -249,12 +440,17 @@
 
                 <a href="index.html#shop">Products</a>
 
+                <a href="wishlist.html">Wishlist</a>
+
+                <a href="compare.html">Compare</a>
+
+                <a href="cart.html">Shopping List</a>
+
                 <a href="about.html">About Us</a>
 
                 <a href="contact.html">Contact</a>
 
             </div>
-
 
             <div>
 
@@ -273,18 +469,40 @@
                     from qualifying purchases.
                 </p>
 
+                <p>
+                    Purchases are completed on
+                    third-party retailer websites.
+                </p>
+
             </div>
 
         </div>
 
         <div class="footer-bottom">
 
-            © 2026 ETHORISE. All rights reserved.
+            <p>
+                © 2026 ETHORISE. All rights reserved.
+            </p>
+
+            <div class="footer-bottom-links">
+
+                <a href="privacy.html">
+                    Privacy Policy
+                </a>
+
+                <a href="affiliate-disclosure.html">
+                    Affiliate Disclosure
+                </a>
+
+                <a href="contact.html">
+                    Contact
+                </a>
+
+            </div>
 
         </div>
 
     </footer>
-
 
     <!-- JAVASCRIPT -->
 

@@ -2,8 +2,20 @@
 
 /* ==========================================
    ETHORISE — PRODUCT DETAILS
-   Interactive Media Gallery
-   Shopping List + Smart Recommendations
+   Premium Product Experience
+
+   Features:
+   - Dynamic Product SEO
+   - Product JSON-LD
+   - Breadcrumb JSON-LD
+   - Interactive Media Gallery
+   - Product Video Player
+   - Fullscreen Image Viewer
+   - Shopping List
+   - Wishlist
+   - Smart Recommendations
+   - Recently Viewed
+   - Mobile Navigation
 ========================================== */
 
 const $ = id => document.getElementById(id);
@@ -12,6 +24,8 @@ const detailContainer = $("productDetail");
 
 const params = new URLSearchParams(window.location.search);
 const productId = Number(params.get("id"));
+
+const SITE_URL = "https://islamashik09.github.io/ethorise/";
 
 const CART_KEY = "ethoriseCart";
 const WISHLIST_KEY = "ethoriseWishlist";
@@ -39,9 +53,11 @@ function el(tag, className = "", text = null) {
 
 function readStorage(key) {
     try {
-        return JSON.parse(
+        const data = JSON.parse(
             localStorage.getItem(key) || "[]"
         );
+
+        return Array.isArray(data) ? data : [];
     } catch {
         return [];
     }
@@ -59,11 +75,7 @@ function saveStorage(key, data) {
 }
 
 function readIds(key) {
-    const data = readStorage(key);
-
-    return Array.isArray(data)
-        ? data.filter(Number.isInteger)
-        : [];
+    return readStorage(key).filter(Number.isInteger);
 }
 
 function priceLabel(product) {
@@ -78,6 +90,251 @@ function priceLabel(product) {
     }
 
     return `$${price.toFixed(2)} USD`;
+}
+
+/* ==========================================
+   PRODUCT SEO
+========================================== */
+
+function absoluteUrl(value) {
+    if (!value || typeof value !== "string") {
+        return "";
+    }
+
+    try {
+        const url = new URL(value, SITE_URL);
+
+        if (
+            url.protocol !== "https:" &&
+            url.protocol !== "http:"
+        ) {
+            return "";
+        }
+
+        return url.href;
+    } catch {
+        return "";
+    }
+}
+
+function setMeta(selector, content) {
+    const meta = document.querySelector(selector);
+
+    if (meta) {
+        meta.setAttribute("content", content);
+    }
+}
+
+function setRobots(content) {
+    setMeta('meta[name="robots"]', content);
+}
+
+function seoDescription(product) {
+    const source = [
+        product.description,
+        product.name,
+        product.category
+    ].find(value =>
+        typeof value === "string" &&
+        value.trim()
+    ) || "";
+
+    const normalized = source
+        .replace(/\s+/g, " ")
+        .trim();
+
+    if (normalized.length <= 155) {
+        return normalized;
+    }
+
+    return normalized.slice(0, 152).trimEnd() + "...";
+}
+
+function productPageUrl(product) {
+    return (
+        SITE_URL +
+        "product.html?id=" +
+        encodeURIComponent(product.id)
+    );
+}
+
+function buildProductSchema(product, pageUrl) {
+    const images = getProductImages(product)
+        .map(absoluteUrl)
+        .filter(Boolean);
+
+    const schema = {
+        "@type": "Product",
+        "@id": pageUrl + "#product",
+        "name": product.name,
+        "url": pageUrl
+    };
+
+    if (product.description) {
+        schema.description = product.description;
+    }
+
+    if (images.length) {
+        schema.image = images;
+    }
+
+    if (product.brand) {
+        schema.brand = {
+            "@type": "Brand",
+            "name": product.brand
+        };
+    }
+
+    if (product.category) {
+        schema.category = product.category;
+    }
+
+    if (
+        product.affiliatePlatform === "Amazon" &&
+        product.asin
+    ) {
+        schema.sku = product.asin;
+    }
+
+    /*
+      No Offer / AggregateRating / Review is generated.
+
+      ETHORISE does not currently maintain verified
+      real-time product prices, availability or ratings.
+    */
+
+    return schema;
+}
+
+function buildBreadcrumbSchema(product, pageUrl) {
+    return {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": SITE_URL
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": product.category || "Products",
+                "item": SITE_URL + "#shop"
+            },
+            {
+                "@type": "ListItem",
+                "position": 3,
+                "name": product.name,
+                "item": pageUrl
+            }
+        ]
+    };
+}
+
+function updateProductSEO(product) {
+    const title = `${product.name} | ETHORISE`;
+
+    const description = seoDescription(product);
+
+    const pageUrl = productPageUrl(product);
+
+    const images = getProductImages(product);
+
+    const primaryImage = images.length
+        ? absoluteUrl(images[0])
+        : "";
+
+    document.title = title;
+
+    setMeta(
+        'meta[name="description"]',
+        description
+    );
+
+    setMeta(
+        'meta[property="og:title"]',
+        title
+    );
+
+    setMeta(
+        'meta[property="og:description"]',
+        description
+    );
+
+    setMeta(
+        'meta[property="og:url"]',
+        pageUrl
+    );
+
+    setMeta(
+        'meta[property="og:image"]',
+        primaryImage
+    );
+
+    setMeta(
+        'meta[name="twitter:title"]',
+        title
+    );
+
+    setMeta(
+        'meta[name="twitter:description"]',
+        description
+    );
+
+    setMeta(
+        'meta[name="twitter:image"]',
+        primaryImage
+    );
+
+    const canonical = $("productCanonical");
+
+    if (canonical) {
+        canonical.href = pageUrl;
+    }
+
+    const structuredData = $("productStructuredData");
+
+    if (structuredData) {
+        structuredData.textContent = JSON.stringify(
+            {
+                "@context": "https://schema.org",
+                "@graph": [
+                    buildProductSchema(
+                        product,
+                        pageUrl
+                    ),
+                    buildBreadcrumbSchema(
+                        product,
+                        pageUrl
+                    )
+                ]
+            }
+        );
+    }
+
+    setRobots("index, follow");
+}
+
+function markProductUnavailable(message) {
+    document.title = "Product Not Found | ETHORISE";
+
+    setMeta(
+        'meta[name="description"]',
+        "The requested product is unavailable on ETHORISE."
+    );
+
+    setRobots("noindex, follow");
+
+    const schema = $("productStructuredData");
+
+    if (schema) {
+        schema.textContent = "";
+    }
+
+    if (detailContainer) {
+        detailContainer.textContent = message;
+    }
 }
 
 /* ==========================================
@@ -122,24 +379,6 @@ function isDirectVideo(url) {
         ).pathname.toLowerCase();
 
         return /\.(mp4|webm|ogg)$/.test(pathname);
-    } catch {
-        return false;
-    }
-}
-
-function isTrustedEmbed(url) {
-    try {
-        const parsed = new URL(url);
-
-        const hostname = parsed.hostname.toLowerCase();
-
-        return (
-            hostname === "www.youtube.com" ||
-            hostname === "youtube.com" ||
-            hostname === "www.youtube-nocookie.com" ||
-            hostname === "youtube-nocookie.com" ||
-            hostname === "player.vimeo.com"
-        );
     } catch {
         return false;
     }
@@ -230,11 +469,7 @@ function getEmbedUrl(url) {
 ========================================== */
 
 function readCart() {
-    const data = readStorage(CART_KEY);
-
-    if (!Array.isArray(data)) return [];
-
-    return data.filter(item =>
+    return readStorage(CART_KEY).filter(item =>
         item &&
         Number.isInteger(item.id) &&
         Number.isInteger(item.quantity) &&
@@ -508,9 +743,9 @@ function createProductGallery(product) {
             const image = el("img");
 
             image.src = item.src;
-            image.alt = (
-                `${product.name} — Image ${activeIndex + 1}`
-            );
+
+            image.alt =
+                `${product.name} — Image ${activeIndex + 1}`;
 
             image.className =
                 "ethorise-gallery-main-image";
@@ -548,10 +783,11 @@ function createProductGallery(product) {
             } else {
                 const embedUrl = getEmbedUrl(source);
 
-                if (embedUrl && isTrustedEmbed(embedUrl)) {
+                if (embedUrl) {
                     const iframe = el("iframe");
 
                     iframe.src = embedUrl;
+
                     iframe.title =
                         `${product.name} product video`;
 
@@ -569,13 +805,13 @@ function createProductGallery(product) {
 
                     stageContent.appendChild(iframe);
                 } else {
-                    const unavailable = el(
-                        "div",
-                        "ethorise-video-unavailable",
-                        "Video preview is unavailable."
+                    stageContent.appendChild(
+                        el(
+                            "div",
+                            "ethorise-video-unavailable",
+                            "Video preview is unavailable."
+                        )
                     );
-
-                    stageContent.appendChild(unavailable);
                 }
             }
         }
@@ -636,21 +872,17 @@ function createProductGallery(product) {
 
             button.appendChild(image);
         } else {
-            const videoIcon = el(
-                "span",
-                "ethorise-video-icon",
-                "▶"
-            );
-
-            const videoLabel = el(
-                "small",
-                "",
-                "VIDEO"
-            );
-
             button.append(
-                videoIcon,
-                videoLabel
+                el(
+                    "span",
+                    "ethorise-video-icon",
+                    "▶"
+                ),
+                el(
+                    "small",
+                    "",
+                    "VIDEO"
+                )
             );
         }
 
@@ -694,7 +926,9 @@ function createProductGallery(product) {
 function openImageViewer(src, name) {
     const existing = $("ethoriseImageViewer");
 
-    if (existing) existing.remove();
+    if (existing) {
+        existing.remove();
+    }
 
     const viewer = el(
         "div",
@@ -705,6 +939,7 @@ function openImageViewer(src, name) {
 
     viewer.setAttribute("role", "dialog");
     viewer.setAttribute("aria-modal", "true");
+
     viewer.setAttribute(
         "aria-label",
         "Enlarged product image"
@@ -722,6 +957,7 @@ function openImageViewer(src, name) {
     );
 
     close.type = "button";
+
     close.setAttribute(
         "aria-label",
         "Close image viewer"
@@ -781,7 +1017,6 @@ function openImageViewer(src, name) {
 
 /* ==========================================
    GALLERY STYLES
-   Injected automatically — no CSS edit needed
 ========================================== */
 
 function injectGalleryStyles() {
@@ -1076,8 +1311,6 @@ function renderProduct(product) {
         "product-detail-actions"
     );
 
-    /* ADD TO SHOPPING LIST */
-
     const addButton = el(
         "button",
         "btn btn-primary",
@@ -1090,8 +1323,6 @@ function renderProduct(product) {
         addToCart(product.id);
     };
 
-    /* WISHLIST */
-
     const wishlistButton = el(
         "button",
         "btn btn-outline",
@@ -1103,8 +1334,6 @@ function renderProduct(product) {
     wishlistButton.onclick = () => {
         addWishlist(product.id);
     };
-
-    /* VIEW SHOPPING LIST */
 
     const cartLink = el(
         "a",
@@ -1135,9 +1364,6 @@ function renderProduct(product) {
     );
 
     detailContainer.appendChild(grid);
-
-    document.title =
-        `${product.name} | ETHORISE`;
 }
 
 /* ==========================================
@@ -1388,11 +1614,11 @@ function setupMenu() {
     if (!toggle || !menu) return;
 
     toggle.onclick = () => {
-        menu.classList.toggle("active");
+        const active = menu.classList.toggle("active");
 
         toggle.setAttribute(
             "aria-expanded",
-            String(menu.classList.contains("active"))
+            String(active)
         );
     };
 
@@ -1430,9 +1656,11 @@ async function init() {
             !Number.isInteger(productId) ||
             productId <= 0
         ) {
-            throw new Error(
-                "Invalid product ID"
+            markProductUnavailable(
+                "Invalid product ID."
             );
+
+            return;
         }
 
         const response = await fetch(
@@ -1460,11 +1688,14 @@ async function init() {
         );
 
         if (!product) {
-            detailContainer.textContent =
-                "Product not found.";
+            markProductUnavailable(
+                "Product not found."
+            );
 
             return;
         }
+
+        updateProductSEO(product);
 
         renderProduct(product);
 
@@ -1483,8 +1714,9 @@ async function init() {
     } catch (error) {
         console.error(error);
 
-        detailContainer.textContent =
-            "Unable to load product details.";
+        markProductUnavailable(
+            "Unable to load product details."
+        );
     }
 }
 
