@@ -8,6 +8,7 @@ Supports:
 - Main Images
 - Multiple Product Images
 - Product Videos
+- AI Image Labels
 - Tags & Recommendations
 - Duplicate Detection
 - Product Validation
@@ -111,6 +112,8 @@ VIDEO_EXTENSIONS = {
     ".webm",
 }
 
+AI_IMAGE_LABEL = "AI-generated illustration"
+
 REQUIRED_COLUMNS = {
     "id",
     "name",
@@ -130,6 +133,10 @@ REQUIRED_COLUMNS = {
     "tags",
     "relatedProductIds",
     "status",
+}
+
+OPTIONAL_COLUMNS = {
+    "mediaLabels",
 }
 
 
@@ -165,6 +172,7 @@ def parse_ids(value):
 
 
 def valid_https_url(value):
+
     try:
 
         parsed = urlparse(value)
@@ -181,6 +189,7 @@ def valid_https_url(value):
 
 
 def normalize_url(value):
+
     parsed = urlparse(value)
 
     return (
@@ -196,6 +205,7 @@ def normalize_url(value):
 # ==========================================
 
 def validate_media(value, media_type="image"):
+
     value = clean(value)
 
     if not value:
@@ -233,10 +243,75 @@ def validate_media(value, media_type="image"):
         else VIDEO_EXTENSIONS
     )
 
-    if target.suffix.lower() not in allowed_extensions:
-        return False
+    return (
+        target.suffix.lower() in allowed_extensions
+    )
 
-    return True
+
+# ==========================================
+# MEDIA LABEL VALIDATION
+# ==========================================
+
+def parse_media_labels(value, product_images):
+
+    text = clean(value)
+
+    if not text:
+        return {}
+
+    try:
+
+        labels = json.loads(text)
+
+    except json.JSONDecodeError:
+
+        raise ValueError(
+            "mediaLabels contains invalid JSON"
+        )
+
+    if not isinstance(labels, dict):
+
+        raise ValueError(
+            "mediaLabels must be a JSON object"
+        )
+
+    valid_images = set(product_images)
+
+    result = {}
+
+    for image_path, label in labels.items():
+
+        if not isinstance(image_path, str):
+            raise ValueError(
+                "mediaLabels image paths must be strings"
+            )
+
+        if not isinstance(label, str):
+            raise ValueError(
+                "mediaLabels labels must be strings"
+            )
+
+        image_path = image_path.strip()
+        label = label.strip()
+
+        if image_path not in valid_images:
+            raise ValueError(
+                f"Labeled image is not in product gallery: {image_path}"
+            )
+
+        if not validate_media(image_path, "image"):
+            raise ValueError(
+                f"Invalid labeled image: {image_path}"
+            )
+
+        if label != AI_IMAGE_LABEL:
+            raise ValueError(
+                f"Unsupported media label: {label}"
+            )
+
+        result[image_path] = label
+
+    return result
 
 
 # ==========================================
@@ -278,6 +353,7 @@ def backup_file(source, label):
 # ==========================================
 
 def validate_product(row, row_number):
+
     errors = []
 
     id_text = clean(row.get("id"))
@@ -294,7 +370,6 @@ def validate_product(row, row_number):
         errors.append("Product name missing")
 
     brand = clean(row.get("brand"))
-
     category = clean(row.get("category"))
 
     if category not in ALLOWED_CATEGORIES:
@@ -360,6 +435,20 @@ def validate_product(row, row_number):
         )
     )
 
+    # AI IMAGE LABELS
+
+    try:
+
+        media_labels = parse_media_labels(
+            row.get("mediaLabels"),
+            all_images
+        )
+
+    except ValueError as error:
+
+        errors.append(str(error))
+        media_labels = {}
+
     # VIDEO
 
     video = clean(row.get("video"))
@@ -407,7 +496,6 @@ def validate_product(row, row_number):
     except ValueError as error:
 
         errors.append(str(error))
-
         related_ids = []
 
     # STATUS
@@ -469,6 +557,7 @@ def validate_product(row, row_number):
         "image": image,
         "images": all_images,
         "video": video,
+        "mediaLabels": media_labels,
         "countries": countries,
         "affiliatePlatform": platform,
         "affiliateLink": affiliate_link,
@@ -676,8 +765,6 @@ def generate_sitemap(products):
                 f"product.html?id={product['id']}"
             )
 
-    # REMOVE DUPLICATES
-
     urls = list(
         dict.fromkeys(urls)
     )
@@ -781,8 +868,6 @@ def export_website(products):
 
     try:
 
-        # GENERATE TEMPORARY FILES
-
         temporary_json = write_temp_file(
             DATA_DIR,
             ".json",
@@ -864,7 +949,7 @@ def export_website(products):
 
     except Exception:
 
-        # ROLLBACK IF ONE FILE CHANGED
+        # ROLLBACK IF EXPORT FAILED
 
         if json_replaced:
 

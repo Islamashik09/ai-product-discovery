@@ -1,24 +1,29 @@
 """
 ETHORISE ADMIN DASHBOARD
-Professional Local Product Manager
+
+Professional Local Affiliate Product Manager
 
 Features:
-- Product Dashboard
+- Dashboard
 - Add / Edit / Delete Products
-- Image and Video Upload
+- Main Image Upload
+- Multiple Gallery Images
+- Product Video Upload
+- AI Image Labeling
 - Media Library
 - Bulk CSV Import
 - Import Preview
 - Duplicate Detection
 - Safe Merge
-- Automatic Backups
-- JSON Website Export
+- Automatic CSV Backups
+- Website JSON / Sitemap Export
 
 Run:
 python -m streamlit run automation/admin_dashboard.py --server.address 127.0.0.1
 """
 
 import io
+import json
 import shutil
 import subprocess
 import sys
@@ -49,7 +54,7 @@ VIDEOS = BASE / "assets" / "videos"
 
 MANAGER = BASE / "automation" / "product_manager.py"
 
-for folder in [DATA, BACKUPS, IMAGES, VIDEOS]:
+for folder in (DATA, BACKUPS, IMAGES, VIDEOS):
     folder.mkdir(parents=True, exist_ok=True)
 
 
@@ -70,6 +75,8 @@ COUNTRIES = ["USA", "UK", "Canada"]
 
 STATUSES = ["active", "inactive"]
 
+AI_LABEL = "AI-generated illustration"
+
 COLUMNS = [
     "id",
     "name",
@@ -81,6 +88,7 @@ COLUMNS = [
     "image",
     "images",
     "video",
+    "mediaLabels",
     "countries",
     "affiliatePlatform",
     "affiliateLink",
@@ -114,7 +122,7 @@ st.set_page_config(
 
 
 # ======================================
-# DATABASE HELPERS
+# DATABASE
 # ======================================
 
 def load_data():
@@ -139,7 +147,7 @@ def load_data():
 def create_backup():
 
     if not CSV.exists():
-        return
+        return None
 
     timestamp = datetime.now().strftime(
         "%Y%m%d_%H%M%S_%f"
@@ -148,6 +156,8 @@ def create_backup():
     destination = BACKUPS / f"products_{timestamp}.csv"
 
     shutil.copy2(CSV, destination)
+
+    return destination
 
 
 def save_data(df):
@@ -191,17 +201,28 @@ def next_id(df):
 def split_values(text):
 
     return [
-        value.strip()
-        for value in str(text).split("|")
-        if value.strip()
+        item.strip()
+        for item in str(text).split("|")
+        if item.strip()
     ]
 
 
-def valid_https(url):
+def unique_values(values):
+
+    return list(dict.fromkeys(
+        item for item in values if item
+    ))
+
+
+# ======================================
+# URL / MEDIA VALIDATION
+# ======================================
+
+def valid_https(value):
 
     try:
 
-        parsed = urlparse(str(url).strip())
+        parsed = urlparse(str(value).strip())
 
         return (
             parsed.scheme == "https"
@@ -224,31 +245,99 @@ def valid_media_path(value, kind="image"):
     if valid_https(value):
         return True
 
+    folder = IMAGES if kind == "image" else VIDEOS
+
     prefix = (
         "assets/images/"
         if kind == "image"
         else "assets/videos/"
     )
 
-    if not value.startswith(prefix):
-        return False
-
-    resolved = (BASE / value).resolve()
-
-    folder = (
-        IMAGES if kind == "image"
-        else VIDEOS
-    ).resolve()
-
     allowed = (
-        IMAGE_TYPES if kind == "image"
+        IMAGE_TYPES
+        if kind == "image"
         else VIDEO_TYPES
     )
 
+    if not value.startswith(prefix):
+        return False
+
+    target = (BASE / value).resolve()
+
     return (
-        resolved.is_relative_to(folder)
-        and resolved.is_file()
-        and resolved.suffix.lower() in allowed
+        target.is_relative_to(folder.resolve())
+        and target.is_file()
+        and target.suffix.lower() in allowed
+    )
+
+
+# ======================================
+# AI MEDIA LABEL HELPERS
+# ======================================
+
+def parse_media_labels(value):
+
+    if isinstance(value, dict):
+        data = value
+
+    else:
+
+        text = str(value or "").strip()
+
+        if not text:
+            return {}
+
+        try:
+            data = json.loads(text)
+        except (ValueError, TypeError):
+            raise ValueError(
+                "mediaLabels must contain valid JSON."
+            )
+
+    if not isinstance(data, dict):
+        raise ValueError(
+            "mediaLabels must be a JSON object."
+        )
+
+    result = {}
+
+    for path, label in data.items():
+
+        path = str(path).strip()
+        label = str(label).strip()
+
+        if label != AI_LABEL:
+            raise ValueError(
+                f"Unsupported media label: {label}"
+            )
+
+        if not valid_media_path(path, "image"):
+            raise ValueError(
+                f"Invalid labeled image: {path}"
+            )
+
+        result[path] = label
+
+    return result
+
+
+def serialize_media_labels(labels):
+
+    if not labels:
+        return ""
+
+    return json.dumps(
+        labels,
+        ensure_ascii=False,
+        separators=(",", ":")
+    )
+
+
+def all_product_images(product):
+
+    return unique_values(
+        [str(product.get("image", "")).strip()]
+        + split_values(product.get("images", ""))
     )
 
 
@@ -264,34 +353,53 @@ def save_uploaded_file(upload, folder, allowed, max_size):
     extension = Path(upload.name).suffix.lower()
 
     if extension not in allowed:
-        raise ValueError("Unsupported file extension.")
+        raise ValueError(
+            "Unsupported file extension."
+        )
 
     content = upload.getvalue()
 
-    if len(content) > max_size:
+    if not content:
         raise ValueError(
-            f"File exceeds {max_size // (1024 * 1024)} MB limit."
+            "Uploaded file is empty."
         )
 
-    if not content:
-        raise ValueError("Uploaded file is empty.")
+    if len(content) > max_size:
+        raise ValueError(
+            f"File exceeds {max_size // 1048576} MB."
+        )
 
     if folder == IMAGES:
 
         if extension in {".jpg", ".jpeg"}:
+
             if not content.startswith(b"\xff\xd8\xff"):
-                raise ValueError("Invalid JPEG file.")
+                raise ValueError("Invalid JPEG.")
 
         elif extension == ".png":
+
             if not content.startswith(b"\x89PNG\r\n\x1a\n"):
-                raise ValueError("Invalid PNG file.")
+                raise ValueError("Invalid PNG.")
 
         elif extension == ".webp":
+
             if not (
                 content.startswith(b"RIFF")
                 and content[8:12] == b"WEBP"
             ):
-                raise ValueError("Invalid WebP file.")
+                raise ValueError("Invalid WebP.")
+
+    elif folder == VIDEOS:
+
+        if extension == ".mp4":
+
+            if b"ftyp" not in content[:32]:
+                raise ValueError("Invalid MP4.")
+
+        elif extension == ".webm":
+
+            if not content.startswith(b"\x1a\x45\xdf\xa3"):
+                raise ValueError("Invalid WebM.")
 
     filename = uuid.uuid4().hex + extension
 
@@ -313,10 +421,10 @@ def preview_image(source):
 
             path = (BASE / source).resolve()
 
-            if not path.is_relative_to(IMAGES.resolve()):
-                return
-
-            if path.exists():
+            if (
+                path.is_relative_to(IMAGES.resolve())
+                and path.is_file()
+            ):
                 st.image(str(path), width=300)
 
         elif valid_https(source):
@@ -337,10 +445,10 @@ def preview_video(source):
 
             path = (BASE / source).resolve()
 
-            if not path.is_relative_to(VIDEOS.resolve()):
-                return
-
-            if path.exists():
+            if (
+                path.is_relative_to(VIDEOS.resolve())
+                and path.is_file()
+            ):
                 st.video(str(path))
 
         elif valid_https(source):
@@ -363,9 +471,9 @@ def product_editor(defaults=None, prefix="add"):
 
     st.subheader("📦 Basic Information")
 
-    col1, col2 = st.columns(2)
+    left, right = st.columns(2)
 
-    with col1:
+    with left:
 
         name = st.text_input(
             "Product Name *",
@@ -379,7 +487,7 @@ def product_editor(defaults=None, prefix="add"):
             key=f"{prefix}_brand"
         )
 
-        selected_category = value(
+        current_category = value(
             "category",
             "Electronics"
         )
@@ -388,14 +496,14 @@ def product_editor(defaults=None, prefix="add"):
             "Category",
             CATEGORIES,
             index=(
-                CATEGORIES.index(selected_category)
-                if selected_category in CATEGORIES
+                CATEGORIES.index(current_category)
+                if current_category in CATEGORIES
                 else 0
             ),
             key=f"{prefix}_category"
         )
 
-    with col2:
+    with right:
 
         subcategory = st.text_input(
             "Subcategory",
@@ -403,7 +511,7 @@ def product_editor(defaults=None, prefix="add"):
             key=f"{prefix}_subcategory"
         )
 
-        selected_platform = value(
+        current_platform = value(
             "affiliatePlatform",
             "Amazon"
         )
@@ -412,14 +520,14 @@ def product_editor(defaults=None, prefix="add"):
             "Affiliate Platform",
             PLATFORMS,
             index=(
-                PLATFORMS.index(selected_platform)
-                if selected_platform in PLATFORMS
+                PLATFORMS.index(current_platform)
+                if current_platform in PLATFORMS
                 else 0
             ),
             key=f"{prefix}_platform"
         )
 
-        selected_status = value(
+        current_status = value(
             "status",
             "active"
         )
@@ -428,8 +536,8 @@ def product_editor(defaults=None, prefix="add"):
             "Product Status",
             STATUSES,
             index=(
-                STATUSES.index(selected_status)
-                if selected_status in STATUSES
+                STATUSES.index(current_status)
+                if current_status in STATUSES
                 else 0
             ),
             key=f"{prefix}_status"
@@ -462,9 +570,9 @@ def product_editor(defaults=None, prefix="add"):
 
     st.divider()
 
-    # ======================================
-    # IMAGE MANAGEMENT
-    # ======================================
+    # ==================================
+    # MAIN IMAGE
+    # ==================================
 
     st.subheader("🖼️ Product Images")
 
@@ -487,26 +595,41 @@ def product_editor(defaults=None, prefix="add"):
         )
 
         if main_upload is not None:
+
             st.image(
                 main_upload,
-                caption="New Main Image Preview",
+                caption="New Main Image",
                 width=300
             )
 
         elif main_image:
-            st.caption("Current image:")
+
+            st.caption("Current main image")
             preview_image(main_image)
 
     else:
 
         main_image = st.text_input(
-            "Main Image URL",
+            "Main Image URL or assets/images/ path",
             value=main_image,
             key=f"{prefix}_image_url"
         )
 
-        if main_image:
-            preview_image(main_image)
+        preview_image(main_image)
+
+    main_ai = st.checkbox(
+        "Main image is AI-generated",
+        value=False,
+        key=f"{prefix}_main_ai",
+        help=(
+            "Select only when the main image is an "
+            "AI-generated illustration."
+        )
+    )
+
+    # ==================================
+    # GALLERY
+    # ==================================
 
     st.markdown("#### Additional Product Images")
 
@@ -531,21 +654,21 @@ def product_editor(defaults=None, prefix="add"):
 
         if gallery_uploads:
 
-            st.caption(
-                f"{len(gallery_uploads)} image(s) selected"
-            )
-
             columns = st.columns(3)
 
-            for index, image in enumerate(gallery_uploads):
+            for index, upload in enumerate(gallery_uploads):
 
                 with columns[index % 3]:
+
                     st.image(
-                        image,
+                        upload,
                         use_container_width=True
                     )
 
+                    st.caption(upload.name)
+
         if gallery:
+
             st.caption("Existing gallery images:")
             st.text(gallery)
 
@@ -557,11 +680,63 @@ def product_editor(defaults=None, prefix="add"):
             key=f"{prefix}_gallery_urls"
         )
 
+    gallery_ai = st.checkbox(
+        "Mark newly uploaded gallery images as AI-generated",
+        value=False,
+        key=f"{prefix}_gallery_ai"
+    )
+
+    # ==================================
+    # EXISTING MEDIA LABELS
+    # ==================================
+
+    st.markdown("#### AI Image Labels")
+
+    st.caption(
+        "Choose existing image paths that contain "
+        "AI-generated illustrations. "
+        "New uploads can be labeled using the checkboxes above."
+    )
+
+    existing_images = all_product_images({
+        "image": main_image,
+        "images": gallery
+    })
+
+    try:
+
+        existing_labels = parse_media_labels(
+            value("mediaLabels")
+        )
+
+    except ValueError as error:
+
+        st.warning(str(error))
+        existing_labels = {}
+
+    default_ai_images = [
+        path
+        for path in existing_images
+        if existing_labels.get(path) == AI_LABEL
+    ]
+
+    labeled_images = st.multiselect(
+        "Existing AI-generated Images",
+        options=existing_images,
+        default=default_ai_images,
+        key=f"{prefix}_labeled_images"
+    )
+
+    st.info(
+        "AI-generated visuals must not be presented "
+        "as verified photographs of the advertised product."
+    )
+
     st.divider()
 
-    # ======================================
-    # VIDEO MANAGEMENT
-    # ======================================
+    # ==================================
+    # VIDEO
+    # ==================================
 
     st.subheader("🎬 Product Video")
 
@@ -584,11 +759,9 @@ def product_editor(defaults=None, prefix="add"):
         )
 
         if video_upload is not None:
-
             st.video(video_upload)
 
         elif video:
-
             preview_video(video)
 
     else:
@@ -599,14 +772,13 @@ def product_editor(defaults=None, prefix="add"):
             key=f"{prefix}_video_url"
         )
 
-        if video:
-            preview_video(video)
+        preview_video(video)
 
     st.divider()
 
-    # ======================================
+    # ==================================
     # AFFILIATE INFORMATION
-    # ======================================
+    # ==================================
 
     st.subheader("🔗 Affiliate Information")
 
@@ -651,6 +823,7 @@ def product_editor(defaults=None, prefix="add"):
         "image": main_image.strip(),
         "images": gallery.strip(),
         "video": video.strip(),
+        "mediaLabels": "",
         "countries": "|".join(countries),
         "affiliatePlatform": platform,
         "affiliateLink": affiliate_link.strip(),
@@ -664,7 +837,10 @@ def product_editor(defaults=None, prefix="add"):
     uploads = {
         "main": main_upload,
         "gallery": gallery_uploads,
-        "video": video_upload
+        "video": video_upload,
+        "main_ai": main_ai,
+        "gallery_ai": gallery_ai,
+        "labeled_images": labeled_images
     }
 
     return product, uploads
@@ -683,7 +859,7 @@ def validate_product(product, uploads):
 
     if not (
         product["image"]
-        or uploads["main"]
+        or uploads["main"] is not None
     ):
         errors.append("Main image is required.")
 
@@ -713,21 +889,45 @@ def validate_product(product, uploads):
     if not product["countries"]:
         errors.append("Select at least one target country.")
 
+    if product["category"] not in CATEGORIES:
+        errors.append("Invalid category.")
+
+    if product["affiliatePlatform"] not in PLATFORMS:
+        errors.append("Invalid affiliate platform.")
+
+    if product["status"] not in STATUSES:
+        errors.append("Invalid product status.")
+
     if product["affiliatePlatform"] == "Amazon":
 
         asin = product["asin"]
 
         if len(asin) != 10 or not asin.isalnum():
-            errors.append("Valid 10-character ASIN required.")
+            errors.append(
+                "Valid 10-character Amazon ASIN required."
+            )
+
+    for item in split_values(product["relatedProductIds"]):
+
+        if not item.isdigit():
+            errors.append(
+                "Related product IDs must be numbers."
+            )
+            break
 
     return errors
 
 
 # ======================================
-# PROCESS MEDIA
+# PROCESS MEDIA AND LABELS
 # ======================================
 
 def process_media(product, uploads):
+
+    labels = {
+        path: AI_LABEL
+        for path in uploads["labeled_images"]
+    }
 
     if uploads["main"] is not None:
 
@@ -738,6 +938,13 @@ def process_media(product, uploads):
             MAX_IMAGE_SIZE
         )
 
+        if uploads["main_ai"]:
+            labels[product["image"]] = AI_LABEL
+
+    elif uploads["main_ai"] and product["image"]:
+
+        labels[product["image"]] = AI_LABEL
+
     if uploads["gallery"]:
 
         existing = split_values(product["images"])
@@ -746,17 +953,20 @@ def process_media(product, uploads):
 
         for image in uploads["gallery"]:
 
-            uploaded.append(
-                save_uploaded_file(
-                    image,
-                    IMAGES,
-                    IMAGE_TYPES,
-                    MAX_IMAGE_SIZE
-                )
+            path = save_uploaded_file(
+                image,
+                IMAGES,
+                IMAGE_TYPES,
+                MAX_IMAGE_SIZE
             )
 
+            uploaded.append(path)
+
+            if uploads["gallery_ai"]:
+                labels[path] = AI_LABEL
+
         product["images"] = "|".join(
-            dict.fromkeys(existing + uploaded)
+            unique_values(existing + uploaded)
         )
 
     if uploads["video"] is not None:
@@ -767,6 +977,16 @@ def process_media(product, uploads):
             VIDEO_TYPES,
             MAX_VIDEO_SIZE
         )
+
+    valid_images = set(all_product_images(product))
+
+    labels = {
+        path: label
+        for path, label in labels.items()
+        if path in valid_images
+    }
+
+    product["mediaLabels"] = serialize_media_labels(labels)
 
     return product
 
@@ -793,7 +1013,6 @@ def normalize_url(value):
         return f"{host}{path}"
 
     except ValueError:
-
         return value.lower()
 
 
@@ -807,21 +1026,17 @@ def duplicate_keys(row):
         row.get("asin", "")
     ).strip().upper()
 
-    original_url = normalize_url(
+    product_url = normalize_url(
         row.get("productUrl", "")
     )
 
     keys = []
 
-    if original_url:
-        keys.append(
-            ("URL", original_url)
-        )
+    if product_url:
+        keys.append(("URL", product_url))
 
     if platform == "amazon" and asin:
-        keys.append(
-            ("ASIN", asin)
-        )
+        keys.append(("ASIN", asin))
 
     return keys
 
@@ -833,7 +1048,6 @@ def existing_duplicate_index(df):
     for _, row in df.iterrows():
 
         for key in duplicate_keys(row):
-
             indexed[key] = str(row.get("id", ""))
 
     return indexed
@@ -874,14 +1088,13 @@ def validate_import_row(row, row_number):
     for image in split_values(field("images")):
 
         if not valid_media_path(image, "image"):
-            errors.append(
-                "Invalid gallery image"
-            )
+            errors.append("Invalid gallery image")
             break
 
-    video = field("video")
-
-    if video and not valid_media_path(video, "video"):
+    if (
+        field("video")
+        and not valid_media_path(field("video"), "video")
+    ):
         errors.append("Invalid video")
 
     countries = split_values(field("countries"))
@@ -902,17 +1115,36 @@ def validate_import_row(row, row_number):
         if len(asin) != 10 or not asin.isalnum():
             errors.append("Invalid Amazon ASIN")
 
-    related_ids = split_values(
+    for related_id in split_values(
         field("relatedProductIds")
-    )
-
-    for related_id in related_ids:
+    ):
 
         if not related_id.isdigit():
             errors.append(
                 "Related product IDs must be numbers"
             )
             break
+
+    try:
+
+        labels = parse_media_labels(
+            field("mediaLabels")
+        )
+
+        image_paths = set(
+            all_product_images(row)
+        )
+
+        for path in labels:
+
+            if path not in image_paths:
+                errors.append(
+                    "Labeled image is not part of product gallery"
+                )
+
+    except ValueError as error:
+
+        errors.append(str(error))
 
     return errors
 
@@ -925,13 +1157,11 @@ def prepare_bulk_import(upload, existing_df):
 
     if upload.size > MAX_IMPORT_SIZE:
         raise ValueError(
-            "CSV file exceeds 10 MB limit."
+            "CSV exceeds 10 MB."
         )
 
-    content = upload.getvalue()
-
     incoming = pd.read_csv(
-        io.BytesIO(content),
+        io.BytesIO(upload.getvalue()),
         dtype=str,
         keep_default_na=False,
         encoding="utf-8-sig"
@@ -960,8 +1190,7 @@ def prepare_bulk_import(upload, existing_df):
 
     if missing:
         raise ValueError(
-            "Missing CSV columns: " +
-            ", ".join(missing)
+            "Missing CSV columns: " + ", ".join(missing)
         )
 
     for column in COLUMNS:
@@ -976,17 +1205,14 @@ def prepare_bulk_import(upload, existing_df):
         "active"
     )
 
-    existing_keys = existing_duplicate_index(
-        existing_df
-    )
+    existing_keys = existing_duplicate_index(existing_df)
 
-    import_keys = {}
+    imported_keys = {}
 
     preview_rows = []
-
     clean_rows = []
 
-    next_product_id = next_id(existing_df)
+    new_id = next_id(existing_df)
 
     for position, (_, row) in enumerate(
         incoming.iterrows(),
@@ -1011,11 +1237,11 @@ def prepare_bulk_import(upload, existing_df):
                     f"(Product ID {existing_keys[key]})"
                 )
 
-            elif key in import_keys:
+            elif key in imported_keys:
 
                 duplicates.append(
-                    f"Duplicate inside import: "
-                    f"{key[0]} (CSV row {import_keys[key]})"
+                    f"Duplicate in CSV: {key[0]} "
+                    f"(Row {imported_keys[key]})"
                 )
 
         if errors:
@@ -1030,16 +1256,14 @@ def prepare_bulk_import(upload, existing_df):
 
             decision = "Ready"
 
-            product["id"] = str(next_product_id)
+            product["id"] = str(new_id)
 
-            next_product_id += 1
+            new_id += 1
 
             clean_rows.append(product)
 
         for key in duplicate_keys(product):
-
-            if key not in import_keys:
-                import_keys[key] = position
+            imported_keys.setdefault(key, position)
 
         preview_rows.append({
             "CSV Row": position,
@@ -1056,14 +1280,10 @@ def prepare_bulk_import(upload, existing_df):
             )
         })
 
-    preview = pd.DataFrame(preview_rows)
-
-    ready = pd.DataFrame(
-        clean_rows,
-        columns=COLUMNS
+    return (
+        pd.DataFrame(preview_rows),
+        pd.DataFrame(clean_rows, columns=COLUMNS)
     )
-
-    return preview, ready
 
 
 # ======================================
@@ -1072,9 +1292,7 @@ def prepare_bulk_import(upload, existing_df):
 
 st.sidebar.title("✦ ETHORISE")
 
-st.sidebar.caption(
-    "Professional Commerce Admin"
-)
+st.sidebar.caption("Professional Commerce Admin")
 
 page = st.sidebar.radio(
     "Navigation",
@@ -1092,9 +1310,7 @@ page = st.sidebar.radio(
 
 st.sidebar.divider()
 
-st.sidebar.caption(
-    "Local Management System"
-)
+st.sidebar.caption("Local Management System")
 
 
 # ======================================
@@ -1124,16 +1340,12 @@ if page == "Dashboard":
     )
 
     amazon = (
-        int(
-            (df["affiliatePlatform"] == "Amazon").sum()
-        )
+        int((df["affiliatePlatform"] == "Amazon").sum())
         if not df.empty else 0
     )
 
     aliexpress = (
-        int(
-            (df["affiliatePlatform"] == "AliExpress").sum()
-        )
+        int((df["affiliatePlatform"] == "AliExpress").sum())
         if not df.empty else 0
     )
 
@@ -1165,9 +1377,7 @@ elif page == "All Products":
 
     search = st.text_input(
         "Search products",
-        placeholder=(
-            "Search by name, brand or category"
-        )
+        placeholder="Search by name, brand or category"
     )
 
     filtered = df.copy()
@@ -1219,8 +1429,8 @@ elif page == "Add Product":
     st.title("➕ Add Product")
 
     st.info(
-        "Use only real products and media "
-        "you have permission to publish."
+        "Use real affiliate products and media "
+        "that you have permission to publish."
     )
 
     product, uploads = product_editor(
@@ -1251,9 +1461,7 @@ elif page == "Add Product":
                     uploads
                 )
 
-                product["id"] = str(
-                    next_id(df)
-                )
+                product["id"] = str(next_id(df))
 
                 updated = pd.concat(
                     [
@@ -1370,8 +1578,7 @@ elif page == "Delete Product":
         )
 
         confirm = st.checkbox(
-            "I understand this product "
-            "will be deleted."
+            "I understand this product will be deleted."
         )
 
         if st.button(
@@ -1386,9 +1593,7 @@ elif page == "Delete Product":
 
             save_data(updated)
 
-            st.success(
-                "Product deleted."
-            )
+            st.success("Product deleted.")
 
             st.rerun()
 
@@ -1408,19 +1613,12 @@ elif page == "Bulk Import":
 
     st.info(
         "Existing products are preserved. "
-        "Duplicates are skipped. "
-        "Only validated new products are imported."
+        "Duplicates and invalid rows are skipped."
     )
-
-    # ==================================
-    # CSV TEMPLATE
-    # ==================================
 
     st.subheader("1. Download Import Template")
 
-    template = pd.DataFrame(
-        columns=COLUMNS
-    )
+    template = pd.DataFrame(columns=COLUMNS)
 
     st.download_button(
         "⬇️ Download CSV Template",
@@ -1430,15 +1628,12 @@ elif page == "Bulk Import":
     )
 
     st.caption(
-        "Use | to separate images, tags, "
-        "features, countries and related IDs."
+        "Use | to separate features, images, "
+        "countries, tags and related IDs. "
+        "mediaLabels uses JSON."
     )
 
     st.divider()
-
-    # ==================================
-    # FILE UPLOAD
-    # ==================================
 
     st.subheader("2. Upload Product CSV")
 
@@ -1459,17 +1654,20 @@ elif page == "Bulk Import":
 
             total_rows = len(preview)
 
-            ready_count = int(
-                (preview["Status"] == "Ready").sum()
-            ) if total_rows else 0
+            ready_count = (
+                int((preview["Status"] == "Ready").sum())
+                if total_rows else 0
+            )
 
-            duplicate_count = int(
-                (preview["Status"] == "Duplicate").sum()
-            ) if total_rows else 0
+            duplicate_count = (
+                int((preview["Status"] == "Duplicate").sum())
+                if total_rows else 0
+            )
 
-            invalid_count = int(
-                (preview["Status"] == "Invalid").sum()
-            ) if total_rows else 0
+            invalid_count = (
+                int((preview["Status"] == "Invalid").sum())
+                if total_rows else 0
+            )
 
             c1, c2, c3, c4 = st.columns(4)
 
@@ -1479,10 +1677,6 @@ elif page == "Bulk Import":
             c4.metric("Invalid", invalid_count)
 
             st.divider()
-
-            # ==============================
-            # PREVIEW
-            # ==============================
 
             st.subheader("3. Import Preview")
 
@@ -1495,38 +1689,30 @@ elif page == "Bulk Import":
             st.download_button(
                 "⬇️ Download Validation Report",
                 data=preview.to_csv(index=False),
-                file_name=(
-                    "ethorise_import_validation.csv"
-                ),
+                file_name="ethorise_import_validation.csv",
                 mime="text/csv"
             )
 
             st.divider()
-
-            # ==============================
-            # IMPORT CONFIRMATION
-            # ==============================
 
             st.subheader("4. Confirm Import")
 
             if ready_count == 0:
 
                 st.warning(
-                    "No new valid products "
-                    "available to import."
+                    "No valid new products to import."
                 )
 
             else:
 
                 st.success(
-                    f"{ready_count} new products "
-                    "are ready to import."
+                    f"{ready_count} products ready."
                 )
 
                 confirm = st.checkbox(
-                    "I confirm these are real "
-                    "affiliate products and I have "
-                    "permission to use their data/media.",
+                    "I confirm the product information "
+                    "is accurate and I have permission "
+                    "to publish the supplied media.",
                     key="confirm_bulk_import"
                 )
 
@@ -1539,26 +1725,20 @@ elif page == "Bulk Import":
                     try:
 
                         updated = pd.concat(
-                            [
-                                df,
-                                ready
-                            ],
+                            [df, ready],
                             ignore_index=True
                         )
 
                         save_data(updated)
 
                         st.success(
-                            f"Successfully imported "
-                            f"{ready_count} products!"
+                            f"Imported {ready_count} products!"
                         )
 
                         st.info(
-                            "Next: Open Export Website "
-                            "and generate products.json."
+                            "Next: Export Website → "
+                            "Validate & Generate JSON."
                         )
-
-                        st.balloons()
 
                     except Exception as error:
 
@@ -1581,57 +1761,48 @@ elif page == "Media Library":
 
     st.title("🖼️ Media Library")
 
-    tabs = st.tabs([
-        "Images",
-        "Videos"
-    ])
+    tabs = st.tabs(["Images", "Videos"])
 
     with tabs[0]:
 
         images = sorted([
-            p for p in IMAGES.iterdir()
-            if p.suffix.lower() in IMAGE_TYPES
+            path
+            for path in IMAGES.iterdir()
+            if path.suffix.lower() in IMAGE_TYPES
         ])
 
-        st.write(
-            f"Total Images: {len(images)}"
-        )
+        st.write(f"Total Images: {len(images)}")
 
-        columns = st.columns(4)
+        if images:
 
-        for index, image in enumerate(images):
+            columns = st.columns(4)
 
-            with columns[index % 4]:
+            for index, image in enumerate(images):
 
-                st.image(
-                    str(image),
-                    use_container_width=True
-                )
+                with columns[index % 4]:
 
-                st.caption(
-                    image.name
-                )
+                    st.image(
+                        str(image),
+                        use_container_width=True
+                    )
+
+                    st.caption(image.name)
 
     with tabs[1]:
 
         videos = sorted([
-            p for p in VIDEOS.iterdir()
-            if p.suffix.lower() in VIDEO_TYPES
+            path
+            for path in VIDEOS.iterdir()
+            if path.suffix.lower() in VIDEO_TYPES
         ])
 
-        st.write(
-            f"Total Videos: {len(videos)}"
-        )
+        st.write(f"Total Videos: {len(videos)}")
 
         for video in videos:
 
-            st.video(
-                str(video)
-            )
+            st.video(str(video))
 
-            st.caption(
-                video.name
-            )
+            st.caption(video.name)
 
 
 # ======================================
@@ -1644,17 +1815,19 @@ elif page == "Export Website":
 
     st.write(
         "Validate products.csv and generate "
-        "products.json for your website."
+        "website JSON and sitemap."
     )
 
-    st.metric(
-        "CSV Products",
-        len(df)
-    )
+    st.metric("CSV Products", len(df))
 
     st.caption(
-        "Multiple images and product videos "
-        "are supported."
+        "Images, videos and AI image labels "
+        "are supported by the Dashboard."
+    )
+
+    st.warning(
+        "Product Manager must also support mediaLabels "
+        "before labels appear in products.json."
     )
 
     if st.button(
@@ -1675,9 +1848,7 @@ elif page == "Export Website":
                 timeout=120
             )
 
-            st.code(
-                result.stdout or "No output"
-            )
+            st.code(result.stdout or "No output")
 
             if result.stderr:
                 st.error(result.stderr)
@@ -1688,15 +1859,13 @@ elif page == "Export Website":
             ):
 
                 st.success(
-                    "JSON generated successfully!"
+                    "Website export completed!"
                 )
 
             else:
 
                 st.error(
-                    "Export failed. "
-                    "Existing products.json "
-                    "was not intentionally replaced."
+                    "Export failed. Check validation output."
                 )
 
         except Exception as error:

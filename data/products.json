@@ -28,6 +28,7 @@
       "assets/images/bc40c520bb70441a8ac57d21cecbe324.jpg"
     ],
     "video": "",
+    "mediaLabels": {},
     "countries": [
       "USA"
     ],
@@ -63,11 +64,15 @@
     "relatedProductIds": [],
     "price": null,
     "currency": "USD",
-    "image": "https://placehold.co/800x800/111111/ffffff?text=MOKiN+USB-C+Dock",
+    "image": "assets/images/razer-lifestyle.jpeg",
     "images": [
-      "https://placehold.co/800x800/111111/ffffff?text=MOKiN+USB-C+Dock"
+      "assets/images/razer-lifestyle.jpeg",
+      "assets/images/mokin-lifestyle.jpeg"
     ],
     "video": "",
+    "mediaLabels": {
+      "assets/images/razer-lifestyle.jpeg": "AI-generated illustration"
+    },
     "countries": [
       "USA"
     ],
@@ -99,11 +104,14 @@
     "relatedProductIds": [],
     "price": null,
     "currency": "USD",
-    "image": "https://placehold.co/800x800/111111/ffffff?text=Razer+Gaming+Mouse",
+    "image": "assets/images/razer-lifestyle.jpeg",
     "images": [
-      "https://placehold.co/800x800/111111/ffffff?text=Razer+Gaming+Mouse"
+      "assets/images/razer-lifestyle.jpeg"
     ],
     "video": "",
+    "mediaLabels": {
+      "assets/images/razer-lifestyle.jpeg": "AI-generated illustration"
+    },
     "countries": [
       "USA"
     ],
@@ -140,6 +148,7 @@
       "https://placehold.co/800x800/111111/ffffff?text=JOYEKY+Laptop+Stand"
     ],
     "video": "",
+    "mediaLabels": {},
     "countries": [
       "USA"
     ],
@@ -176,6 +185,7 @@
       "https://placehold.co/800x800/111111/ffffff?text=UGREEN+100W+Charger"
     ],
     "video": "",
+    "mediaLabels": {},
     "countries": [
       "USA"
     ],

@@ -2,14 +2,12 @@
 
 /* ==========================================
    ETHORISE — PRODUCT DETAILS
-   Premium Product Experience
 
    Features:
-   - Dynamic Product SEO
-   - Product JSON-LD
-   - Breadcrumb JSON-LD
-   - Interactive Media Gallery
+   - Dynamic SEO + Structured Data
+   - Interactive Image Gallery
    - Product Video Player
+   - AI Image Labels
    - Fullscreen Image Viewer
    - Shopping List
    - Wishlist
@@ -30,6 +28,8 @@ const SITE_URL = "https://islamashik09.github.io/ethorise/";
 const CART_KEY = "ethoriseCart";
 const WISHLIST_KEY = "ethoriseWishlist";
 const RECENT_KEY = "ethoriseRecentlyViewed";
+
+const AI_LABEL = "AI-generated illustration";
 
 const MAX_RECOMMENDATIONS = 4;
 
@@ -90,6 +90,46 @@ function priceLabel(product) {
     }
 
     return `$${price.toFixed(2)} USD`;
+}
+
+/* ==========================================
+   AI IMAGE HELPERS
+========================================== */
+
+function isAIImage(product, imagePath) {
+    if (
+        !product ||
+        !product.mediaLabels ||
+        typeof product.mediaLabels !== "object" ||
+        Array.isArray(product.mediaLabels)
+    ) {
+        return false;
+    }
+
+    return (
+        product.mediaLabels[imagePath] === AI_LABEL
+    );
+}
+
+function createAIBadge() {
+    const badge = el(
+        "span",
+        "ethorise-ai-badge",
+        "AI ILLUSTRATION"
+    );
+
+    badge.title =
+        "AI-generated illustration — actual product may differ.";
+
+    return badge;
+}
+
+function createAIDisclosure() {
+    return el(
+        "p",
+        "ethorise-ai-disclosure",
+        "AI-generated illustration — actual product may differ."
+    );
 }
 
 /* ==========================================
@@ -160,6 +200,7 @@ function productPageUrl(product) {
 
 function buildProductSchema(product, pageUrl) {
     const images = getProductImages(product)
+        .filter(src => !isAIImage(product, src))
         .map(absoluteUrl)
         .filter(Boolean);
 
@@ -173,6 +214,14 @@ function buildProductSchema(product, pageUrl) {
     if (product.description) {
         schema.description = product.description;
     }
+
+    /*
+      Only non-AI product image references are included
+      in Product structured data.
+
+      Illustrations should not be represented as
+      verified product photographs.
+    */
 
     if (images.length) {
         schema.image = images;
@@ -197,10 +246,7 @@ function buildProductSchema(product, pageUrl) {
     }
 
     /*
-      No Offer / AggregateRating / Review is generated.
-
-      ETHORISE does not currently maintain verified
-      real-time product prices, availability or ratings.
+      No invented pricing, ratings or availability.
     */
 
     return schema;
@@ -239,10 +285,11 @@ function updateProductSEO(product) {
 
     const pageUrl = productPageUrl(product);
 
-    const images = getProductImages(product);
+    const primaryImage = getProductImages(product)
+        .find(src => !isAIImage(product, src));
 
-    const primaryImage = images.length
-        ? absoluteUrl(images[0])
+    const imageUrl = primaryImage
+        ? absoluteUrl(primaryImage)
         : "";
 
     document.title = title;
@@ -269,7 +316,7 @@ function updateProductSEO(product) {
 
     setMeta(
         'meta[property="og:image"]',
-        primaryImage
+        imageUrl
     );
 
     setMeta(
@@ -284,7 +331,7 @@ function updateProductSEO(product) {
 
     setMeta(
         'meta[name="twitter:image"]',
-        primaryImage
+        imageUrl
     );
 
     const canonical = $("productCanonical");
@@ -661,13 +708,15 @@ function createProductGallery(product) {
 
     const mediaItems = images.map(src => ({
         type: "image",
-        src
+        src,
+        isAI: isAIImage(product, src)
     }));
 
     if (video) {
         mediaItems.push({
             type: "video",
-            src: video
+            src: video,
+            isAI: false
         });
     }
 
@@ -695,6 +744,9 @@ function createProductGallery(product) {
         "aria-label",
         "Product media thumbnails"
     );
+
+    const disclosure = createAIDisclosure();
+    disclosure.hidden = true;
 
     const position = el(
         "span",
@@ -739,13 +791,16 @@ function createProductGallery(product) {
 
         stageContent.replaceChildren();
 
+        disclosure.hidden = !item.isAI;
+
         if (item.type === "image") {
             const image = el("img");
 
             image.src = item.src;
 
-            image.alt =
-                `${product.name} — Image ${activeIndex + 1}`;
+            image.alt = item.isAI
+                ? `${product.name} — AI-generated illustrative image`
+                : `${product.name} — Image ${activeIndex + 1}`;
 
             image.className =
                 "ethorise-gallery-main-image";
@@ -759,10 +814,21 @@ function createProductGallery(product) {
             image.title = "Click to enlarge image";
 
             image.onclick = () => {
-                openImageViewer(item.src, product.name);
+                openImageViewer(
+                    item.src,
+                    product.name,
+                    item.isAI
+                );
             };
 
             stageContent.appendChild(image);
+
+            if (item.isAI) {
+                stageContent.appendChild(
+                    createAIBadge()
+                );
+            }
+
         } else {
             const source = item.src;
 
@@ -787,7 +853,6 @@ function createProductGallery(product) {
                     const iframe = el("iframe");
 
                     iframe.src = embedUrl;
-
                     iframe.title =
                         `${product.name} product video`;
 
@@ -860,7 +925,11 @@ function createProductGallery(product) {
             "aria-label",
             item.type === "video"
                 ? "View product video"
-                : `View product image ${index + 1}`
+                : (
+                    item.isAI
+                        ? `View AI illustration ${index + 1}`
+                        : `View product image ${index + 1}`
+                )
         );
 
         if (item.type === "image") {
@@ -871,6 +940,17 @@ function createProductGallery(product) {
             image.loading = "lazy";
 
             button.appendChild(image);
+
+            if (item.isAI) {
+                button.appendChild(
+                    el(
+                        "span",
+                        "ethorise-thumbnail-ai",
+                        "AI"
+                    )
+                );
+            }
+
         } else {
             button.append(
                 el(
@@ -902,6 +982,7 @@ function createProductGallery(product) {
 
     gallery.append(
         stage,
+        disclosure,
         thumbnails
     );
 
@@ -923,7 +1004,7 @@ function createProductGallery(product) {
    FULLSCREEN IMAGE VIEWER
 ========================================== */
 
-function openImageViewer(src, name) {
+function openImageViewer(src, name, isAI = false) {
     const existing = $("ethoriseImageViewer");
 
     if (existing) {
@@ -948,7 +1029,10 @@ function openImageViewer(src, name) {
     const image = el("img");
 
     image.src = src;
-    image.alt = name;
+
+    image.alt = isAI
+        ? `${name} — AI-generated illustration`
+        : name;
 
     const close = el(
         "button",
@@ -964,6 +1048,17 @@ function openImageViewer(src, name) {
     );
 
     const previouslyFocused = document.activeElement;
+
+    function handleKeydown(event) {
+        if (event.key === "Escape") {
+            closeViewer();
+        }
+
+        if (event.key === "Tab") {
+            event.preventDefault();
+            close.focus();
+        }
+    }
 
     function closeViewer() {
         viewer.remove();
@@ -981,17 +1076,6 @@ function openImageViewer(src, name) {
         }
     }
 
-    function handleKeydown(event) {
-        if (event.key === "Escape") {
-            closeViewer();
-        }
-
-        if (event.key === "Tab") {
-            event.preventDefault();
-            close.focus();
-        }
-    }
-
     close.onclick = closeViewer;
 
     viewer.onclick = event => {
@@ -1000,10 +1084,19 @@ function openImageViewer(src, name) {
         }
     };
 
-    viewer.append(
-        image,
-        close
-    );
+    viewer.appendChild(image);
+
+    if (isAI) {
+        const disclosure = createAIDisclosure();
+
+        disclosure.classList.add(
+            "ethorise-viewer-disclosure"
+        );
+
+        viewer.appendChild(disclosure);
+    }
+
+    viewer.appendChild(close);
 
     document.body.appendChild(viewer);
 
@@ -1016,7 +1109,7 @@ function openImageViewer(src, name) {
 }
 
 /* ==========================================
-   GALLERY STYLES
+   GALLERY + AI STYLES
 ========================================== */
 
 function injectGalleryStyles() {
@@ -1044,6 +1137,7 @@ function injectGalleryStyles() {
         }
 
         .ethorise-gallery-content {
+            position: relative;
             width: 100%;
             height: 100%;
             display: flex;
@@ -1124,6 +1218,7 @@ function injectGalleryStyles() {
         }
 
         .ethorise-gallery-thumbnail {
+            position: relative;
             width: 76px;
             height: 76px;
             flex: 0 0 76px;
@@ -1151,9 +1246,21 @@ function injectGalleryStyles() {
             object-fit: contain;
         }
 
+        .ethorise-thumbnail-ai {
+            position: absolute;
+            bottom: 3px;
+            left: 3px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #111;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
         .ethorise-video-icon {
             font-size: 23px;
-            color: #ff6b35;
+            color: #b93f12;
         }
 
         .ethorise-gallery-thumbnail small {
@@ -1167,6 +1274,33 @@ function injectGalleryStyles() {
             text-align: center;
         }
 
+        .ethorise-ai-badge {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            z-index: 5;
+            padding: 7px 10px;
+            background: rgba(17,17,17,.94);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .5px;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+
+        .ethorise-ai-disclosure {
+            margin: 12px 0;
+            padding: 11px 13px;
+            border-radius: 8px;
+            border-left: 3px solid #b93f12;
+            background: #fff7f2;
+            color: #713b25;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
         .ethorise-image-viewer {
             position: fixed;
             inset: 0;
@@ -1175,12 +1309,12 @@ function injectGalleryStyles() {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 60px 20px 20px;
+            padding: 60px 20px 70px;
         }
 
         .ethorise-image-viewer img {
             max-width: 95%;
-            max-height: 90%;
+            max-height: 85%;
             object-fit: contain;
         }
 
@@ -1196,6 +1330,16 @@ function injectGalleryStyles() {
             color: #111;
             font-size: 32px;
             cursor: pointer;
+        }
+
+        .ethorise-viewer-disclosure {
+            position: absolute;
+            left: 20px;
+            right: 20px;
+            bottom: 15px;
+            max-width: 550px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         @media (max-width: 768px) {
@@ -1384,10 +1528,23 @@ function recommendationCard(product) {
     const image = el("img");
 
     image.src = product.image;
-    image.alt = product.name;
+
+    const mainIsAI = isAIImage(
+        product,
+        product.image
+    );
+
+    image.alt = mainIsAI
+        ? `${product.name} — AI illustration`
+        : product.name;
+
     image.loading = "lazy";
 
     imageBox.appendChild(image);
+
+    if (mainIsAI) {
+        imageBox.appendChild(createAIBadge());
+    }
 
     const info = el(
         "div",
@@ -1404,7 +1561,14 @@ function recommendationCard(product) {
             "h3",
             "",
             product.name
-        ),
+        )
+    );
+
+    if (mainIsAI) {
+        info.appendChild(createAIDisclosure());
+    }
+
+    info.appendChild(
         el(
             "p",
             "product-price",

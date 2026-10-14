@@ -6,6 +6,7 @@
    Premium Product Discovery
    Cinematic Hero Slider
    Fashion Background Video
+   AI Image Disclosure
    Wishlist + Comparison + Shopping List
 ========================================== */
 
@@ -19,6 +20,8 @@ const COMPARE_KEY = "ethoriseComparison";
 
 const HERO_VIDEO = "assets/videos/ethorise-fashion.mp4";
 const SLIDE_INTERVAL = 6500;
+
+const AI_LABEL = "AI-generated illustration";
 
 const $ = id => document.getElementById(id);
 
@@ -53,13 +56,8 @@ function readIds(key) {
     return readStorage(key).filter(Number.isInteger);
 }
 
-const wishlist = new Set(
-    readIds(WISHLIST_KEY)
-);
-
-const comparison = new Set(
-    readIds(COMPARE_KEY)
-);
+const wishlist = new Set(readIds(WISHLIST_KEY));
+const comparison = new Set(readIds(COMPARE_KEY));
 
 /* ==========================================
    DOM ELEMENTS
@@ -113,9 +111,112 @@ function refreshSavedCollections() {
 
     readIds(COMPARE_KEY)
         .slice(0, MAX_COMPARE)
-        .forEach(id => {
-            comparison.add(id);
-        });
+        .forEach(id => comparison.add(id));
+}
+
+/* ==========================================
+   AI IMAGE DISCLOSURE
+========================================== */
+
+function isAIImage(product, imagePath) {
+    if (
+        !product ||
+        !product.mediaLabels ||
+        typeof product.mediaLabels !== "object" ||
+        Array.isArray(product.mediaLabels)
+    ) {
+        return false;
+    }
+
+    return (
+        product.mediaLabels[imagePath] === AI_LABEL
+    );
+}
+
+function createAIBadge() {
+    const badge = el(
+        "span",
+        "ethorise-ai-badge",
+        "AI ILLUSTRATION"
+    );
+
+    badge.title =
+        "AI-generated illustration — actual product may differ.";
+
+    return badge;
+}
+
+function createAIDisclosure() {
+    return el(
+        "p",
+        "ethorise-ai-disclosure",
+        "AI-generated illustration — actual product may differ."
+    );
+}
+
+function injectAIStyles() {
+    if ($("ethoriseAIStyles")) return;
+
+    const style = el("style");
+
+    style.id = "ethoriseAIStyles";
+
+    style.textContent = `
+        .ethorise-ai-badge {
+            position: absolute;
+            left: 10px;
+            bottom: 10px;
+            z-index: 5;
+            display: inline-flex;
+            align-items: center;
+            max-width: calc(100% - 20px);
+            padding: 7px 10px;
+            background: rgba(17,17,17,.94);
+            color: #ffffff;
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            line-height: 1.4;
+            pointer-events: none;
+        }
+
+        .ethorise-ai-disclosure {
+            margin: 12px 0;
+            padding: 11px 13px;
+            border-radius: 8px;
+            border-left: 3px solid #b93f12;
+            background: #fff7f2;
+            color: #713b25;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .ethorise-card-disclosure {
+            margin-bottom: 12px;
+        }
+
+        .ethorise-quick-image {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .ethorise-quick-image img {
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+        }
+
+        @media (max-width: 480px) {
+            .ethorise-ai-badge {
+                font-size: 9px;
+                padding: 6px 8px;
+            }
+        }
+    `;
+
+    document.head.appendChild(style);
 }
 
 /* ==========================================
@@ -154,9 +255,7 @@ function setupHeroSlider() {
 
     let fashionVideo = null;
 
-    /* ======================================
-       FASHION BACKGROUND VIDEO
-    ====================================== */
+    /* FASHION VIDEO */
 
     function setupFashionVideo() {
         if (reducedMotion.matches) return;
@@ -225,6 +324,7 @@ function setupHeroSlider() {
         if (
             activeSlide === 0 &&
             !manuallyPaused &&
+            !reducedMotion.matches &&
             !document.hidden
         ) {
             const playPromise = fashionVideo.play();
@@ -240,9 +340,7 @@ function setupHeroSlider() {
         }
     }
 
-    /* ======================================
-       SLIDE CONTROLS
-    ====================================== */
+    /* SLIDE CONTROLS */
 
     function showSlide(index) {
         activeSlide = (
@@ -339,10 +437,6 @@ function setupHeroSlider() {
         );
     }
 
-    /* ======================================
-       BUTTON EVENTS
-    ====================================== */
-
     if (previousButton) {
         previousButton.onclick = () => {
             moveSlide(-1);
@@ -384,9 +478,7 @@ function setupHeroSlider() {
         };
     });
 
-    /* ======================================
-       MOBILE TOUCH SWIPE
-    ====================================== */
+    /* MOBILE SWIPE */
 
     slider.addEventListener(
         "touchstart",
@@ -422,9 +514,7 @@ function setupHeroSlider() {
         { passive: true }
     );
 
-    /* ======================================
-       AUTO PLAY CONTROL
-    ====================================== */
+    /* AUTO PLAY */
 
     slider.addEventListener(
         "mouseenter",
@@ -444,9 +534,7 @@ function setupHeroSlider() {
     slider.addEventListener(
         "focusout",
         event => {
-            if (
-                !slider.contains(event.relatedTarget)
-            ) {
+            if (!slider.contains(event.relatedTarget)) {
                 startTimer();
             }
         }
@@ -479,7 +567,10 @@ function setupHeroSlider() {
         }
     }
 
-    if (typeof reducedMotion.addEventListener === "function") {
+    if (
+        typeof reducedMotion.addEventListener ===
+        "function"
+    ) {
         reducedMotion.addEventListener(
             "change",
             onMotionChange
@@ -487,16 +578,11 @@ function setupHeroSlider() {
     }
 
     setupFashionVideo();
-
     showSlide(0);
-
     updatePauseButton();
-
     startTimer();
 
-    /* ======================================
-       HERO CATEGORY BUTTONS
-    ====================================== */
+    /* HERO CATEGORY BUTTONS */
 
     slider.querySelectorAll(
         "[data-hero-category]"
@@ -778,7 +864,10 @@ function productCard(product) {
     const image = el("img");
 
     image.src = product.image;
-    image.alt = product.name;
+    image.alt = isAIImage(product, product.image)
+        ? `${product.name} — AI-generated illustration`
+        : product.name;
+
     image.loading = "lazy";
     image.decoding = "async";
 
@@ -802,7 +891,20 @@ function productCard(product) {
 
     heart.onclick = () => toggleWishlist(product.id);
 
-    imageBox.append(image, heart);
+    imageBox.appendChild(image);
+
+    /* AI BADGE ON MAIN IMAGE */
+
+    const mainImageIsAI = isAIImage(
+        product,
+        product.image
+    );
+
+    if (mainImageIsAI) {
+        imageBox.appendChild(createAIBadge());
+    }
+
+    imageBox.appendChild(heart);
 
     const info = el(
         "div",
@@ -902,7 +1004,18 @@ function productCard(product) {
 
     info.append(
         category,
-        title,
+        title
+    );
+
+    if (mainImageIsAI) {
+        const disclosure = createAIDisclosure();
+        disclosure.classList.add(
+            "ethorise-card-disclosure"
+        );
+        info.appendChild(disclosure);
+    }
+
+    info.append(
         price,
         actions,
         addButton,
@@ -1076,10 +1189,29 @@ function openQuickView(product) {
 
     body.replaceChildren();
 
+    const imageBox = el(
+        "div",
+        "ethorise-quick-image"
+    );
+
     const image = el("img");
 
     image.src = product.image;
-    image.alt = product.name;
+
+    const mainImageIsAI = isAIImage(
+        product,
+        product.image
+    );
+
+    image.alt = mainImageIsAI
+        ? `${product.name} — AI-generated illustration`
+        : product.name;
+
+    imageBox.appendChild(image);
+
+    if (mainImageIsAI) {
+        imageBox.appendChild(createAIBadge());
+    }
 
     const title = el(
         "h2",
@@ -1131,8 +1263,15 @@ function openQuickView(product) {
     );
 
     body.append(
-        image,
-        title,
+        imageBox,
+        title
+    );
+
+    if (mainImageIsAI) {
+        body.appendChild(createAIDisclosure());
+    }
+
+    body.append(
         price,
         description,
         actions
@@ -1287,6 +1426,8 @@ function setupEvents() {
         };
     }
 
+    /* WISHLIST PAGE */
+
     const wishlistButton = $("wishlistBtn");
 
     if (wishlistButton) {
@@ -1295,6 +1436,8 @@ function setupEvents() {
         };
     }
 
+    /* COMPARE PAGE */
+
     const compareButton = $("compareNavBtn");
 
     if (compareButton) {
@@ -1302,6 +1445,8 @@ function setupEvents() {
             window.location.href = "compare.html";
         };
     }
+
+    /* COMPARISON MODAL */
 
     const openCompare = $("openCompare");
 
@@ -1361,6 +1506,8 @@ function setupEvents() {
         }
     );
 
+    /* CATEGORY CARDS */
+
     document.querySelectorAll(
         ".category-card"
     ).forEach(button => {
@@ -1370,6 +1517,8 @@ function setupEvents() {
             );
         };
     });
+
+    /* COLLECTION BUTTONS */
 
     document.querySelectorAll(
         ".collection-card, .fashion-editorial-content [data-collection], .technology-editorial-content [data-collection]"
@@ -1382,6 +1531,8 @@ function setupEvents() {
             );
         };
     });
+
+    /* MOBILE MENU */
 
     const menu = $("navLinks");
     const toggle = $("menuToggle");
@@ -1409,6 +1560,8 @@ function setupEvents() {
             };
         });
     }
+
+    /* STORAGE SYNCHRONIZATION */
 
     window.addEventListener(
         "pageshow",
@@ -1446,6 +1599,8 @@ function setupEvents() {
 ========================================== */
 
 async function init() {
+    injectAIStyles();
+
     createCartNavigation();
 
     setupEvents();
