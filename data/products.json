@@ -349,14 +349,14 @@
     "relatedProductIds": [],
     "price": null,
     "currency": "USD",
-    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S77963fb4a02d40e1a0e7ae950c8273bck.jpg",
+    "image": "assets/images/aliexpress/ae-3256811657051022-a64129d84a2a01.webp",
     "images": [
-      "https://ae-pic-a1.aliexpress-media.com/kf/S77963fb4a02d40e1a0e7ae950c8273bck.jpg",
-      "https://ae-pic-a1.aliexpress-media.com/kf/S18fdbb78f0fb4f6caf106292ba824e216.jpg",
-      "https://ae-pic-a1.aliexpress-media.com/kf/S09155a6df4704a04a6837afeef9b64d5w.jpg",
-      "https://ae-pic-a1.aliexpress-media.com/kf/S105108c16bea4c52b29e5985db352127Z.jpg",
-      "https://ae-pic-a1.aliexpress-media.com/kf/S4f7cbcdc33bd41b7a66ab4a6e06fc95cF.jpg",
-      "https://ae-pic-a1.aliexpress-media.com/kf/S54b5812d889246cd8df2333a00d337ef0.jpg"
+      "assets/images/aliexpress/ae-3256811657051022-a64129d84a2a01.webp",
+      "assets/images/aliexpress/ae-3256811657051022-fff056057f1f67.webp",
+      "assets/images/aliexpress/ae-3256811657051022-87a0455e1041fe.webp",
+      "assets/images/aliexpress/ae-3256811657051022-8154bbb8455edd.webp",
+      "assets/images/aliexpress/ae-3256811657051022-46034242878117.webp",
+      "assets/images/aliexpress/ae-3256811657051022-db3347dc0c8a0f.webp"
     ],
     "video": "",
     "mediaLabels": {},
